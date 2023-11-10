@@ -1,5 +1,5 @@
 <template>
-    <div class="filter-item" v-if="options != null && options.length > 0">
+    <div class="filter-item">
         <label for="name">
             <slot></slot>
         </label>

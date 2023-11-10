@@ -31,9 +31,9 @@ export default new Vuex.Store({
         commit('SET_REGION', res.data);
       })
     },
-    getCenters({commit},regionids:string[]){
+    getCenters({commit},regionids:string){
       if(regionids && regionids.length > 0){
-        Helper.GetCenters(regionids[0]).then(res=>{
+        Helper.GetCenters(regionids).then(res=>{
           commit('SET_CENTER',res.data);
         })
       }
