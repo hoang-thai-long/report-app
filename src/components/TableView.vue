@@ -47,9 +47,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        
-                        <td></td>
+                    <tr v-for="(item,i) in data" :key="i">
+                        <td>{{ (i+1) }}</td>
                         <td style="border-right: 1px solid;"></td>
                         <!-- tổng hợp -->
                         <td></td>
@@ -84,6 +83,8 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 export default class extends Vue {
     @Prop()
     type !: number;
+    @Prop()
+    data !: number;
 }
 
 </script>

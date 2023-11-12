@@ -1,8 +1,9 @@
 import axios from 'axios';
 const configs = {
-    BASE_URL:"https:/localhost:7201/data/",
+    BASE_URL:"https:/localhost:56456/data/",
     GET_REGIONS:'GetRegions',
-    GET_CENTERS:'GetCenters'
+    GET_CENTERS:'GetCenters',
+    GET_CLASS :'GetClass'
 }
 
 const instance = axios.create({

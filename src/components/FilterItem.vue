@@ -45,6 +45,13 @@ export default class FilterItem extends Vue {
         return this.value;
     }
 
+    @Watch("options")
+    watchOptions(newValue:[{ id: string, name: string }] | null, oldValue: [{ id: string, name: string }] | null){
+        if(newValue != oldValue){
+            this.value = null;
+        }
+    }
+
     @Watch("value")
     wacthValue(newValue: [{ id: string, name: string }] | null, oldValue: [{ id: string, name: string }] | null) {
         // console.log(newValue,oldValue);

@@ -2,11 +2,7 @@
     <div class="filter">
         <div class="filter-box">
             <div class="filter-group">
-                <div class="filter-item">
-                    <button class="btn btn-tab">Tháng</button>
-                    <button class="btn btn-tab">Tuần</button>
-                    <filter-date></filter-date>
-                </div>
+                <filter-date @on-update="updateDate"></filter-date>
             </div>
             <div class="filter-group">
                 <filter-item name="report-region" :multiple="false" placeholder="Chọn khu vực" :options="Regions"
@@ -57,6 +53,7 @@ const changeRegions = function (value: [{ id: string, name: string }] | null) {
 }
 const loadCenters = function (value: { id: string, name: string } | null) {
     if (value) {
+
         store.dispatch('getCenters', value.id);
     }
 }
@@ -67,6 +64,9 @@ const loadClass = function (value: { id: string, name: string } | null) {
 }
 const changeView = function(value: { id: string, name: string }){
     console.log(value);
+}
+const updateDate = function(range:{start:Date,end:Date}){
+    console.log(range);
 }
 
 onMounted(() => {

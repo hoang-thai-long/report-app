@@ -6,6 +6,9 @@ const Helper = {
     },
     GetCenters(regionid:string){
         return instance.get(configs.GET_CENTERS+"?regionid="+regionid);
+    },
+    GetClass(centerid:string){
+        return instance.get(configs.GET_CLASS+"?centerid="+centerid);
     }
 }
 

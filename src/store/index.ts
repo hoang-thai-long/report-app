@@ -27,6 +27,9 @@ export default new Vuex.Store({
     },
     SET_LEVEL(state, levels){
       state.Levels = levels;
+    },
+    SET_CLASS(state, dataClass){
+      state.Class = dataClass
     }
   },
   actions: {
@@ -39,6 +42,13 @@ export default new Vuex.Store({
       if(regionids && regionids.length > 0){
         Helper.GetCenters(regionids).then(res=>{
           commit('SET_CENTER',res.data);
+        })
+      }
+    },
+    getClass({commit},centerid:string){
+      if(centerid && centerid.length > 0){
+        Helper.GetClass(centerid).then(res=>{
+          commit('SET_CLASS',res.data);
         })
       }
     }
