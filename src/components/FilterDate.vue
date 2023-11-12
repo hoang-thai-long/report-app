@@ -1,5 +1,5 @@
 <template>
-    <date-range-picker v-model="dateRange" :date-format="dateFormat"></date-range-picker>
+    <date-range-picker v-model="dateRange" :date-format="dateFormat" single-date-picker="range" :auto-apply="true"></date-range-picker>
 </template>
 <script setup>
 import DateRangePicker from 'vue2-daterange-picker'
