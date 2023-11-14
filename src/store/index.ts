@@ -73,8 +73,15 @@ export default new Vuex.Store({
     SET_DATA_KHAO_THI(state,data){
       state.kiemTra.Exam.push(data);
     },
+    CLEAR_DATA(state){
+      state.kiemTra = kiemTra;
+      state.LuyenTap = LuyenTap;
+    }
   },
   actions: {
+    clearData({commit}){
+      commit('CLEAR_DATA');
+    },
     setData({commit}, data:number){
       commit('SET_DATA',data)
     },

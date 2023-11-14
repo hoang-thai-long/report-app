@@ -87,9 +87,10 @@ const changeClass = function (value: { id: string, name: string, center: string,
 const changeView = function (value: { id: string, name: string }) {
     console.log(value);
 }
-const updateDate = function (range: { start: Date, end: Date }) {
-    filterRange.value.start = range.start;
-    filterRange.value.end = range.end;
+const updateDate = function (range: { startDate: Date, endDate: Date }) {
+    console.log(range);
+    filterRange.value.start = range.startDate;
+    filterRange.value.end = range.endDate;
 }
 
 onMounted(() => {
@@ -122,6 +123,7 @@ const syncLuyenTap = function(classids:string[], i : number, limit:number, start
 }
 
 const syncData = function(type:number,id:string){
+    console.log(filterRange.value)
     switch(type){
         default:
             Helper.CountClass(id,0,filterRange.value.start,filterRange.value.end).then(res=>{
@@ -153,6 +155,9 @@ const loadFilterData = function(type:number){
 
 
 const applyFilter = function () {
+
+    store.dispatch("clearData");
+
     let type = 0;
     if (filterClass.value != null){
         type = 3;
