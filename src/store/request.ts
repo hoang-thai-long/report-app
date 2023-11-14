@@ -3,7 +3,12 @@ const configs = {
     BASE_URL:"https:/localhost:56456/data/",
     GET_REGIONS:'GetRegions',
     GET_CENTERS:'GetCenters',
-    GET_CLASS :'GetClass'
+    GET_CLASS :'GetClass',
+    BAIKIEMTRA:'BAIKIEMTRA',
+    BAILUYENTAP:'BAILUYENTAP',
+    BAILINK:'BAILINK',
+    TULUYEN:'TULUYEN',
+    BAIKHAOTHI:'BAIKHAOTHI'
 }
 
 const instance = axios.create({
