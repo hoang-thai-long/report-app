@@ -4,10 +4,18 @@ import Helper from './helper'
 
 Vue.use(Vuex)
 
+const LuyenTap : {Link:any[],Class:any[],TuLuyen:any[]} = {Link : [],Class : [],TuLuyen : []};
+
+const kiemTra : {Class : any[],Exam :any[] } = {Class : [], Exam :[]};
+
+
+
 const TypeDataView : {[key:string]:{id:string,name:string}[]} = {};
 TypeDataView["longht"] =  [{id:"1",name:"hai"}]
 export default new Vuex.Store({
   state: {
+    LuyenTap:LuyenTap,
+    kiemTra:kiemTra,
     DataView:TypeDataView,
     FilterTable: null,
     Regions: null,
@@ -53,7 +61,22 @@ export default new Vuex.Store({
     },
     SET_CLASS(state, dataClass){
       state.Class = dataClass
-    }
+    },
+    SET_DATA_TULUYEN(state,data){
+      state.LuyenTap.TuLuyen.push(data);
+    },
+    SET_DATA_LUYEN_TAP(state,data){
+      state.LuyenTap.Class.push(data);
+    },
+    SET_DATA_LINK(state,data){
+      state.LuyenTap.Link.push(data);
+    },
+    SET_DATA_KIEM_TRA(state,data){
+      state.kiemTra.Class.push(data);
+    },
+    SET_DATA_KHAO_THI(state,data){
+      state.kiemTra.Exam.push(data);
+    },
   },
   actions: {
     setData({commit}, data:number){
@@ -75,6 +98,56 @@ export default new Vuex.Store({
       if(centerid && centerid.length > 0){
         Helper.GetClass(centerid).then(res=>{
           commit('SET_CLASS',res.data);
+        })
+      }
+    },
+    getTuLuyen({commit},data:{classid:string, start: Date, end :Date}){
+      if(data.classid){
+        Helper.GetTuLuyen(data.classid,data.start,data.end).then(res=>{
+          console.log(res)
+          if(res.data){
+            commit("SET_DATA_TULUYEN",res.data);
+          }
+        })
+      }
+    },
+    getLuyenTap({commit},data:{classid:string, start: Date, end :Date}){
+      if(data.classid){
+        Helper.GetLuyenTap(data.classid,data.start,data.end).then(res=>{
+          console.log(res)
+          if(res.data){
+            commit("SET_DATA_LUYEN_TAP",res.data);
+          }
+        })
+      }
+    },
+    getKiemTra({commit},data:{classid:string, start: Date, end :Date}){
+      if(data.classid){
+        Helper.GetBaiKiemTra(data.classid,data.start,data.end).then(res=>{
+          console.log(res)
+          if(res.data){
+            commit("SET_DATA_KIEM_TRA",res.data);
+          }
+        })
+      }
+    },
+    getLink({commit},data:{classid:string, start: Date, end :Date}){
+      if(data.classid){
+        Helper.GetLink(data.classid,data.start,data.end).then(res=>{
+          console.log(res)
+          if(res.data){
+            commit("SET_DATA_LINK",res.data);
+          }
+        })
+      }
+    },
+    getKhaoThi({commit},data:{classid:string, start: Date, end :Date}){
+      if(data.classid){
+        Helper.GetKhaoThi(data.classid,data.start,data.end).then(res=>{
+          console.log(res)
+          if(res.data){
+            commit("SET_DATA_KHAO_THI",res.data);
+          }
         })
       }
     }
