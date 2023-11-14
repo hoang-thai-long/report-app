@@ -5,11 +5,7 @@ import Helper from './helper'
 Vue.use(Vuex)
 
 const LuyenTap : {Link:any[],Class:any[],TuLuyen:any[]} = {Link : [],Class : [],TuLuyen : []};
-
 const kiemTra : {Class : any[],Exam :any[] } = {Class : [], Exam :[]};
-
-
-
 const TypeDataView : {[key:string]:{id:string,name:string}[]} = {};
 TypeDataView["longht"] =  [{id:"1",name:"hai"}]
 export default new Vuex.Store({
