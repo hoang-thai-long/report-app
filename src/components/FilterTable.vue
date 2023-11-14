@@ -103,7 +103,7 @@ const syncDataCount = function(data:string[]){
 }
 
 const syncKiemTra = function(classids:string[], i : number, limit:number, start: Date, end: Date){
-    Helper.LoadBaiKiemTra(classids[i],start,end).then(res=>{
+    store.dispatch("getKiemTra",{classid:classids[i],start:start,end:end}).then(res=>{
         console.log(res);
         i++;
         if(i < limit){
@@ -113,7 +113,7 @@ const syncKiemTra = function(classids:string[], i : number, limit:number, start:
     
 }
 const syncLuyenTap = function(classids:string[], i : number, limit:number, start: Date, end: Date){
-    Helper.LoadBaiLuyenTap(classids[i],start,end).then(res=>{
+    store.dispatch("getLuyenTap",{classid:classids[i],start:start,end:end}).then(res=>{
         console.log(res);
         i++;
         if(i < limit){
@@ -121,9 +121,9 @@ const syncLuyenTap = function(classids:string[], i : number, limit:number, start
         }
     });
 }
-
+///
 const syncData = function(type:number,id:string){
-    console.log(filterRange.value)
+    // console.log(filterRange.value)
     switch(type){
         default:
             Helper.CountClass(id,0,filterRange.value.start,filterRange.value.end).then(res=>{
