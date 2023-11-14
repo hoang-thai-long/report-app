@@ -4,8 +4,12 @@ import Helper from './helper'
 
 Vue.use(Vuex)
 
+const TypeDataView : {[key:string]:{id:string,name:string}[]} = {};
+TypeDataView["longht"] =  [{id:"1",name:"hai"}]
 export default new Vuex.Store({
   state: {
+    DataView:TypeDataView,
+    FilterTable: null,
     Regions: null,
     Centers: null,
     Class: null,
@@ -18,9 +22,28 @@ export default new Vuex.Store({
     }
   },
   mutations: {
+    SET_DATA_VIEW(state, dataView:{id:string,centers:{id:string,name:string}[]}){
+      state.DataView[dataView.id] = dataView.centers;
+    },
+    SET_DATA(state, filterData:number){
+      switch(filterData){
+        case 3: 
+          state.FilterTable = state.Students;
+          break;
+        case 2:
+          state.FilterTable = state.Class;
+          break;
+        case 1: 
+          state.FilterTable = state.Centers;
+          break;
+        default:
+          state.FilterTable = state.Regions;
+          break;
+      }
+    },
     SET_REGION(state, regions) {
       state.Regions = regions;
-      console.log(state);
+      // console.log(state);
     },
     SET_CENTER(state, dataCenter){
       state.Centers = dataCenter;
@@ -33,6 +56,9 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    setData({commit}, data:number){
+      commit('SET_DATA',data)
+    },
     getRegions({ commit }) {
       Helper.GetRegions().then(res => {
         commit('SET_REGION', res.data);

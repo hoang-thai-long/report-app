@@ -47,9 +47,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(item,i) in data" :key="i">
+                    <tr v-for="(item,i) in $store.state.FilterTable" :key="i">
                         <td>{{ (i+1) }}</td>
-                        <td style="border-right: 1px solid;"></td>
+                        <td style="border-right: 1px solid;">{{ item.name }}</td>
                         <!-- tổng hợp -->
                         <td></td>
                         <td></td>
@@ -77,14 +77,14 @@
     </div>
 </template>
 <script lang="ts">
+// import store from '@/store';
+// import { computed, watch } from 'vue';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 
 @Component
 export default class extends Vue {
     @Prop()
     type !: number;
-    @Prop()
-    data !: number;
 }
 
 </script>

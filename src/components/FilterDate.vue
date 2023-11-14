@@ -10,6 +10,7 @@
 import { defineEmits, ref, watch } from 'vue'
 import DateRangePicker from 'vue2-daterange-picker'
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
+import { caculatorDate } from "../utils/common";
 
 const emits = defineEmits(['on-update'])
 
@@ -17,43 +18,12 @@ const type = ref("week");
 
 
 
-const caculatorDate = function (date) {
-    if (!date) {
-        date = new Date()
-    }
-    const month = date.getMonth();
-    const year = date.getFullYear();
-    if (type.value == "month") {
-        const thisMonth = month < 12 ? new Date(year, month, 1) : new Date(year + 1, 1, 1);
-        const nextMonth = month < 11 ? new Date(year, month + 1, 1) : new Date(year + 1, 1, 1);
-        const lastMonth = new Date(nextMonth.setDate(-1));
 
-        return {
-            first: thisMonth,
-            last: lastMonth
-        }
-    }
-    else {
-        const week = [1, 2, 3, 4, 5, 6, 0];
-        const dateIndex = date.getDay();
-        const clone = new Date(date.getTime());
-        const cloneDate = clone.getDate();
 
-        const firstWeek = new Date(clone.setDate(cloneDate - week.indexOf(dateIndex)));
-        const cloneFirstWeek = new Date(firstWeek.getTime());
-        const lastWeek = new Date(cloneFirstWeek.setDate(cloneFirstWeek.getDate() + 6));
-        return {
-            first: firstWeek,
-            last: lastWeek
-        }
-    }
-
-}
-
-const now = ref(caculatorDate(new Date));
+const now = ref(caculatorDate(new Date,type.value));
 watch(type, (n, o) => {
     if(n != o){
-        now.value = caculatorDate(new Date);
+        now.value = caculatorDate(new Date,type.value);
     }
 })
 const flag = ref(false);
@@ -68,7 +38,7 @@ const dateRange = {
 const choisData = function(value){
     if(type.value != value){
         type.value = value;
-        now.value = caculatorDate(new Date);
+        now.value = caculatorDate(new Date,type.value);
         flagLastDate.value = now.value.last;
         flagFirstDate.value = now.value.first;
         dateRange.startDate =  now.value.first;
@@ -111,10 +81,6 @@ const updateValue = function (value) { emits('on-update', value); }
     background-color: #357ebd !important;
     border-color: transparent;
     color: #fff;
-}
-
-.daterangepicker .ranges {
-    display: none;
 }
 
 .daterangepicker {

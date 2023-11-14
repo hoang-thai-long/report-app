@@ -36,7 +36,8 @@ export default class FilterItem extends Vue {
     }
 
     @Emit('on-change')
-    onChange(value: [{ id: string, name: string }] | null) {
+    onChange<type>(value: type | null) {
+        console.log(value);
         return value;
     }
 
@@ -46,17 +47,17 @@ export default class FilterItem extends Vue {
     }
 
     @Watch("options")
-    watchOptions(newValue:[{ id: string, name: string }] | null, oldValue: [{ id: string, name: string }] | null){
+    watchOptions(newValue:{ id: string, name: string } | null, oldValue: { id: string, name: string } | null){
         if(newValue != oldValue){
             this.value = null;
         }
     }
 
     @Watch("value")
-    wacthValue(newValue: [{ id: string, name: string }] | null, oldValue: [{ id: string, name: string }] | null) {
+    wacthValue(newValue: { id: string, name: string } | null, oldValue: { id: string, name: string } | null) {
         // console.log(newValue,oldValue);
         if (newValue != oldValue) {
-            if (newValue != null && newValue.length > 0) {
+            if (newValue != null) {
                 this.onChange(newValue);
             }
             else {
