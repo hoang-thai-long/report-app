@@ -169,7 +169,7 @@ export default class extends Vue {
         if(item && Array.isArray(item.details) && item.totalLesson > 0){
             const student = item.details.find((x: { id: string; })=>x.id == studentid);
             if(student.tyLeThamGia > 0)
-                return [(student.tyLeThamGia/100)*item.totalLesson,student.diem.toFixed(1),student.thoiGian.toFixed(1)];
+                return [Math.round((student.tyLeThamGia/100)*item.totalLesson),student.diem.toFixed(1),student.thoiGian.toFixed(1)];
             else
                 return [0,'---','---'];
         }
@@ -180,7 +180,7 @@ export default class extends Vue {
         const item = store.state.LuyenTap.Class.find(o=>o.classID == classid);
         if(item && Array.isArray(item.details) && item.totalLesson > 0){
             const student = item.details.find((x: { id: string; })=>x.id == studentid);
-            return [(student.tyLeThamGia/100)*item.totalLesson,student.diem.toFixed(1),student.thoiGian.toFixed(1)];
+            return [Math.round((student.tyLeThamGia/100)*item.totalLesson),student.diem.toFixed(1),student.thoiGian.toFixed(1)];
         }
 
         return ['---','---','---'];
@@ -199,7 +199,7 @@ export default class extends Vue {
         const item = store.state.kiemTra.Class.find(o=>o.classID == classid);
         if(item && Array.isArray(item.details) && item.totalLesson > 0){
             const student = item.details.find((x: { id: string; })=>x.id == studentid);
-            return [(student.tyLeThamGia/100)*item.totalLesson,student.diem.toFixed(1),student.thoiGian.toFixed(1)];
+            return [Math.round((student.tyLeThamGia/100)*item.totalLesson),student.diem.toFixed(1),student.thoiGian.toFixed(1)];
         }
 
         return ['---','---','---'];
@@ -208,7 +208,7 @@ export default class extends Vue {
         const item = store.state.kiemTra.Exam.find(o=>o.classID == classid);
         if(item && Array.isArray(item.details) && item.totalLesson > 0){
             const student = item.details.find((x: { id: string; })=>x.id == studentid);
-            return [(student.tyLeThamGia/100)*item.totalLesson,student.diem.toFixed(1),student.thoiGian.toFixed(1)];
+            return [Math.round((student.tyLeThamGia/100)*item.totalLesson),student.diem.toFixed(1),student.thoiGian.toFixed(1)];
         }
 
         return ['---','---','---'];
