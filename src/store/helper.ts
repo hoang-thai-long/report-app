@@ -1,6 +1,10 @@
 import {configs, instance} from './request';
 
 const Helper = {
+    GetStudents(id:string){
+        const url = configs.GET_STUDENT+"?id="+id
+        return instance.get(url);
+    },
     CountClass(id:string,type:number, start:Date|null, end:Date|null){
         let url = configs.COUNT_CLASS+"?id="+id+"&type="+type;
         if(start){

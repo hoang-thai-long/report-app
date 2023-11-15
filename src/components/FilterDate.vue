@@ -3,7 +3,7 @@
         <button class="btn btn-tab" @click="choisData('month')">Tháng</button>
         <button class="btn btn-tab" @click="choisData('week')">Tuần</button>
         <date-range-picker @toggle="toggle" @update="updateValue" @start-selection="runLimit" v-model="dateRange"
-            :date-format="dateFormat" :auto-apply="true"></date-range-picker>
+             :auto-apply="true"></date-range-picker>
     </div>
 </template>
 <script setup>

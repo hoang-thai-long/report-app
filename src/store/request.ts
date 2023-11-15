@@ -1,6 +1,6 @@
 import axios from 'axios';
 const configs = {
-    BASE_URL:"https:/localhost:56456/data/",
+    BASE_URL:"/data/",
     GET_REGIONS:'GetRegions',
     GET_CENTERS:'GetCenters',
     GET_CLASS :'GetClass',
@@ -11,7 +11,8 @@ const configs = {
     BAIKHAOTHI:'BAIKHAOTHI',
     COUNT_CLASS:"CountCLASS",
     GET_BAIKIEMTRA:"BAIKIEMTRA",
-    GET_BAILUYENTAP:"BAILUYENTAP"
+    GET_BAILUYENTAP:"BAILUYENTAP",
+    GET_STUDENT:"GetStudent"
 }
 
 const instance = axios.create({

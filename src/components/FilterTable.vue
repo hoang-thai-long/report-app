@@ -83,6 +83,9 @@ const loadClass = function (value: { id: string, name: string } | null) {
 }
 const changeClass = function (value: { id: string, name: string, center: string, region: string } | null) {
     filterClass.value = value;
+    if(value){
+        store.dispatch('getStudents',value.id);
+    }
 }
 const changeView = function (value: { id: string, name: string }) {
     console.log(value);
@@ -96,49 +99,129 @@ const updateDate = function (range: { startDate: Date, endDate: Date }) {
 onMounted(() => {
     store.dispatch('getRegions');
 });
-
+let tuLuyenRequest : string[] = [];
+let linkRequest : string[] = [];
+let kiemTraRequest : string[] = [];
+let khaoThiRequest : string[] = [];
+let luyenTapRequest : string[] = [];
 const syncDataCount = function(data:string[]){
+
+    tuLuyenRequest = [];
+    linkRequest = [];
+    kiemTraRequest = [];
+    khaoThiRequest = [];
+    luyenTapRequest = [];
+
+    // bai trong lop
     syncKiemTra(data,0, data.length, filterRange.value.start, filterRange.value.end);
+    // bai khao thi
+    syncBaiKhaoThi(data,0, data.length, filterRange.value.start, filterRange.value.end);
+    // bai trong lop
     syncLuyenTap(data,0, data.length, filterRange.value.start, filterRange.value.end);
+    // qua link
+    syncLink(data,0, data.length, filterRange.value.start, filterRange.value.end);
+    // tự luyện
+    syncTuLuyen(data,0, data.length, filterRange.value.start, filterRange.value.end);
+}
+
+const syncTuLuyen = function(classids:string[], i : number, limit:number, start: Date, end: Date){
+    
+    const classid = classids[i];
+    i++;
+    console.log(tuLuyenRequest);
+    if(tuLuyenRequest.includes(classid)) return;
+    tuLuyenRequest.push(classid);
+    store.dispatch("getTuLuyen",{classid:classid,start:start,end:end}).then(res=>{
+        if(i < limit){
+           return syncTuLuyen(classids,i,limit,start,end);
+        }
+    });
+}
+const syncLink = function(classids:string[], i : number, limit:number, start: Date, end: Date){
+    const classid = classids[i];
+    i++;
+    if(linkRequest.includes(classid)) return;
+    linkRequest.push(classid);
+    store.dispatch("getLink",{classid:classid,start:start,end:end}).then(res=>{
+        if(i < limit){
+           return syncLink(classids,i,limit,start,end);
+        }
+    });
+}
+
+const syncBaiKhaoThi = function(classids:string[], i : number, limit:number, start: Date, end: Date){
+    const classid = classids[i];
+    i++;
+    if(khaoThiRequest.includes(classid)) return;
+    khaoThiRequest.push(classid);
+    store.dispatch("getKhaoThi",{classid:classid,start:start,end:end}).then(res=>{
+        if(i < limit){
+           return syncBaiKhaoThi(classids,i,limit,start,end);
+        }
+    });
 }
 
 const syncKiemTra = function(classids:string[], i : number, limit:number, start: Date, end: Date){
-    store.dispatch("getKiemTra",{classid:classids[i],start:start,end:end}).then(res=>{
-        console.log(res);
-        i++;
+    const classid = classids[i];
+    i++;
+    if(kiemTraRequest.includes(classid)) return;
+    kiemTraRequest.push(classid);
+    store.dispatch("getKiemTra",{classid:classid,start:start,end:end}).then(res=>{
         if(i < limit){
-            syncKiemTra(classids,i,limit,start,end);
+           return syncKiemTra(classids,i,limit,start,end);
         }
     });
-    
 }
 const syncLuyenTap = function(classids:string[], i : number, limit:number, start: Date, end: Date){
-    store.dispatch("getLuyenTap",{classid:classids[i],start:start,end:end}).then(res=>{
-        console.log(res);
-        i++;
+    const classid = classids[i];
+    i++;
+    if(luyenTapRequest.includes(classid)) return;
+    luyenTapRequest.push(classid);
+    store.dispatch("getLuyenTap",{classid:classid,start:start,end:end})
+    .then(res=>{
         if(i < limit){
-            syncLuyenTap(classids,i,limit,start,end);
+           return syncLuyenTap(classids,i,limit,start,end);
         }
     });
 }
 ///
 const syncData = function(type:number,id:string){
-    // console.log(filterRange.value)
-    switch(type){
-        default:
-            Helper.CountClass(id,0,filterRange.value.start,filterRange.value.end).then(res=>{
+    if(type == -1){
+        const regions =store.state.Regions
+        if(regions != null){
+            const count = regions.length;
+            for(let  i =0; i < count; i++){
+                const item = regions[i];
+                Helper.CountClass(item.id,0,filterRange.value.start,filterRange.value.end).then(res=>{
+                    if(res && res.data){
+                        if(res.data.n > 0){
+                            syncDataCount(res.data.l);
+                        }
+                    }
+                })
+            }
+        }
+    }
+    else{
+        if(type == 0){
+            Helper.CountClass(id,type,filterRange.value.start,filterRange.value.end).then(res=>{
                 if(res && res.data){
                     if(res.data.n > 0){
                         syncDataCount(res.data.l);
                     }
                 }
             })
-            // Helper.GetCenters(id).then(res=>{
-            //     if(res.data != null){
-            //         store.commit("SET_DATA_VIEW",{id:id,centers:res.data})
-            //     }
-            // })
-            break;
+        }
+        if(type == 1){
+            syncDataCount(['631753a026627e0694262021'])
+            // if(ListClass.value != null && ListClass.value.length > 0){
+            //     syncDataCount(ListClass.value.map(o=>o.id));
+            // }
+            
+        }
+        if(type == 2){
+            syncDataCount([id]);
+        }
     }
 }
 
@@ -158,29 +241,29 @@ const applyFilter = function () {
 
     store.dispatch("clearData");
 
-    let type = 0;
+    let type = -1;
     if (filterClass.value != null){
-        type = 3;
+        type = 2;
         console.log("load data theo class")
     }
     else{
         if(filterCenter.value != null){
-            type = 2;
+            type = 1;
             console.log("load data theo center")
         }
         else{
             if(filterRegion.value != null){
-                type = 1;
+                type = 0;
                 console.log("load data theo region")
             }
             else{
-                type = 0;
+                type = -1;
                 console.log("load data all region")
             }
         }
     }
     store.dispatch("setData",type);
-    loadFilterData(type);
+    syncDataCount(['631753a026627e0694262021','631753b826627e0694262093','631753c626627e06942620df','6152c2d386f7a83034b2e673'])
     console.log(store.state.FilterTable);
 }
 

@@ -1,23 +1,24 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import Helper from './helper'
+import Helper from './helper';
 
 Vue.use(Vuex)
 
 const LuyenTap: { Link: any[], Class: any[], TuLuyen: any[] } = { Link: [], Class: [], TuLuyen: [] };
 const kiemTra: { Class: any[], Exam: any[] } = { Class: [], Exam: [] };
 const TypeDataView: { [key: string]: { id: string, name: string }[] } = {};
+const DataType :any[] | null = [];
 TypeDataView["longht"] = [{ id: "1", name: "hai" }]
 export default new Vuex.Store({
   state: {
     LuyenTap: LuyenTap,
     kiemTra: kiemTra,
     DataView: TypeDataView,
-    FilterTable: null,
-    Regions: null,
-    Centers: null,
-    Class: null,
-    Students: null,
+    FilterTable: DataType,
+    Regions: DataType,
+    Centers: DataType,
+    Class: DataType,
+    Students: DataType,
     Levels: [{ id: "1", name: "lớp 1" }, { id: "2", name: "lớp 2" }, { id: "3", name: "lớp 4" }, { id: "5", name: "lớp 5" }, { id: "6", name: "lớp 6" }, { id: "7", name: "lớp 8" }, { id: "9", name: "lớp 9" }, { id: "10", name: "lớp 10" }, { id: "11", name: "lớp 11" }, { id: "12", name: "lớp 12" }, { id: "0", name: "Đại học" }]
   },
   getters: {
@@ -31,19 +32,22 @@ export default new Vuex.Store({
     },
     SET_DATA(state, filterData: number) {
       switch (filterData) {
-        case 3:
+        case 2:
           state.FilterTable = state.Students;
           break;
-        case 2:
+        case 1:
           state.FilterTable = state.Class;
           break;
-        case 1:
+        case 0:
           state.FilterTable = state.Centers;
           break;
         default:
           state.FilterTable = state.Regions;
           break;
       }
+    },
+    SET_STUDENT(state,data){
+      state.Students = data;
     },
     SET_REGION(state, regions) {
       state.Regions = regions;
@@ -74,8 +78,9 @@ export default new Vuex.Store({
       state.kiemTra.Exam.push(data);
     },
     CLEAR_DATA(state) {
-      state.kiemTra = kiemTra;
-      state.LuyenTap = LuyenTap;
+      console.log(state);
+      state.kiemTra = { Class: [], Exam: [] };
+      state.LuyenTap = { Link: [], Class: [], TuLuyen: [] };
     }
   },
   actions: {
@@ -103,6 +108,11 @@ export default new Vuex.Store({
           commit('SET_CLASS', res.data);
         })
       }
+    },
+    getStudents({commit},classid:string){
+      Helper.GetStudents(classid).then(res=>{
+        commit("SET_STUDENT",res.data)
+      })
     },
     getTuLuyen({ commit }, data: { classid: string, start: Date, end: Date }) {
       const instance =  Helper.GetTuLuyen(data.classid, data.start, data.end)
