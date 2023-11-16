@@ -84,6 +84,7 @@ const loadClass = function (value: { id: string, name: string } | null) {
 const changeClass = function (value: { id: string, name: string, center: string, region: string } | null) {
     filterClass.value = value;
     if (value) {
+        store.commit('SET_CLASS_FILTER', value.id);
         store.dispatch('getStudents', value.id);
     }
 }
@@ -186,20 +187,18 @@ const syncLuyenTap = function (classids: string[], i: number, limit: number, sta
         });
 }
 let countClassFromRegion: string[] = [];
-const countClass = function(regionids:string[],i:number,limit:number){
-    const classid = regionids[i];
+const countClass = function (regionids: string[], i: number, limit: number) {
+    const regionid = regionids[i];
     i++;
-    if (countClassFromRegion.includes(classid)) return;
-    countClassFromRegion.push(classid);
-    Helper.CountClass(classid, 0, filterRange.value.start, filterRange.value.end).then(res=>{
-        if (i < limit) 
-        {
-            if(res && res.data && res.data.n > 0)
-            {
-                store.dispatch("setClassRegion",res.data.l);
-                syncDataCount(res.data.l.map((o: { id: string; })=>o.id));
-            }
-            return countClass(regionids,i,limit);
+    if (countClassFromRegion.includes(regionid)) return;
+    countClassFromRegion.push(regionid);
+    Helper.CountClass(regionid, 0, filterRange.value.start, filterRange.value.end).then(res => {
+        if (res && res.data && res.data.n > 0) {
+            store.dispatch("setClassRegion", res.data.l);
+            syncDataCount(res.data.l.map((o: { id: string; }) => o.id));
+        }
+        if (i < limit) {
+            return countClass(regionids, i, limit);
         }
     });
 }
@@ -211,7 +210,7 @@ const loadFilterData = function (type: number) {
         case 0:
             console.log(filterRegion);
             if (filterRegion != null && filterRegion.value != null) {
-                countClass([filterRegion.value.id],0,0);
+                countClass([filterRegion.value.id], 0, 1);
             }
             break;
         case 1: syncDataCount(store.state.Class.map(o => o.id));
@@ -223,7 +222,7 @@ const loadFilterData = function (type: number) {
             if (data != null && data.length > 0) {
                 const count = data.length;
                 // all region
-                countClass(data.map(o=>o.id),0,count);
+                countClass(data.map(o => o.id), 0, count);
             }
             break;
     }
@@ -231,7 +230,7 @@ const loadFilterData = function (type: number) {
 
 
 const applyFilter = function () {
-
+    countClassFromRegion = [];
     store.dispatch("clearData");
 
     let type = -1;
@@ -252,9 +251,6 @@ const applyFilter = function () {
             else {
                 type = -1;
                 console.log("load data all region")
-
-
-
             }
         }
     }

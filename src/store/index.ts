@@ -11,6 +11,7 @@ const DataType :any[] | null = [];
 TypeDataView["longht"] = [{ id: "1", name: "hai" }]
 export default new Vuex.Store({
   state: {
+    FilterClass:'',
     DataClass:[],
     View:0,
     Type:-1,
@@ -96,6 +97,9 @@ export default new Vuex.Store({
     },
     CLEAR_DATA_CLASS(state){
       state.DataClass = [];
+    },
+    SET_CLASS_FILTER(state,value){
+      state.FilterClass = value;
     }
   },
   actions: {
