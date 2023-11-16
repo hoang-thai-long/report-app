@@ -29,6 +29,12 @@ const caculatorDate = function (date:Date, type:string) {
         }
     }
 }
+
+const onlyUnique = function(value:any, index:number, self:any[]) {
+    return self.indexOf(value) === index;
+}
+
 export {
-    caculatorDate
+    caculatorDate,
+    onlyUnique
 }

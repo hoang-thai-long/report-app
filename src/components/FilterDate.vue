@@ -1,7 +1,7 @@
 <template>
-    <div class="filter-item">
-        <button class="btn btn-tab" @click="choisData('month')">Tháng</button>
-        <button class="btn btn-tab" @click="choisData('week')">Tuần</button>
+    <div class="filter-item row">
+        <button class="col btn btn-tab" @click="choisData('month')">Tháng</button>
+        <button class="col btn btn-tab" @click="choisData('week')">Tuần</button>
         <date-range-picker @toggle="toggle" @update="updateValue" @start-selection="runLimit" v-model="dateRange"
              :auto-apply="true"></date-range-picker>
     </div>
@@ -62,12 +62,12 @@ const runLimit = function (value) {
 
 
 
-const dateFormat = function (classes, date) {
-    if (!classes.disabled && flag.value) {
-        classes.disabled = date.getTime() > flagLastDate.value || date.getTime() < flagFirstDate.value
-    }
-    return classes
-}
+// const dateFormat = function (classes, date) {
+//     if (!classes.disabled && flag.value) {
+//         classes.disabled = date.getTime() > flagLastDate.value || date.getTime() < flagFirstDate.value
+//     }
+//     return classes
+// }
 const updateValue = function (value) { emits('on-update', value); }
 
 </script>

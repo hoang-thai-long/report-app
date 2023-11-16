@@ -46,9 +46,9 @@ const DataReportView = [
     { id: 3, name: 'Tất cả' },
 ]
 
-const now  = caculatorDate(new Date(),"week");
+const now = caculatorDate(new Date(), "week");
 
-const filterRange = ref<{start:Date, end:Date}>({start:now.first,end:now.last});
+const filterRange = ref<{ start: Date, end: Date }>({ start: now.first, end: now.last });
 const filterClass = ref<{ id: string, name: string, center: string, region: string } | null>(null);
 const filterCenter = ref<{ id: string, name: string, region: string } | null>(null);
 const filterRegion = ref<{ id: string, name: string } | null>(null);
@@ -67,7 +67,7 @@ const changeLevel = function (value: { id: string, name: string } | null) {
     filterLevel.value = value;
 }
 
-const changeCenter = function (value: { id: string, name: string, region:string } | null) {
+const changeCenter = function (value: { id: string, name: string, region: string } | null) {
     filterCenter.value = value;
 }
 
@@ -83,12 +83,12 @@ const loadClass = function (value: { id: string, name: string } | null) {
 }
 const changeClass = function (value: { id: string, name: string, center: string, region: string } | null) {
     filterClass.value = value;
-    if(value){
-        store.dispatch('getStudents',value.id);
+    if (value) {
+        store.dispatch('getStudents', value.id);
     }
 }
 const changeView = function (value: { id: string, name: string }) {
-    console.log(value);
+    store.dispatch('changeView', value)
 }
 const updateDate = function (range: { startDate: Date, endDate: Date }) {
     console.log(range);
@@ -99,140 +99,133 @@ const updateDate = function (range: { startDate: Date, endDate: Date }) {
 onMounted(() => {
     store.dispatch('getRegions');
 });
-let tuLuyenRequest : string[] = [];
-let linkRequest : string[] = [];
-let kiemTraRequest : string[] = [];
-let khaoThiRequest : string[] = [];
-let luyenTapRequest : string[] = [];
-const syncDataCount = function(data:string[]){
-
+let tuLuyenRequest: string[] = [];
+let linkRequest: string[] = [];
+let kiemTraRequest: string[] = [];
+let khaoThiRequest: string[] = [];
+let luyenTapRequest: string[] = [];
+const syncDataCount = function (data: string[]) {
     tuLuyenRequest = [];
     linkRequest = [];
     kiemTraRequest = [];
     khaoThiRequest = [];
     luyenTapRequest = [];
-
-    // bai trong lop
-    syncKiemTra(data,0, data.length, filterRange.value.start, filterRange.value.end);
-    // bai khao thi
-    syncBaiKhaoThi(data,0, data.length, filterRange.value.start, filterRange.value.end);
-    // bai trong lop
-    syncLuyenTap(data,0, data.length, filterRange.value.start, filterRange.value.end);
-    // qua link
-    syncLink(data,0, data.length, filterRange.value.start, filterRange.value.end);
-    // tự luyện
-    syncTuLuyen(data,0, data.length, filterRange.value.start, filterRange.value.end);
+    if (data && data.length > 0) {
+        // bai trong lop
+        syncKiemTra(data, 0, data.length, filterRange.value.start, filterRange.value.end);
+        // bai khao thi
+        syncBaiKhaoThi(data, 0, data.length, filterRange.value.start, filterRange.value.end);
+        // bai trong lop
+        syncLuyenTap(data, 0, data.length, filterRange.value.start, filterRange.value.end);
+        // qua link
+        syncLink(data, 0, data.length, filterRange.value.start, filterRange.value.end);
+        // tự luyện
+        syncTuLuyen(data, 0, data.length, filterRange.value.start, filterRange.value.end);
+    }
+    else
+        console.log("no class")
 }
 
-const syncTuLuyen = function(classids:string[], i : number, limit:number, start: Date, end: Date){
-    
+const syncTuLuyen = function (classids: string[], i: number, limit: number, start: Date, end: Date) {
+
     const classid = classids[i];
     i++;
-    console.log(tuLuyenRequest);
-    if(tuLuyenRequest.includes(classid)) return;
+    if (tuLuyenRequest.includes(classid)) return;
     tuLuyenRequest.push(classid);
-    store.dispatch("getTuLuyen",{classid:classid,start:start,end:end}).then(res=>{
-        if(i < limit){
-           return syncTuLuyen(classids,i,limit,start,end);
+    store.dispatch("getTuLuyen", { classid: classid, start: start, end: end }).then(() => {
+        if (i < limit) {
+            return syncTuLuyen(classids, i, limit, start, end);
         }
     });
 }
-const syncLink = function(classids:string[], i : number, limit:number, start: Date, end: Date){
+const syncLink = function (classids: string[], i: number, limit: number, start: Date, end: Date) {
     const classid = classids[i];
     i++;
-    if(linkRequest.includes(classid)) return;
+    if (linkRequest.includes(classid)) return;
     linkRequest.push(classid);
-    store.dispatch("getLink",{classid:classid,start:start,end:end}).then(res=>{
-        if(i < limit){
-           return syncLink(classids,i,limit,start,end);
+    store.dispatch("getLink", { classid: classid, start: start, end: end }).then(() => {
+        if (i < limit) {
+            return syncLink(classids, i, limit, start, end);
         }
     });
 }
 
-const syncBaiKhaoThi = function(classids:string[], i : number, limit:number, start: Date, end: Date){
+const syncBaiKhaoThi = function (classids: string[], i: number, limit: number, start: Date, end: Date) {
     const classid = classids[i];
     i++;
-    if(khaoThiRequest.includes(classid)) return;
+    if (khaoThiRequest.includes(classid)) return;
     khaoThiRequest.push(classid);
-    store.dispatch("getKhaoThi",{classid:classid,start:start,end:end}).then(res=>{
-        if(i < limit){
-           return syncBaiKhaoThi(classids,i,limit,start,end);
+    store.dispatch("getKhaoThi", { classid: classid, start: start, end: end }).then(() => {
+        if (i < limit) {
+            return syncBaiKhaoThi(classids, i, limit, start, end);
         }
     });
 }
 
-const syncKiemTra = function(classids:string[], i : number, limit:number, start: Date, end: Date){
+const syncKiemTra = function (classids: string[], i: number, limit: number, start: Date, end: Date) {
     const classid = classids[i];
     i++;
-    if(kiemTraRequest.includes(classid)) return;
+    if (kiemTraRequest.includes(classid)) return;
     kiemTraRequest.push(classid);
-    store.dispatch("getKiemTra",{classid:classid,start:start,end:end}).then(res=>{
-        if(i < limit){
-           return syncKiemTra(classids,i,limit,start,end);
+    store.dispatch("getKiemTra", { classid: classid, start: start, end: end }).then(() => {
+        if (i < limit) {
+            return syncKiemTra(classids, i, limit, start, end);
         }
     });
 }
-const syncLuyenTap = function(classids:string[], i : number, limit:number, start: Date, end: Date){
+const syncLuyenTap = function (classids: string[], i: number, limit: number, start: Date, end: Date) {
     const classid = classids[i];
     i++;
-    if(luyenTapRequest.includes(classid)) return;
+    if (luyenTapRequest.includes(classid)) return;
     luyenTapRequest.push(classid);
-    store.dispatch("getLuyenTap",{classid:classid,start:start,end:end})
-    .then(res=>{
-        if(i < limit){
-           return syncLuyenTap(classids,i,limit,start,end);
+    store.dispatch("getLuyenTap", { classid: classid, start: start, end: end })
+        .then(() => {
+            if (i < limit) {
+                return syncLuyenTap(classids, i, limit, start, end);
+            }
+        });
+}
+let countClassFromRegion: string[] = [];
+const countClass = function(regionids:string[],i:number,limit:number){
+    const classid = regionids[i];
+    i++;
+    if (countClassFromRegion.includes(classid)) return;
+    countClassFromRegion.push(classid);
+    Helper.CountClass(classid, 0, filterRange.value.start, filterRange.value.end).then(res=>{
+        if (i < limit) 
+        {
+            if(res && res.data && res.data.n > 0)
+            {
+                store.dispatch("setClassRegion",res.data.l);
+                syncDataCount(res.data.l.map((o: { id: string; })=>o.id));
+            }
+            return countClass(regionids,i,limit);
         }
     });
 }
-///
-const syncData = function(type:number,id:string){
-    if(type == -1){
-        const regions =store.state.Regions
-        if(regions != null){
-            const count = regions.length;
-            for(let  i =0; i < count; i++){
-                const item = regions[i];
-                Helper.CountClass(item.id,0,filterRange.value.start,filterRange.value.end).then(res=>{
-                    if(res && res.data){
-                        if(res.data.n > 0){
-                            syncDataCount(res.data.l);
-                        }
-                    }
-                })
-            }
-        }
-    }
-    else{
-        if(type == 0){
-            Helper.CountClass(id,type,filterRange.value.start,filterRange.value.end).then(res=>{
-                if(res && res.data){
-                    if(res.data.n > 0){
-                        syncDataCount(res.data.l);
-                    }
-                }
-            })
-        }
-        if(type == 1){
-            syncDataCount(['631753a026627e0694262021'])
-            // if(ListClass.value != null && ListClass.value.length > 0){
-            //     syncDataCount(ListClass.value.map(o=>o.id));
-            // }
-            
-        }
-        if(type == 2){
-            syncDataCount([id]);
-        }
-    }
-}
 
-const loadFilterData = function(type:number){
-    const data : {id:string, name:string}[] = store.state.FilterTable ?? [];
-    if(data != null && data.length > 0){
-        const count = data.length;
-        for(let i =0; i < count; i++){
-            const item = data[i];
-            syncData(type,item.id);
-        }
+const loadFilterData = function (type: number) {
+    store.dispatch("clearDataClass");
+    const data: { id: string, name: string }[] = store.state.FilterTable ?? [];
+    switch (type) {
+        case 0:
+            console.log(filterRegion);
+            if (filterRegion != null && filterRegion.value != null) {
+                countClass([filterRegion.value.id],0,0);
+            }
+            break;
+        case 1: syncDataCount(store.state.Class.map(o => o.id));
+            break;
+        case 2:
+            if (filterClass != null && filterClass.value != null) syncDataCount([filterClass.value.id]);
+            break;
+        default:
+            if (data != null && data.length > 0) {
+                const count = data.length;
+                // all region
+                countClass(data.map(o=>o.id),0,count);
+            }
+            break;
     }
 }
 
@@ -242,29 +235,31 @@ const applyFilter = function () {
     store.dispatch("clearData");
 
     let type = -1;
-    if (filterClass.value != null){
+    if (filterClass.value != null) {
         type = 2;
         console.log("load data theo class")
     }
-    else{
-        if(filterCenter.value != null){
+    else {
+        if (filterCenter.value != null) {
             type = 1;
             console.log("load data theo center")
         }
-        else{
-            if(filterRegion.value != null){
+        else {
+            if (filterRegion.value != null) {
                 type = 0;
                 console.log("load data theo region")
             }
-            else{
+            else {
                 type = -1;
                 console.log("load data all region")
+
+
+
             }
         }
     }
-    store.dispatch("setData",type);
-    syncDataCount(['631753a026627e0694262021','631753b826627e0694262093','631753c626627e06942620df','6152c2d386f7a83034b2e673'])
-    console.log(store.state.FilterTable);
+    store.dispatch("setData", type);
+    loadFilterData(type);
 }
 
 

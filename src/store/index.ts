@@ -11,6 +11,9 @@ const DataType :any[] | null = [];
 TypeDataView["longht"] = [{ id: "1", name: "hai" }]
 export default new Vuex.Store({
   state: {
+    DataClass:[],
+    View:0,
+    Type:-1,
     LuyenTap: LuyenTap,
     kiemTra: kiemTra,
     DataView: TypeDataView,
@@ -31,6 +34,7 @@ export default new Vuex.Store({
       state.DataView[dataView.id] = dataView.centers;
     },
     SET_DATA(state, filterData: number) {
+      state.Type = filterData;
       switch (filterData) {
         case 2:
           state.FilterTable = state.Students;
@@ -81,9 +85,29 @@ export default new Vuex.Store({
       console.log(state);
       state.kiemTra = { Class: [], Exam: [] };
       state.LuyenTap = { Link: [], Class: [], TuLuyen: [] };
+    },
+    SET_VIEW(state,view:number){
+      state.View = view;
+    },
+    SET_DATA_ClASS(state,data){
+      if(data && data.length > 0){
+        state.DataClass = [].concat(state.DataClass,data);
+      }
+    },
+    CLEAR_DATA_CLASS(state){
+      state.DataClass = [];
     }
   },
   actions: {
+    clearDataClass({commit}){
+      commit("CLEAR_DATA_CLASS")
+    },
+    setClassRegion({commit},data){
+      commit("SET_DATA_ClASS",data)
+    },
+    changeView({commit},view){
+      commit('SET_VIEW',view.id);
+    },
     clearData({ commit }) {
       commit('CLEAR_DATA');
     },
@@ -117,7 +141,7 @@ export default new Vuex.Store({
     getTuLuyen({ commit }, data: { classid: string, start: Date, end: Date }) {
       const instance =  Helper.GetTuLuyen(data.classid, data.start, data.end)
         instance.then(res => {
-          console.log(res)
+          // console.log(res)
           if (res.data) {
             commit("SET_DATA_TULUYEN", res.data);
           }
@@ -127,7 +151,7 @@ export default new Vuex.Store({
     getLuyenTap({ commit }, data: { classid: string, start: Date, end: Date }) {
       const instance = Helper.GetLuyenTap(data.classid, data.start, data.end)
         instance.then(res => {
-          console.log(res)
+          // console.log(res)
           if (res.data) {
             commit("SET_DATA_LUYEN_TAP", res.data);
           }
@@ -137,7 +161,7 @@ export default new Vuex.Store({
     getKiemTra({ commit }, data: { classid: string, start: Date, end: Date }) {
       const instance = Helper.GetBaiKiemTra(data.classid, data.start, data.end);
       instance.then(res => {
-        console.log(res)
+        // console.log(res)
         if (res.data) {
           commit("SET_DATA_KIEM_TRA", res.data);
         }
@@ -148,7 +172,7 @@ export default new Vuex.Store({
     getLink({ commit }, data: { classid: string, start: Date, end: Date }) {
       const instance = Helper.GetLink(data.classid, data.start, data.end)
       instance.then(res => {
-        console.log(res)
+        // console.log(res)
         if (res.data) {
           commit("SET_DATA_LINK", res.data);
         }
@@ -158,7 +182,7 @@ export default new Vuex.Store({
     getKhaoThi({ commit }, data: { classid: string, start: Date, end: Date }) {
       const instance = Helper.GetKhaoThi(data.classid, data.start, data.end)
       instance.then(res => {
-        console.log(res)
+        // console.log(res)
         if (res.data) {
           commit("SET_DATA_KHAO_THI", res.data);
         }
