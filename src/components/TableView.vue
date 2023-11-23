@@ -191,75 +191,38 @@ export default class extends Vue {
             }
             return ['---'];
         }
-        let data = this.getListClass(id);
-        if (data != null && data.length > 0) {
-            const listIds = data.map(o => o.id);
-            const count = listIds.length;
-            let dataStudens: string[] = [];
-            let tghd: number[] = [];
-            let siso = 0;
-            for (let i = 0; i < count; i++) {
-                const classid = listIds[i];
-                const linkData = store.state.LuyenTap.Link.find(o => o.classID == classid);
-                const luyenTapData = store.state.LuyenTap.Class.find(o => o.classID == classid);
-                const kiemTraData = store.state.kiemTra.Class.find(o => o.classID == classid);
-                const khaoThiData = store.state.kiemTra.Exam.find(o => o.classID == classid);
-                const tuLuyenData = store.state.LuyenTap.TuLuyen.find(o => o.id == classid);
+        
+        let dataStudens: string[] = [];
+        let tghd = 0;
+        let siso = 0;
 
-                if (luyenTapData) {
-                    siso += luyenTapData.siSo;
-                    if (luyenTapData.details && luyenTapData.details.length > 0) {
-                        const studentActive = luyenTapData.details.filter((o: { thoiGian: number, id: string }) => o.thoiGian > 0);
-                        if (studentActive && studentActive.length > 0) {
-                            dataStudens = dataStudens.concat(studentActive.map((o: { thoiGian: number, id: string }) => o.id))
-                            tghd = tghd.concat(studentActive.map((o: { thoiGian: number, id: string }) => o.thoiGian))
-                        }
-                    }
-                }
-                if (linkData) {
-                    if (linkData.details && linkData.details.length > 0) {
-                        const studentActive = linkData.details.filter((o: { thoiGian: number, id: string }) => o.thoiGian > 0);
-                        if (studentActive && studentActive.length > 0) {
-                            dataStudens = dataStudens.concat(studentActive.map((o: { thoiGian: number, id: string }) => o.id))
-                            tghd = tghd.concat(studentActive.map((o: { thoiGian: number, id: string }) => o.thoiGian))
-                        }
-                    }
-                }
-                if (kiemTraData) {
-                    if (kiemTraData.details && kiemTraData.details.length > 0) {
-                        const studentActive = kiemTraData.details.filter((o: { thoiGian: number, id: string }) => o.thoiGian > 0);
-                        if (studentActive && studentActive.length > 0) {
-                            dataStudens = dataStudens.concat(studentActive.map((o: { thoiGian: number, id: string }) => o.id))
-                            tghd = tghd.concat(studentActive.map((o: { thoiGian: number, id: string }) => o.thoiGian))
-                        }
-                    }
-                }
-                if (khaoThiData) {
-                    if (khaoThiData.details && khaoThiData.details.length > 0) {
-                        const studentActive = khaoThiData.details.filter((o: { thoiGian: number, id: string }) => o.thoiGian > 0);
-                        if (studentActive && studentActive.length > 0) {
-                            dataStudens = dataStudens.concat(studentActive.map((o: { thoiGian: number, id: string }) => o.id))
-                            tghd = tghd.concat(studentActive.map((o: { thoiGian: number, id: string }) => o.thoiGian))
-                        }
-                    }
-                }
-                if (tuLuyenData) {
-                    if (tuLuyenData.ds && tuLuyenData.ds.length > 0) {
-                        const studentActive = tuLuyenData.ds.filter((o: { timeTotal: number, id: string }) => o.timeTotal > 0);
-                        if (studentActive && studentActive.length > 0) {
-                            dataStudens = dataStudens.concat(studentActive.map((o: { timeTotal: number, id: string }) => o.id))
-                            tghd = tghd.concat(studentActive.map((o: { timeTotal: number, id: string }) => o.timeTotal))
-                        }
-                    }
-                }
-            }
-
-            const tghdavg = tghd.length == 0 ? 0 : tghd.reduce((a, b) => a + b, 0) / tghd.length;
-            if(siso == 0) return ["---", '---','---']; 
-            return [siso, dataStudens.filter(onlyUnique).length, Math.round(tghdavg * 100) / 100];
+        const linkData = store.state.LuyenTap.Link.find(o => o.classID == id);
+        const luyenTapData = store.state.LuyenTap.Class.find(o => o.classID == id);
+        const kiemTraData = store.state.kiemTra.Class.find(o => o.classID == id);
+        const khaoThiData = store.state.kiemTra.Exam.find(o => o.classID == id);
+        const tuLuyenData = store.state.LuyenTap.TuLuyen.find(o => o.id == id);
+        if (luyenTapData) {
+            siso = luyenTapData.siSo;
+            tghd += luyenTapData.times;
+            dataStudens = dataStudens.concat([],luyenTapData.studentIDs)
         }
-
-        return ["---", '---','---'];
+        if (linkData) {
+            tghd += linkData.times;
+            dataStudens = dataStudens.concat([],linkData.studentIDs)
+        }
+        if (kiemTraData) {
+            tghd += kiemTraData.times;
+            dataStudens = dataStudens.concat([],kiemTraData.studentIDs)
+        }
+        if (khaoThiData) {
+            tghd += khaoThiData.times;
+            dataStudens = dataStudens.concat([],khaoThiData.studentIDs)
+        }
+        if (tuLuyenData) {
+            tghd += tuLuyenData.tgtl;
+            dataStudens = dataStudens.concat([],tuLuyenData.hstg)
+        }
+        return siso == 0 ? ['---','---','---'] : [siso, dataStudens.filter(onlyUnique).length, tghd.toFixed(1)];
     }
 
 
@@ -277,42 +240,13 @@ export default class extends Vue {
             return ['---', '---'];
         }
 
-        let data = this.getListClass(id);
-        if (data != null && data.length > 0) {
-            const listIds = data.map(o => o.id);
-            const count = listIds.length;
-            let times: number[] = [];
-            let tllb: number[] = [];
-            for (let i = 0; i < count; i++) {
-                const classid = listIds[i];
-                const linkData = store.state.LuyenTap.Link.find(o => o.classID == classid);
-                if (linkData) {
-                    if (linkData.times > 0 && linkData.siSo > 0) {
-                        times.push(linkData.times)
-                        tllb.push(linkData.tyleThamGia)
-                    }
+        const linkData = store.state.LuyenTap.Link.find(o => o.classID == id);
 
-                }
-            }
-            const TLTG = tllb.length > 0 ? tllb.reduce((a, b) => a + b) / tllb.length : 0;
-            const TGLB = times.length > 0 ? times.reduce((a, b) => a + b) / times.length : 0;
-            if(TLTG <= 0) return ['---','---'];
-            return [Math.round(TLTG), TGLB.toFixed(1)];
+        if(linkData && linkData.studentIDs && linkData.studentIDs.length > 0){
+            return [linkData.tyleThamGia.toFixed(1),linkData.times.toFixed(1)]
         }
 
-        return ["---", '---'];
-
-
-        // const item = store.state.LuyenTap.Link.find(o=>o.classID == classid);
-        // if(item && Array.isArray(item.details) && item.totalLesson > 0){
-        //     const student = item.details.find((x: { id: string; })=>x.id == studentid);
-        //     if(student.tyLeThamGia > 0)
-        //         return [Math.round((student.tyLeThamGia/100)*item.totalLesson),student.diem.toFixed(1),student.thoiGian.toFixed(1)];
-        //     else
-        //         return [0,'---','---'];
-        // }
-
-        // return [id, store.state.Type, '---'];
+        return ['---','---'];
     }
     public getLuyenTap(id: string) {
         if (store.state.Type == 2) {
@@ -327,34 +261,10 @@ export default class extends Vue {
             }
             return ['---', '---'];
         }
-        let data = this.getListClass(id);
-        if (data != null && data.length > 0) {
-            const listIds = data.map(o => o.id);
-            const count = listIds.length;
-            let times: number[] = [];
-            let tllb: number[] = [];
-            for (let i = 0; i < count; i++) {
-                const classid = listIds[i];
-                const linkData = store.state.LuyenTap.Class.find(o => o.classID == classid);
-                if (linkData) {
-                    if (linkData.times > 0 && linkData.siSo > 0) {
-                        times.push(linkData.times)
-                        tllb.push(linkData.tyleThamGia)
-                    }
-
-                }
-            }
-            const TLTG = tllb.length > 0 ? tllb.reduce((a, b) => a + b) / tllb.length : 0;
-            const TGLB = times.length > 0 ? times.reduce((a, b) => a + b) / times.length : 0;
-            if(TLTG <= 0) return ['---','---'];
-            return [Math.round(TLTG), TGLB.toFixed(1)];
+        const linkData = store.state.LuyenTap.Class.find(o => o.classID == id);
+        if(linkData && linkData.studentIDs && linkData.studentIDs.length > 0){
+            return [linkData.tyleThamGia.toFixed(1),linkData.times.toFixed(1)]
         }
-
-        // const item = store.state.LuyenTap.Class.find(o=>o.classID == classid);
-        // if(item && Array.isArray(item.details) && item.totalLesson > 0){
-        //     const student = item.details.find((x: { id: string; })=>x.id == studentid);
-        //     return [Math.round((student.tyLeThamGia/100)*item.totalLesson),student.diem.toFixed(1),student.thoiGian.toFixed(1)];
-        // }
 
         return ['---', '---'];
     }
@@ -371,39 +281,10 @@ export default class extends Vue {
             }
             return ['---', '---', '---'];
         }
-        let data = this.getListClass(id);
-        if (data != null && data.length > 0) {
-            const listIds = data.map(o => o.id);
-            const count = listIds.length;
-            let points: number[] = [];
-            let times: number[] = [];
-            let tllb: number[] = [];
-            for (let i = 0; i < count; i++) {
-                const classid = listIds[i];
-                const linkData = store.state.kiemTra.Class.find(o => o.classID == classid);
-                if (linkData) {
-                    if (linkData.times > 0 && linkData.siSo > 0) {
-                        points.push(linkData.points)
-                        times.push(linkData.times)
-                        tllb.push(linkData.tyleThamGia)
-                    }
-
-                }
-            }
-            const TLTG = tllb.length > 0 ? tllb.reduce((a, b) => a + b) / tllb.length : 0;
-            const TGLB = times.length > 0 ? times.reduce((a, b) => a + b) / times.length : 0;
-            const DTB = points.length > 0 ? points.reduce((a, b) => a + b) / points.length : 0;
-
-            if(TLTG <= 0) return ['---','---','---'];
-
-            return [Math.round(TLTG), TGLB.toFixed(1), DTB.toFixed(1)];
+        const linkData = store.state.kiemTra.Class.find(o => o.classID == id);
+        if(linkData &&  linkData.studentIDs && linkData.studentIDs.length > 0){
+            return [linkData.tyleThamGia.toFixed(1),linkData.points.toFixed(1),linkData.times.toFixed(1)]
         }
-        // const item = store.state.kiemTra.Class.find(o=>o.classID == classid);
-        // if(item && Array.isArray(item.details) && item.totalLesson > 0){
-        //     const student = item.details.find((x: { id: string; })=>x.id == studentid);
-        //     return [Math.round((student.tyLeThamGia/100)*item.totalLesson),student.diem.toFixed(1),student.thoiGian.toFixed(1)];
-        // }
-
         return ['---', '---', '---'];
     }
     public getKhaoThi(id: string) {
@@ -419,42 +300,14 @@ export default class extends Vue {
             }
             return ['---', '---', '---'];
         }
-        let data = this.getListClass(id);
-        if (data != null && data.length > 0) {
-            const listIds = data.map(o => o.id);
-            const count = listIds.length;
-            let points: number[] = [];
-            let times: number[] = [];
-            let tllb: number[] = [];
-            for (let i = 0; i < count; i++) {
-                const classid = listIds[i];
-                const linkData = store.state.kiemTra.Exam.find(o => o.classID == classid);
-                if (linkData) {
-                    if (linkData.times > 0 && linkData.siSo > 0) {
-                        points.push(linkData.points)
-                        times.push(linkData.times)
-                        tllb.push(linkData.tyleThamGia)
-                    }
-
-                }
-            }
-            const TLTG = tllb.length > 0 ? tllb.reduce((a, b) => a + b) / tllb.length : 0;
-            const TGLB = times.length > 0 ? times.reduce((a, b) => a + b) / times.length : 0;
-            const DTB = points.length > 0 ? points.reduce((a, b) => a + b) / points.length : 0;
-            if(TLTG <= 0) return ['---','---','---'];
-            return [Math.round(TLTG), TGLB.toFixed(1), DTB.toFixed(1)];
+        const linkData = store.state.kiemTra.Exam.find(o => o.classID == id);
+        if(linkData && linkData.studentIDs && linkData.studentIDs.length > 0){
+            return [linkData.tyleThamGia.toFixed(1),linkData.points.toFixed(1),linkData.times.toFixed(1)]
         }
-        // const item = store.state.kiemTra.Exam.find(o=>o.classID == classid);
-        // if(item && Array.isArray(item.details) && item.totalLesson > 0){
-        //     const student = item.details.find((x: { id: string; })=>x.id == studentid);
-        //     return [Math.round((student.tyLeThamGia/100)*item.totalLesson),student.diem.toFixed(1),student.thoiGian.toFixed(1)];
-        // }
-
         return ['---', '---', '---'];
     }
 
     public getTuLuyen(id: string) {
-        let data = this.getListClass(id);
         if (store.state.Type == 2) {
             const dataClass = store.state.LuyenTap.TuLuyen.find(o => o.id == store.state.FilterClass);
             if (dataClass && dataClass.ds && dataClass.ds.length > 0) {
@@ -467,29 +320,10 @@ export default class extends Vue {
             }
             return ['---', '---'];
         }
-        if (data != null && data.length > 0) {
-            const listIds = data.map(o => o.id);
-            const count = listIds.length;
-            let times: number[] = [];
-            let tllb: number[] = [];
-            for (let i = 0; i < count; i++) {
-                const classid = listIds[i];
-                const linkData = store.state.LuyenTap.TuLuyen.find(o => o.id == classid);
-                if (linkData) {
-                    if (linkData.times > 0 && linkData.siso > 0) {
-                        // points.push(linkData.points)
-                        times.push(linkData.tgtl)
-                        tllb.push(linkData.tltg)
-                    }
-                }
-            }
-            const TLTG = tllb.length > 0 ? tllb.reduce((a, b) => a + b) / tllb.length : 0;
-            const TGLB = times.length > 0 ? times.reduce((a, b) => a + b) / times.length : 0;
-            if(TLTG <= 0) return ['---','---'];
-            // const DTB =  points.length > 0 ? points.reduce((a,b)=>a+b)/points.length : 0;
-            return [Math.round(TLTG), TGLB.toFixed(1)];
+        const linkData = store.state.LuyenTap.TuLuyen.find(o => o.id == id);
+        if(linkData && linkData.hstg && linkData.hstg.length > 0 && linkData.qtt > 0){
+            return [linkData.qtt,linkData.tgtl.toFixed(1)];
         }
-
         return ['---', '---'];
     }
 

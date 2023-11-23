@@ -38,7 +38,7 @@ import FilterItem from './FilterItem.vue';
 import FilterDate from './FilterDate.vue';
 import store from '@/store';
 import FilterTab from './FilterTab.vue';
-import Helper from '../store/helper';
+// import Helper from '../store/helper';
 const DataReportView = [
     { id: 0, name: 'Tổng hợp' },
     { id: 1, name: 'Luyện tập' },
@@ -105,132 +105,138 @@ let linkRequest: string[] = [];
 let kiemTraRequest: string[] = [];
 let khaoThiRequest: string[] = [];
 let luyenTapRequest: string[] = [];
-const syncDataCount = function (data: string[]) {
+
+const syncDataCount = function (type: number) {
     tuLuyenRequest = [];
     linkRequest = [];
     kiemTraRequest = [];
     khaoThiRequest = [];
     luyenTapRequest = [];
-    if (data && data.length > 0) {
-        // bai trong lop
-        syncKiemTra(data, 0, data.length, filterRange.value.start, filterRange.value.end);
-        // bai khao thi
-        syncBaiKhaoThi(data, 0, data.length, filterRange.value.start, filterRange.value.end);
-        // bai trong lop
-        syncLuyenTap(data, 0, data.length, filterRange.value.start, filterRange.value.end);
-        // qua link
-        syncLink(data, 0, data.length, filterRange.value.start, filterRange.value.end);
-        // tự luyện
-        syncTuLuyen(data, 0, data.length, filterRange.value.start, filterRange.value.end);
+    let data = [];
+    switch (type) {
+        case 1:
+            data = store.state.Centers.map(o=>o.id);
+            break;
+        case 2:
+            data = store.state.Class.map(o=>o.id);
+            break;
+        case 3:
+            data = [filterClass.value?.id];
+            break;
+        default:
+            data = store.state.Regions.map(o=>o.id);
+            break;
     }
-    else
-        console.log("no class")
+
+    // bai trong lop
+    syncKiemTra(data, 0, data.length, filterRange.value.start, filterRange.value.end,type);
+    // bai khao thi
+    syncBaiKhaoThi(data, 0, data.length, filterRange.value.start, filterRange.value.end,type);
+    // bai trong lop
+    syncLuyenTap(data, 0, data.length, filterRange.value.start, filterRange.value.end,type);
+    // qua link
+    syncLink(data, 0, data.length, filterRange.value.start, filterRange.value.end,type);
+    // tự luyện
+    syncTuLuyen(data, 0, data.length, filterRange.value.start, filterRange.value.end,type);
 }
 
-const syncTuLuyen = function (classids: string[], i: number, limit: number, start: Date, end: Date) {
+const syncTuLuyen = function (classids: string[], i: number, limit: number, start: Date, end: Date,type:number) {
 
     const classid = classids[i];
     i++;
     if (tuLuyenRequest.includes(classid)) return;
     tuLuyenRequest.push(classid);
-    store.dispatch("getTuLuyen", { classid: classid, start: start, end: end }).then(() => {
+    store.dispatch("getTuLuyen", { classid: classid, start: start, end: end ,type:type}).then(() => {
         if (i < limit) {
-            return syncTuLuyen(classids, i, limit, start, end);
+            return syncTuLuyen(classids, i, limit, start, end,type);
         }
     });
 }
-const syncLink = function (classids: string[], i: number, limit: number, start: Date, end: Date) {
+const syncLink = function (classids: string[], i: number, limit: number, start: Date, end: Date,type:number) {
     const classid = classids[i];
     i++;
     if (linkRequest.includes(classid)) return;
     linkRequest.push(classid);
-    store.dispatch("getLink", { classid: classid, start: start, end: end }).then(() => {
+    store.dispatch("getLink", { classid: classid, start: start, end: end ,type:type}).then(() => {
         if (i < limit) {
-            return syncLink(classids, i, limit, start, end);
+            return syncLink(classids, i, limit, start, end,type);
         }
     });
 }
 
-const syncBaiKhaoThi = function (classids: string[], i: number, limit: number, start: Date, end: Date) {
+const syncBaiKhaoThi = function (classids: string[], i: number, limit: number, start: Date, end: Date,type:number) {
     const classid = classids[i];
     i++;
     if (khaoThiRequest.includes(classid)) return;
     khaoThiRequest.push(classid);
-    store.dispatch("getKhaoThi", { classid: classid, start: start, end: end }).then(() => {
+    store.dispatch("getKhaoThi", { classid: classid, start: start, end: end ,type:type}).then(() => {
         if (i < limit) {
-            return syncBaiKhaoThi(classids, i, limit, start, end);
+            return syncBaiKhaoThi(classids, i, limit, start, end, type);
         }
     });
 }
 
-const syncKiemTra = function (classids: string[], i: number, limit: number, start: Date, end: Date) {
+const syncKiemTra = function (classids: string[], i: number, limit: number, start: Date, end: Date,type:number) {
     const classid = classids[i];
     i++;
     if (kiemTraRequest.includes(classid)) return;
     kiemTraRequest.push(classid);
-    store.dispatch("getKiemTra", { classid: classid, start: start, end: end }).then(() => {
+    store.dispatch("getKiemTra", { classid: classid, start: start, end: end , type : type}).then(() => {
         if (i < limit) {
-            return syncKiemTra(classids, i, limit, start, end);
+            return syncKiemTra(classids, i, limit, start, end, type);
         }
     });
 }
-const syncLuyenTap = function (classids: string[], i: number, limit: number, start: Date, end: Date) {
+const syncLuyenTap = function (classids: string[], i: number, limit: number, start: Date, end: Date,type:number) {
     const classid = classids[i];
     i++;
     if (luyenTapRequest.includes(classid)) return;
     luyenTapRequest.push(classid);
-    store.dispatch("getLuyenTap", { classid: classid, start: start, end: end })
+    store.dispatch("getLuyenTap", { classid: classid, start: start, end: end ,type:type})
         .then(() => {
             if (i < limit) {
-                return syncLuyenTap(classids, i, limit, start, end);
+                return syncLuyenTap(classids, i, limit, start, end, type);
             }
         });
 }
-let countClassFromRegion: string[] = [];
-const countClass = function (regionids: string[], i: number, limit: number) {
-    const regionid = regionids[i];
-    i++;
-    if (countClassFromRegion.includes(regionid)) return;
-    countClassFromRegion.push(regionid);
-    Helper.CountClass(regionid, 0, filterRange.value.start, filterRange.value.end).then(res => {
-        if (res && res.data && res.data.n > 0) {
-            store.dispatch("setClassRegion", res.data.l);
-            syncDataCount(res.data.l.map((o: { id: string; }) => o.id));
-        }
-        if (i < limit) {
-            return countClass(regionids, i, limit);
-        }
-    });
-}
+// let countClassFromRegion: string[] = [];
+// const countClass = function (regionids: string[], i: number, limit: number) {
+//     const regionid = regionids[i];
+//     i++;
+//     if (countClassFromRegion.includes(regionid)) return;
+//     countClassFromRegion.push(regionid);
+//     Helper.CountClass(regionid, 0, filterRange.value.start, filterRange.value.end).then(res => {
+//         if (res && res.data && res.data.n > 0) {
+//             store.dispatch("setClassRegion", res.data.l);
+//         }
+//         if (i < limit) {
+//             return countClass(regionids, i, limit);
+//         }
+//         else {
+//             syncDataCount(store.state.DataClass.map((o: { id: string; }) => o.id));
+//         }
+//     });
+// }
 
 const loadFilterData = function (type: number) {
-    store.dispatch("clearDataClass");
-    const data: { id: string, name: string }[] = store.state.FilterTable ?? [];
+    // store.dispatch("clearDataClass");
+    // const data: { id: string, name: string }[] = store.state.FilterTable ?? [];
     switch (type) {
-        case 0:
-            console.log(filterRegion);
-            if (filterRegion != null && filterRegion.value != null) {
-                countClass([filterRegion.value.id], 0, 1);
-            }
+        case 0: syncDataCount(1);
             break;
-        case 1: syncDataCount(store.state.Class.map(o => o.id));
+        case 1: syncDataCount(2);
             break;
         case 2:
-            if (filterClass != null && filterClass.value != null) syncDataCount([filterClass.value.id]);
+            if (filterClass != null && filterClass.value != null) syncDataCount(3);
             break;
-        default:
-            if (data != null && data.length > 0) {
-                const count = data.length;
-                // all region
-                countClass(data.map(o => o.id), 0, count);
-            }
+        default: syncDataCount(0);
             break;
     }
 }
 
 
 const applyFilter = function () {
-    countClassFromRegion = [];
+    // countClassFromRegion = [];
     store.dispatch("clearData");
 
     let type = -1;

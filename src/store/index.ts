@@ -142,8 +142,8 @@ export default new Vuex.Store({
         commit("SET_STUDENT",res.data)
       })
     },
-    getTuLuyen({ commit }, data: { classid: string, start: Date, end: Date }) {
-      const instance =  Helper.GetTuLuyen(data.classid, data.start, data.end)
+    getTuLuyen({ commit }, data: { classid: string, start: Date, end: Date, type: number}) {
+      const instance =  Helper.GetTuLuyen(data.classid, data.start, data.end,data.type)
         instance.then(res => {
           // console.log(res)
           if (res.data) {
@@ -152,8 +152,8 @@ export default new Vuex.Store({
         })
         return instance;
     },
-    getLuyenTap({ commit }, data: { classid: string, start: Date, end: Date }) {
-      const instance = Helper.GetLuyenTap(data.classid, data.start, data.end)
+    getLuyenTap({ commit }, data: { classid: string, start: Date, end: Date, type: number }) {
+      const instance = Helper.GetLuyenTap(data.classid, data.start, data.end,data.type)
         instance.then(res => {
           // console.log(res)
           if (res.data) {
@@ -162,8 +162,8 @@ export default new Vuex.Store({
         })
         return instance;
     },
-    getKiemTra({ commit }, data: { classid: string, start: Date, end: Date }) {
-      const instance = Helper.GetBaiKiemTra(data.classid, data.start, data.end);
+    getKiemTra({ commit }, data: { classid: string, start: Date, end: Date, type: number }) {
+      const instance = Helper.GetBaiKiemTra(data.classid, data.start, data.end,data.type)
       instance.then(res => {
         // console.log(res)
         if (res.data) {
@@ -173,8 +173,8 @@ export default new Vuex.Store({
 
       return instance;
     },
-    getLink({ commit }, data: { classid: string, start: Date, end: Date }) {
-      const instance = Helper.GetLink(data.classid, data.start, data.end)
+    getLink({ commit }, data: { classid: string, start: Date, end: Date, type: number }) {
+      const instance = Helper.GetLink(data.classid, data.start, data.end,data.type)
       instance.then(res => {
         // console.log(res)
         if (res.data) {
@@ -183,8 +183,8 @@ export default new Vuex.Store({
       })
       return instance;
     },
-    getKhaoThi({ commit }, data: { classid: string, start: Date, end: Date }) {
-      const instance = Helper.GetKhaoThi(data.classid, data.start, data.end)
+    getKhaoThi({ commit }, data: { classid: string, start: Date, end: Date, type: number }) {
+      const instance = Helper.GetKhaoThi(data.classid, data.start, data.end,data.type)
       instance.then(res => {
         // console.log(res)
         if (res.data) {

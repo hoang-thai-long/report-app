@@ -1,16 +1,18 @@
 import TableReport from "./components/TableReport.vue"
+import store from '@/store';
 
 const ReportPlugins =  {
     install(vue:any,options:any){
         if(options){
             console.log(options);
         }
+        vue.prototype.$store = store;
         vue.component('table-report',TableReport)
     }
 }
 
 const useLibrary = function(vue:any){
-    vue.use(TableReport)
+    vue.use(ReportPlugins)
 }
 
 if (typeof window !== 'undefined' && window.Vue) {
