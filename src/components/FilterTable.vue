@@ -1,44 +1,51 @@
 <template>
-    <div class="filter">
-        <div class="filter-box">
-            <div class="filter-group">
+    <div class="rt-filter">
+        <div class="rt-filter-box" style="position: relative;">
+            <div class="rt-filter-group">
                 <filter-date @on-update="updateDate" v-model="filterRange"></filter-date>
             </div>
-            <div class="filter-group">
+            <div class="rt-filter-group">
                 <filter-item name="report-region" :multiple="false" placeholder="Chọn khu vực" :options="Regions"
-                    :select-first="false" :hide-selected="true" @on-change="changeRegions"
+                    :select-first="!$store.state.User.Type" :hide-selected="false" @on-change="changeRegions"
                     @close="loadCenters"></filter-item>
 
                 <filter-item name="report-center" :multiple="false" placeholder="Chọn cơ sở" :options="Centers"
-                    :select-first="false" :hide-selected="true" @on-change="changeCenter" @close="loadClass"></filter-item>
-
-                <filter-item name="report-level" :multiple="false" placeholder="Chọn khối" :options="Levels"
-                    :select-first="false" :hide-selected="true" @on-change="changeLevel"></filter-item>
+                    :select-first="!$store.state.User.Type" :hide-selected="false" @on-change="changeCenter" @close="loadClass"></filter-item>
+                <filter-item name="report-level" :multiple="false" placeholder="Chọn khối" 
+                    :options="$store.state.Levels"
+                    :select-first="false" :hide-selected="false" @on-change="changeLevel"></filter-item>
 
                 <filter-item name="report-class" :multiple="false" placeholder="Chọn lớp" :options="ListClass"
-                    :select-first="false" :hide-selected="true" @on-change="changeClass"></filter-item>
+                    :select-first="false" :hide-selected="false" @on-change="changeClass"></filter-item>
             </div>
-            <filter-tab class="filter-group" :data="DataReportView" @on-select="changeView" :text="'Tùy chọn báo cáo :'"
+            <filter-tab class="rt-filter-group" :data="DataReportView" @on-select="changeView" :text="'Tùy chọn báo cáo :'"
                 :name="'report-type'"></filter-tab>
-            <div class="filter-group">
-                <!-- <filter-item name="report-type" :multiple="false" placeholder="Chọn kiểu báo cáo" :options="DataReportView"
-                    :select-first="true" :hide-selected="true">
-                    Tùy chọn báo cáo
-                </filter-item> -->
-
-            </div>
-            <button @click="applyFilter">Áp dụng</button>
+            <button class="btn btn-primary" @click="applyFilter" style="position: absolute; top: 10px;right: 10px;">Áp dụng</button>
         </div>
     </div>
 </template>
 <script lang="ts" setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref,defineProps } from 'vue';
 import { caculatorDate } from "../utils/common";
 import FilterItem from './FilterItem.vue';
 import FilterDate from './FilterDate.vue';
 import store from '@/store';
 import FilterTab from './FilterTab.vue';
 // import Helper from '../store/helper';
+
+
+const props = defineProps({
+    CenterCode:{
+        type:String
+    },
+    TeacherID:{
+        type:String
+    },
+    HeadTeacher:{
+        type:Boolean
+    }
+});
+
 const DataReportView = [
     { id: 0, name: 'Tổng hợp' },
     { id: 1, name: 'Luyện tập' },
@@ -49,12 +56,12 @@ const DataReportView = [
 const now = caculatorDate(new Date(), "week");
 
 const filterRange = ref<{ start: Date, end: Date }>({ start: now.first, end: now.last });
-const filterClass = ref<{ id: string, name: string, center: string, region: string } | null>(null);
-const filterCenter = ref<{ id: string, name: string, region: string } | null>(null);
+const filterClass = ref<{ id: string, name: string, center: string, region: string, level:string } | null>(null);
+const filterCenter = ref<{ id: string, name: string, region: string, levels:number[] } | null>(null);
 const filterRegion = ref<{ id: string, name: string } | null>(null);
 const filterLevel = ref<{ id: string, name: string } | null>(null);
 
-const Levels = computed(() => { return store.state.Levels });
+// const Levels = computed(() => { return store.state.Levels });
 const ListClass = computed(() => { return store.state.Class ?? []; });
 const Regions = computed(() => { return store.state.Regions ?? []; });
 const Centers = computed(() => { return store.state.Centers ?? []; });
@@ -65,23 +72,24 @@ const changeRegions = function (value: { id: string, name: string } | null) {
 
 const changeLevel = function (value: { id: string, name: string } | null) {
     filterLevel.value = value;
+    store.commit('SET_LEVEL_DATA',filterLevel.value?.id);
 }
 
-const changeCenter = function (value: { id: string, name: string, region: string } | null) {
+const changeCenter = function (value: { id: string, name: string, region: string,  levels:number[] } | null) {
     filterCenter.value = value;
 }
 
 const loadCenters = function (value: { id: string, name: string } | null) {
     if (value) {
-        store.dispatch('getCenters', value.id);
+        store.dispatch('getCenters', {id:value.id,start:filterRange.value.start, end:filterRange.value.end});
     }
 }
 const loadClass = function (value: { id: string, name: string } | null) {
     if (value) {
-        store.dispatch('getClass', value.id);
+        store.dispatch('getClass', {id:value.id,start:filterRange.value.start, end:filterRange.value.end});
     }
 }
-const changeClass = function (value: { id: string, name: string, center: string, region: string } | null) {
+const changeClass = function (value: { id: string, name: string, center: string, region: string, level:string } | null) {
     filterClass.value = value;
     if (value) {
         store.commit('SET_CLASS_FILTER', value.id);
@@ -92,12 +100,14 @@ const changeView = function (value: { id: string, name: string }) {
     store.dispatch('changeView', value)
 }
 const updateDate = function (range: { startDate: Date, endDate: Date }) {
-    console.log(range);
     filterRange.value.start = range.startDate;
     filterRange.value.end = range.endDate;
 }
 
 onMounted(() => {
+    store.commit('SET_CENTER_CODE',props.CenterCode);
+    store.dispatch('setUseID',{ID:props.TeacherID,Type:props.HeadTeacher});
+    // console.log({ID:props.TeacherID,Type:props.HeadTeacher});
     store.dispatch('getRegions');
 });
 let tuLuyenRequest: string[] = [];
@@ -112,18 +122,25 @@ const syncDataCount = function (type: number) {
     kiemTraRequest = [];
     khaoThiRequest = [];
     luyenTapRequest = [];
-    let data = [];
+    let data : string[] = [];
     switch (type) {
-        case 1:
+        case 1: // region
             data = store.state.Centers.map(o=>o.id);
             break;
-        case 2:
-            data = store.state.Class.map(o=>o.id);
+        case 2: // center
+            if(filterLevel.value){
+                const idlevel = filterLevel.value.id;
+                data = store.state.Class.filter(o=>o.level == idlevel).map(o=>o.id)
+            }
+            else{
+                data = store.state.Class.map(o=>o.id);
+            }
             break;
-        case 3:
-            data = [filterClass.value?.id];
+        case 3: // in class
+            if(filterClass.value)
+            data = [filterClass.value.id];
             break;
-        default:
+        default: // all region
             data = store.state.Regions.map(o=>o.id);
             break;
     }
@@ -266,13 +283,13 @@ const applyFilter = function () {
 
 
 </script>
-<style lang="scss">
-.filter-group {
+<style lang="scss" scoped>
+.rt-filter-group {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
 
-    .filter-item {
+    .rt-filter-item {
         flex: 0 0 auto;
         padding: 0 2px;
     }

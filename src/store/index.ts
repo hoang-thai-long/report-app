@@ -3,16 +3,42 @@ import Vuex from 'vuex'
 import Helper from './helper';
 
 Vue.use(Vuex)
+interface typeExam {
+  siSo: number,
+  totalLesson: number,
+  classID: string,
+  tyleThamGia: number,
+  times: number,
+  points: number,
+  studentIDs: string[] | null,
+  details:{name:string,id:string,tyLeThamGia:number,diem:number,thoiGian:number}[]
+}
+interface typeTuLuyen {
+  id: string,
+  siso: number,
+  hstg: string[]|null,
+  tltg: number,
+  tgtl: number,
+  qtt: number,
+  ds:{name:string,id:string,questionTotal:number,timeTotal:number}[]
+}
 
-const LuyenTap: { Link: any[], Class: any[], TuLuyen: any[] } = { Link: [], Class: [], TuLuyen: [] };
-const kiemTra: { Class: any[], Exam: any[] } = { Class: [], Exam: [] };
+const LuyenTap: { Link: typeExam[], Class: typeExam[], TuLuyen: typeTuLuyen[] } = { Link: [], Class: [], TuLuyen: [] };
+const kiemTra: { Class: typeExam[], Exam: typeExam[] } = { Class: [], Exam: [] };
 const TypeDataView: { [key: string]: { id: string, name: string }[] } = {};
-const DataType :any[] | null = [];
-TypeDataView["longht"] = [{ id: "1", name: "hai" }]
+const DataType :{ id: string, name: string, centerID: string, regionID: string, level:string }[] | null = [];
+const levels = [{ id: "1", name: "Khối 1" }, { id: "2", name: "Khối 2" }, { id: "3", name: "Khối 4" }, { id: "5", name: "Khối 5" }, { id: "6", name: "Khối 6" }, { id: "7", name: "Khối 8" }, { id: "9", name: "Khối 9" }, { id: "10", name: "Khối 10" }, { id: "11", name: "Khối 11" }, { id: "12", name: "Khối 12" }, { id: "0", name: "Đại học" }];
+const DataClassModel :{ id: string, name: string, centerID: string, regionID: string, level:string }[] = [];
 export default new Vuex.Store({
   state: {
+    CenterCode:'',
+    FilterLevel:'',
+    User:{
+      ID:'',
+      Type:false
+    },
     FilterClass:'',
-    DataClass:[],
+    DataClass:DataClassModel,
     View:0,
     Type:-1,
     LuyenTap: LuyenTap,
@@ -23,7 +49,7 @@ export default new Vuex.Store({
     Centers: DataType,
     Class: DataType,
     Students: DataType,
-    Levels: [{ id: "1", name: "lớp 1" }, { id: "2", name: "lớp 2" }, { id: "3", name: "lớp 4" }, { id: "5", name: "lớp 5" }, { id: "6", name: "lớp 6" }, { id: "7", name: "lớp 8" }, { id: "9", name: "lớp 9" }, { id: "10", name: "lớp 10" }, { id: "11", name: "lớp 11" }, { id: "12", name: "lớp 12" }, { id: "0", name: "Đại học" }]
+    Levels: levels
   },
   getters: {
     getRegions(state) {
@@ -31,6 +57,15 @@ export default new Vuex.Store({
     }
   },
   mutations: {
+    SET_CENTER_CODE(state,centerCode){
+      state.CenterCode = centerCode;
+    },
+    SET_LEVEL_DATA(state,data){
+      state.FilterLevel = data;
+    },
+    SET_USER_ID(state,data){
+      state.User = data;
+    },
     SET_DATA_VIEW(state, dataView: { id: string, centers: { id: string, name: string }[] }) {
       state.DataView[dataView.id] = dataView.centers;
     },
@@ -41,7 +76,12 @@ export default new Vuex.Store({
           state.FilterTable = state.Students;
           break;
         case 1:
-          state.FilterTable = state.Class;
+          if(state.FilterLevel){
+            state.FilterTable = state.Class.filter(o=>o.level == state.FilterLevel);
+          }
+          else{
+            state.FilterTable = state.Class;
+          }
           break;
         case 0:
           state.FilterTable = state.Centers;
@@ -66,6 +106,12 @@ export default new Vuex.Store({
     },
     SET_CLASS(state, dataClass) {
       state.Class = dataClass
+      if(state.Class != null && state.Class.length > 0){
+        state.Levels = levels.filter(o=>state.Class.map(x=>x.level).includes(o.id));
+      }
+      else{
+        state.Levels = levels;
+      }
     },
     SET_DATA_TULUYEN(state, data) {
       state.LuyenTap.TuLuyen.push(data);
@@ -92,7 +138,8 @@ export default new Vuex.Store({
     },
     SET_DATA_ClASS(state,data){
       if(data && data.length > 0){
-        state.DataClass = [].concat(state.DataClass,data);
+        state.DataClass = state.DataClass.concat(data);
+        // state.Levels = levels.filter(x=> state.DataClass.map(o=>o.level).includes(x));
       }
     },
     CLEAR_DATA_CLASS(state){
@@ -103,6 +150,9 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    setUseID({commit},data:{ID:string,Type:boolean}){
+      commit('SET_USER_ID',data);
+    },
     clearDataClass({commit}){
       commit("CLEAR_DATA_CLASS")
     },
@@ -123,19 +173,15 @@ export default new Vuex.Store({
         commit('SET_REGION', res.data);
       })
     },
-    getCenters({ commit }, regionids: string) {
-      if (regionids && regionids.length > 0) {
-        Helper.GetCenters(regionids).then(res => {
-          commit('SET_CENTER', res.data);
-        })
-      }
+    getCenters({ commit }, data:{id:string, start: Date, end : Date}) {
+      Helper.GetCenters(data.id,data.start,data.end).then(res => {
+        commit('SET_CENTER', res.data);
+      })
     },
-    getClass({ commit }, centerid: string) {
-      if (centerid && centerid.length > 0) {
-        Helper.GetClass(centerid).then(res => {
-          commit('SET_CLASS', res.data);
-        })
-      }
+    getClass({ commit }, data:{id:string, start: Date, end : Date}) {
+      Helper.GetClass(data.id,data.start, data.end).then(res => {
+        commit('SET_CLASS', res.data);
+      })
     },
     getStudents({commit},classid:string){
       Helper.GetStudents(classid).then(res=>{

@@ -16,6 +16,7 @@ const useLibrary = function(vue:any){
 }
 
 if (typeof window !== 'undefined' && window.Vue) {
+    window.Vue.config.productionTip = false
     useLibrary(window.Vue);
 }
 

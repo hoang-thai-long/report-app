@@ -2,9 +2,8 @@
 <template>
     <div class="table-data">
         <div class="table-data-box">
-            {{ $store.state.Type }}
             <table class="table table-striped table-bordered">
-                <thead>
+                <thead style="position: sticky; top: 0px;">
                     <tr>
                         <th rowspan="3">STT</th>
                         <th style="border-right: 1px solid;" rowspan="3">Tên</th>
@@ -73,31 +72,30 @@
                         <td style="border-right: 1px solid; text-align: left;">{{ item.name }}</td>
                         <!-- tổng hợp -->
                         <template v-if="$store.state.View == 0 || $store.state.View == 3">
-                            <td v-for="(td, k) in getTongHop(item.id)" :key="'total' + k">{{ td }}</td>
+                            <td v-for="(td, k) in getTongHop(item.id)" :key="'total' + k" :style="td.style">{{ td.text }}
+                            </td>
                         </template>
-
                         <!-- link -->
                         <template v-if="$store.state.View == 1 || $store.state.View == 3">
-                            <td v-for="(td, k) in getLink(item.id)" :key="'link' + k">{{ td }}</td>
+                            <td v-for="(td, k) in getLink(item.id)" :key="'link' + k" :style="td.style">{{ td.text }}</td>
                         </template>
                         <!--  luyện tập -->
                         <template v-if="$store.state.View == 1 || $store.state.View == 3">
-                            <td v-for="(td, k) in getLuyenTap(item.id)" :key="'lt' + k">{{ td }}</td>
+                            <td v-for="(td, k) in getLuyenTap(item.id)" :key="'lt' + k" :style="td.style">{{ td.text }}</td>
                         </template>
-
                         <!--tự luyện -->
                         <template v-if="$store.state.View == 1 || $store.state.View == 3">
-                            <td v-for="(td, k) in getTuLuyen(item.id)" :key="'tl' + k">{{ td }}</td>
+                            <td v-for="(td, k) in getTuLuyen(item.id)" :key="'tl' + k" :style="td.style">{{ td.text }}</td>
                         </template>
 
                         <!-- kiểm tra -->
                         <template v-if="$store.state.View == 2 || $store.state.View == 3">
-                            <td v-for="(td, k) in getKiemTra(item.id)" :key="'bg' + k">{{ td }}</td>
+                            <td v-for="(td, k) in getKiemTra(item.id)" :key="'bg' + k" :style="td.style">{{ td.text }}</td>
                         </template>
 
                         <!-- khao thi -->
                         <template v-if="$store.state.View == 2 || $store.state.View == 3">
-                            <td v-for="(td, k) in getKhaoThi(item.id)" :key="'kt' + k">{{ td }}</td>
+                            <td v-for="(td, k) in getKhaoThi(item.id)" :key="'kt' + k" :style="td.style">{{ td.text }}</td>
                         </template>
 
                     </tr>
@@ -107,10 +105,7 @@
     </div>
 </template>
 <script lang="ts">
-// import store from '@/store';
-// import { computed, watch } from 'vue';
 import store from '@/store';
-import { onlyUnique } from '@/utils/common';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 
 @Component
@@ -120,17 +115,17 @@ export default class extends Vue {
 
 
     public getListClass(id: string) {
-        let data: { regionID: string, id: string, centerID: string }[] = [];
+        let data: { id: string, name: string, centerID: string, regionID: string, level: string }[] = [];
         switch (store.state.Type) {
             case 1:
                 // lay 1 lopws
-                data = [{ id: id, regionID: "", centerID: "" }];
+                data = [{ id: id, name: "", regionID: "", centerID: "", level: "" }];
                 break;
             case 0: // center
-                data = store.state.DataClass.filter((o: { regionID: string, id: string, centerID: string }) => o.centerID == id);
+                data = store.state.DataClass.filter((o => o.centerID == id));
                 break;
             default:
-                data = store.state.DataClass.filter((o: { regionID: string, id: string, centerID: string }) => o.regionID == id);
+                data = store.state.DataClass.filter((o => o.regionID == id));
                 break;
         }
         return data;
@@ -178,20 +173,26 @@ export default class extends Vue {
                     }
                 }
             }
-            if (tuLuyenData && tuLuyenData.details && tuLuyenData.details.length > 0) {
-                var dataStudentTuLuyen = tuLuyenData.details.find((o: { diem: number, id: string, tyLeThamGia: number, thoiGian: number }) => o.id == id);
+            if (tuLuyenData && tuLuyenData.ds && tuLuyenData.ds.length > 0) {
+                var dataStudentTuLuyen = tuLuyenData.ds.find(o => o.id == id);
                 if (dataStudentTuLuyen) {
-                    if (dataStudentTuLuyen.tyLeThamGia > 0) {
-                        tghd.push(dataStudentTuLuyen.thoiGian)
+                    if (dataStudentTuLuyen.questionTotal > 0) {
+                        tghd.push(dataStudentTuLuyen.timeTotal)
                     }
                 }
             }
             if (tghd && tghd.length > 0) {
-                return [tghd.reduce((a, b) => a + b, 0).toFixed(1)];
+                return [{
+                    text: tghd.reduce((a, b) => a + b, 0).toFixed(1),
+                    style: 'border-right: 1px solid;'
+                }];
             }
-            return ['---'];
+            return [{
+                text: "---",
+                style: 'border-right: 1px solid;'
+            }];
         }
-        
+
         let dataStudens: string[] = [];
         let tghd = 0;
         let siso = 0;
@@ -201,28 +202,107 @@ export default class extends Vue {
         const kiemTraData = store.state.kiemTra.Class.find(o => o.classID == id);
         const khaoThiData = store.state.kiemTra.Exam.find(o => o.classID == id);
         const tuLuyenData = store.state.LuyenTap.TuLuyen.find(o => o.id == id);
+        // console.log("----------------------")
         if (luyenTapData) {
             siso = luyenTapData.siSo;
             tghd += luyenTapData.times;
-            dataStudens = dataStudens.concat([],luyenTapData.studentIDs)
+            if (luyenTapData.studentIDs)
+                dataStudens = dataStudens.concat([], luyenTapData.studentIDs)
+            // console.log(luyenTapData.studentIDs)
         }
         if (linkData) {
             tghd += linkData.times;
-            dataStudens = dataStudens.concat([],linkData.studentIDs)
+            if (linkData.studentIDs)
+                dataStudens = dataStudens.concat([], linkData.studentIDs)
+            // console.log(linkData.studentIDs)
         }
         if (kiemTraData) {
             tghd += kiemTraData.times;
-            dataStudens = dataStudens.concat([],kiemTraData.studentIDs)
+            if (kiemTraData.studentIDs)
+                dataStudens = dataStudens.concat([], kiemTraData.studentIDs)
+            // console.log(kiemTraData.studentIDs)
         }
         if (khaoThiData) {
             tghd += khaoThiData.times;
-            dataStudens = dataStudens.concat([],khaoThiData.studentIDs)
+            if (khaoThiData.studentIDs)
+                dataStudens = dataStudens.concat([], khaoThiData.studentIDs)
+            // console.log(khaoThiData.studentIDs)
         }
         if (tuLuyenData) {
             tghd += tuLuyenData.tgtl;
-            dataStudens = dataStudens.concat([],tuLuyenData.hstg)
+            if (tuLuyenData.hstg)
+                dataStudens = dataStudens.concat([], tuLuyenData.hstg)
+            // console.log(tuLuyenData.hstg)
         }
-        return siso == 0 ? ['---','---','---'] : [siso, dataStudens.filter(onlyUnique).length, tghd.toFixed(1)];
+        var studentActive = Array.from(new Set(dataStudens)).filter(o => o != null && o.length > 10);
+        // console.log(studentActive)
+        // console.log("----------------------")
+        if (studentActive.length > 0) {
+            const dataStudentActive: number = ((studentActive.length / siso) * 100);
+            if (dataStudentActive == Infinity) {
+                return [
+                    {
+                        text: siso,
+                        style: ''
+                    },
+                    {
+                        text: studentActive.length,
+                        style: ''
+                    },
+                    {
+                        text: tghd.toFixed(1),
+                        style: 'border-right: 1px solid;'
+                    }
+                ];
+            }
+            else {
+                return [
+                    {
+                        text: siso,
+                        style: ''
+                    },
+                    {
+                        text: studentActive.length + " (" + dataStudentActive.toFixed(1) + "%)",
+                        style: ''
+                    },
+                    {
+                        text: tghd.toFixed(1),
+                        style: 'border-right: 1px solid;'
+                    }
+                ];
+            }
+        }
+        return siso == 0 ?
+            [
+                {
+                    text: "---",
+                    style: ''
+                },
+                {
+                    text: "---",
+                    style: ''
+                },
+                {
+                    text: "---",
+                    style: 'border-right: 1px solid;'
+                }
+            ]
+
+            :
+            [
+                {
+                    text: siso,
+                    style: ''
+                },
+                {
+                    text: "---",
+                    style: ''
+                },
+                {
+                    text: tghd > 0 ? tghd.toFixed(1) : '---',
+                    style: 'border-right: 1px solid;'
+                }
+            ]
     }
 
 
@@ -230,101 +310,277 @@ export default class extends Vue {
         if (store.state.Type == 2) {
             const dataClass = store.state.LuyenTap.Link.find(o => o.classID == store.state.FilterClass);
             if (dataClass && dataClass.details && dataClass.details.length > 0) {
-                var dataStudent = dataClass.details.find((o: { regionID: string, id: string, centerID: string }) => o.id == id);
+                var dataStudent = dataClass.details.find(o => o.id == id);
                 if (dataStudent) {
                     if (dataStudent.tyLeThamGia > 0) {
-                        return [dataStudent.tyLeThamGia.toFixed(0), dataStudent.diem.toFixed(0), dataStudent.thoiGian.toFixed(1)]
+                        return [
+                            {
+                                text: dataStudent.tyLeThamGia.toFixed(0),
+                                style: ''
+                            },
+                            {
+                                text: dataStudent.thoiGian.toFixed(1),
+                                style: 'border-right: 1px solid;'
+                            }
+                        ];
                     }
                 }
             }
-            return ['---', '---'];
+            return [
+                {
+                    text: "---",
+                    style: ''
+                },
+                {
+                    text: "---",
+                    style: 'border-right: 1px solid;'
+                }
+            ];
+
         }
 
         const linkData = store.state.LuyenTap.Link.find(o => o.classID == id);
 
-        if(linkData && linkData.studentIDs && linkData.studentIDs.length > 0){
-            return [linkData.tyleThamGia.toFixed(1),linkData.times.toFixed(1)]
+        if (linkData && linkData.studentIDs && linkData.studentIDs.length > 0) {
+            return [{
+                text: linkData.tyleThamGia.toFixed(1),
+                style: ''
+            },
+            {
+                text: linkData.times.toFixed(1),
+                style: 'border-right: 1px solid;'
+            }];
         }
 
-        return ['---','---'];
+        return [{
+            text: "---",
+            style: ''
+        },
+        {
+            text: "---",
+            style: 'border-right: 1px solid;'
+        }];
     }
     public getLuyenTap(id: string) {
         if (store.state.Type == 2) {
             const dataClass = store.state.LuyenTap.Class.find(o => o.classID == store.state.FilterClass);
             if (dataClass && dataClass.details && dataClass.details.length > 0) {
-                var dataStudent = dataClass.details.find((o: { regionID: string, id: string, centerID: string }) => o.id == id);
+                var dataStudent = dataClass.details.find(o => o.id == id);
                 if (dataStudent) {
                     if (dataStudent.tyLeThamGia > 0) {
-                        return [dataStudent.tyLeThamGia.toFixed(0), dataStudent.thoiGian.toFixed(1)]
+                        return [{
+                            text: dataStudent.tyLeThamGia.toFixed(0),
+                            style: ''
+                        },
+                        {
+                            text: dataStudent.thoiGian.toFixed(1),
+                            style: 'border-right: 1px solid;'
+                        }];
                     }
                 }
             }
-            return ['---', '---'];
+            return [{
+                text: "---",
+                style: ''
+            },
+            {
+                text: "---",
+                style: 'border-right: 1px solid;'
+            }];
         }
         const linkData = store.state.LuyenTap.Class.find(o => o.classID == id);
-        if(linkData && linkData.studentIDs && linkData.studentIDs.length > 0){
-            return [linkData.tyleThamGia.toFixed(1),linkData.times.toFixed(1)]
+        if (linkData && linkData.studentIDs && linkData.studentIDs.length > 0) {
+            return [{
+                text: linkData.tyleThamGia.toFixed(1),
+                style: ''
+            },
+            {
+                text: linkData.times.toFixed(1),
+                style: 'border-right: 1px solid;'
+            }];
         }
 
-        return ['---', '---'];
+        return [{
+            text: "---",
+            style: ''
+        },
+        {
+            text: "---",
+            style: 'border-right: 1px solid;'
+        }];
     }
     public getKiemTra(id: string) {
         if (store.state.Type == 2) {
             const dataClass = store.state.kiemTra.Class.find(o => o.classID == store.state.FilterClass);
             if (dataClass && dataClass.details && dataClass.details.length > 0) {
-                var dataStudent = dataClass.details.find((o: { regionID: string, id: string, centerID: string }) => o.id == id);
+                var dataStudent = dataClass.details.find(o => o.id == id);
                 if (dataStudent) {
                     if (dataStudent.tyLeThamGia > 0) {
-                        return [dataStudent.tyLeThamGia.toFixed(0), dataStudent.diem.toFixed(0), dataStudent.thoiGian.toFixed(1)]
+                        return [{
+                            text: dataStudent.tyLeThamGia.toFixed(0),
+                            style: ''
+                        },
+                        {
+                            text: dataStudent.diem.toFixed(0),
+                            style: ''
+                        },
+                        {
+                            text: dataStudent.thoiGian.toFixed(1),
+                            style: 'border-right: 1px solid;'
+                        }];
                     }
                 }
             }
-            return ['---', '---', '---'];
+            return [{
+                text: "---",
+                style: ''
+            },
+            {
+                text: "---",
+                style: ''
+            },
+            {
+                text: "---",
+                style: 'border-right: 1px solid;'
+            }];
         }
         const linkData = store.state.kiemTra.Class.find(o => o.classID == id);
-        if(linkData &&  linkData.studentIDs && linkData.studentIDs.length > 0){
-            return [linkData.tyleThamGia.toFixed(1),linkData.points.toFixed(1),linkData.times.toFixed(1)]
+        if (linkData && linkData.studentIDs && linkData.studentIDs.length > 0) {
+            return [{
+                text: linkData.tyleThamGia.toFixed(1),
+                style: ''
+            },
+            {
+                text: linkData.points.toFixed(1),
+                style: ''
+            },
+            {
+                text: linkData.times.toFixed(1),
+                style: 'border-right: 1px solid;'
+            }];
         }
-        return ['---', '---', '---'];
+        return [{
+            text: "---",
+            style: ''
+        },
+        {
+            text: "---",
+            style: ''
+        },
+        {
+            text: "---",
+            style: 'border-right: 1px solid;'
+        }];
     }
     public getKhaoThi(id: string) {
         if (store.state.Type == 2) {
             const dataClass = store.state.kiemTra.Exam.find(o => o.classID == store.state.FilterClass);
             if (dataClass && dataClass.details && dataClass.details.length > 0) {
-                var dataStudent = dataClass.details.find((o: { regionID: string, id: string, centerID: string }) => o.id == id);
+                var dataStudent = dataClass.details.find(o => o.id == id);
                 if (dataStudent) {
                     if (dataStudent.tyLeThamGia > 0) {
-                        return [dataStudent.tyLeThamGia.toFixed(0), dataStudent.diem.toFixed(0), dataStudent.thoiGian.toFixed(1)]
+                        return [{
+                            text: dataStudent.tyLeThamGia.toFixed(0),
+                            style: ''
+                        },
+                        {
+                            text: dataStudent.diem.toFixed(0),
+                            style: ''
+                        },
+                        {
+                            text: dataStudent.thoiGian.toFixed(1),
+                            style: 'border-right: 1px solid;'
+                        }];
                     }
                 }
             }
-            return ['---', '---', '---'];
+            return [{
+                text: "---",
+                style: ''
+            },
+            {
+                text: "---",
+                style: ''
+            },
+            {
+                text: "---",
+                style: 'border-right: 1px solid;'
+            }];
         }
         const linkData = store.state.kiemTra.Exam.find(o => o.classID == id);
-        if(linkData && linkData.studentIDs && linkData.studentIDs.length > 0){
-            return [linkData.tyleThamGia.toFixed(1),linkData.points.toFixed(1),linkData.times.toFixed(1)]
+        if (linkData && linkData.studentIDs && linkData.studentIDs.length > 0) {
+            return [{
+                text: linkData.tyleThamGia.toFixed(1),
+                style: ''
+            },
+            {
+                text: linkData.points.toFixed(1),
+                style: ''
+            },
+            {
+                text: linkData.times.toFixed(1),
+                style: 'border-right: 1px solid;'
+            }];
         }
-        return ['---', '---', '---'];
+        return [{
+            text: "---",
+            style: ''
+        },
+        {
+            text: "---",
+            style: ''
+        },
+        {
+            text: "---",
+            style: 'border-right: 1px solid;'
+        }];
     }
-
     public getTuLuyen(id: string) {
         if (store.state.Type == 2) {
             const dataClass = store.state.LuyenTap.TuLuyen.find(o => o.id == store.state.FilterClass);
             if (dataClass && dataClass.ds && dataClass.ds.length > 0) {
-                var dataStudent = dataClass.ds.find((o: { regionID: string, id: string, centerID: string }) => o.id == id);
+                var dataStudent = dataClass.ds.find(o => o.id == id);
                 if (dataStudent) {
                     if (dataStudent.questionTotal > 0) {
-                        return [dataStudent.questionTotal.toFixed(0), dataStudent.timeTotal.toFixed(1)]
+                        return [{
+                            text: dataStudent.questionTotal.toFixed(0),
+                            style: ''
+                        },
+                        {
+                            text: dataStudent.timeTotal.toFixed(1),
+                            style: 'border-right: 1px solid;'
+                        }];
                     }
                 }
             }
-            return ['---', '---'];
+            return [{
+                text: "---",
+                style: ''
+            },
+            {
+                text: "---",
+                style: 'border-right: 1px solid;'
+            }];
         }
         const linkData = store.state.LuyenTap.TuLuyen.find(o => o.id == id);
-        if(linkData && linkData.hstg && linkData.hstg.length > 0 && linkData.qtt > 0){
-            return [linkData.qtt,linkData.tgtl.toFixed(1)];
+        if (linkData && linkData.hstg && linkData.hstg.length > 0 && linkData.qtt > 0) {
+            return [{
+                text: linkData.qtt,
+                style: ''
+            },
+            {
+                text: linkData.tgtl.toFixed(1),
+                style: 'border-right: 1px solid;'
+            }];
         }
-        return ['---', '---'];
+        return [{
+            text: "---",
+            style: ''
+        },
+        {
+            text: "---",
+            style: 'border-right: 1px solid;'
+        }];
     }
 
 }

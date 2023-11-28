@@ -17,7 +17,7 @@ const ChoiseValue = (item: { id: string; name: string; }) => {
     emits('on-select', item);
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .filter-tab{    
     margin: 10px 0;
 }

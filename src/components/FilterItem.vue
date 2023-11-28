@@ -7,6 +7,7 @@
             select-label="Chọn" :placeholder="placeholder" label="name" track-by="id" :options="options"
             :multiple="multiple" :taggable="true" :close-on-select="!multiple" :hide-selected="hideSelected"
             @close="close"
+            :disabled="selectFirst"
             ></multiselect>
     </div>
 </template>
@@ -29,15 +30,11 @@ export default class FilterItem extends Vue {
     public placeholder !: string
     @Prop()
     public options !: [{ id: string, name: string }] | null;
-    public value: [{ id: string, name: string }] | null = null;
-
-    mounted() {
-        console.log(this.options)
-    }
+    public value: { id: string, name: string } | null = null;
 
     @Emit('on-change')
     onChange<type>(value: type | null) {
-        console.log(value);
+        // console.log(value);
         return value;
     }
 
@@ -64,6 +61,23 @@ export default class FilterItem extends Vue {
                 this.onChange(null);
             }
         }
+    }
+    @Watch("options")
+    wathOptions(n:{ id: string, name: string}[]| null , o:{ id: string, name: string}[]|null){
+        if(n != o){
+            // console.log(n,o, this.value, this.selectFirst);
+            if(n && n.length > 0){
+                if(this.value == null && this.selectFirst){
+                    this.value = n[0];
+                    this.close();
+                }
+            }
+            // console.log(n,o, this.value);
+        }
+    }
+
+    mounted() {
+    //  console.log(this.options,this.value,this.selectFirst);   
     }
 }
 </script>
