@@ -340,7 +340,7 @@ export default class extends Vue {
                     if (dataStudent.tyLeThamGia > 0) {
                         return [
                             {
-                                text: dataStudent.tyLeThamGia.toFixed(0),
+                                text: dataStudent.tyLeThamGia.toFixed(0)+"/"+dataClass.totalLesson,
                                 style: ''
                             },
                             {
@@ -394,7 +394,7 @@ export default class extends Vue {
                 if (dataStudent) {
                     if (dataStudent.tyLeThamGia > 0) {
                         return [{
-                            text: dataStudent.tyLeThamGia.toFixed(0),
+                            text: dataStudent.tyLeThamGia.toFixed(0)+"/"+dataClass.totalLesson,
                             style: ''
                         },
                         {
