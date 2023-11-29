@@ -97,6 +97,7 @@ const changeClass = function (value: { id: string, name: string, center: string,
     }
 }
 const changeView = function (value: { id: string, name: string }) {
+    console.log('changeView',value);
     store.dispatch('changeView', value)
 }
 const updateDate = function (range: { startDate: Date, endDate: Date }) {

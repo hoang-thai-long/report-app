@@ -5,71 +5,80 @@
             <table class="table table-striped table-bordered">
                 <thead style="position: sticky; top: 0px;">
                     <tr>
-                        <th rowspan="3">STT</th>
-                        <th style="border-right: 1px solid;" rowspan="3">Tên</th>
+                        <th rowspan="3" style="border-left: 1px solid #000000;border-right:1px solid #000000; border-top: 1px solid #000000;">STT</th>
+                        <th rowspan="3" style="border-right:1px solid #000000; border-top: 1px solid #000000;">Tên</th>
                         <!-- tổng hợp -->
                         <template v-if="$store.state.View == 0 || $store.state.View == 3">
-                            <th style="border:1px solid;" :colspan="$store.state.Type == 2 ? '1' : '3'">Tổng hợp</th>
+                            <th style="border-right:1px solid #000000; border-top: 1px solid #000000;" :colspan="$store.state.Type == 2 ? '1' : '4'">Tổng hợp</th>
                         </template>
                         <!--  luyện tập -->
                         <template v-if="$store.state.View == 1 || $store.state.View == 3">
-                            <th style="border:1px solid;" colspan="6">Luyện tập</th>
+                            <th style="border-right:1px solid #000000; border-top: 1px solid #000000;" colspan="6">Luyện tập</th>
                         </template>
                         <!-- kiểm tra -->
                         <template v-if="$store.state.View == 2 || $store.state.View == 3">
-                            <th style="border:1px solid;" colspan="6">Kiểm tra</th>
+                            <th style="border-right:1px solid #000000; border-top: 1px solid #000000;" :colspan="$store.state.Type == 2 ? '4' : '6'">Kiểm tra</th>
                         </template>
                     </tr>
                     <tr>
                         <!-- tổng hợp -->
                         <template v-if="$store.state.View == 0 || $store.state.View == 3">
                             <template v-if="$store.state.Type == 2">
-                                <th style="border-right: 1px solid;" rowspan="2">Thời gian</th>
+                                <th style="border-right: 1px solid #000000;" rowspan="2"> Tổng thời gian hoạt động </th>
                             </template>
                             <template v-else>
-                                <th style="border-left: 1px solid;" rowspan="2">Sĩ số</th>
-                                <th rowspan="2">HSHĐ</th>
-                                <th style="border-right: 1px solid;" rowspan="2">Thời gian</th>
+                                <th style="border-left: 1px solid #000000;" rowspan="2">Tổng HS</th>
+                                <th rowspan="2">Số HS hoạt động</th>
+                                <th rowspan="2">Tỷ lệ</th>
+                                <th style="border-right: 1px solid #000000;" rowspan="2">Thời gian hoạt động trung bình</th>
                             </template>
 
                         </template>
                         <!--  luyện tập -->
                         <template v-if="$store.state.View == 1 || $store.state.View == 3">
-                            <th style="border-right: 1px solid;" colspan="2">Được giao qua link</th>
-                            <th style="border-right: 1px solid;" colspan="2">GV giao trong lớp</th>
-                            <th style="border-right: 1px solid;" colspan="2">Tự luyện</th>
+                            <th style="border-right: 1px solid #000000;" colspan="2">Được giao qua link</th>
+                            <th style="border-right: 1px solid #000000;" colspan="2">Được GV giao trong lớp</th>
+                            <th style="border-right: 1px solid #000000;" colspan="2">Tự luyện</th>
                         </template>
                         <!-- kiểm tra -->
                         <template v-if="$store.state.View == 2 || $store.state.View == 3">
-                            <th style="border-left: 1px solid; border-right: 1px solid;" colspan="3">Bài trong lớp</th>
-                            <th style="border-left: 1px solid; border-right: 1px solid;" colspan="3">Bài khảo thí</th>
+                            <th style="border-left: 1px solid #000000; border-right: 1px solid #000000;" :colspan="$store.state.Type == 2 ? '2' : '3'">Bài kiểm tra trong lớp</th>
+                            <th style="border-left: 1px solid #000000; border-right: 1px solid #000000;" :colspan="$store.state.Type == 2 ? '2' : '3'">Bài kiểm tra trên khảo thí</th>
                         </template>
                     </tr>
                     <tr>
                         <!--  luyện tập -->
                         <template v-if="$store.state.View == 1 || $store.state.View == 3">
-                            <th>TLLB (%)</th>
-                            <th style="border-right: 1px solid;">TGLB</th>
-                            <th>TLLB (%)</th>
-                            <th style="border-right: 1px solid;">TGLB</th>
-                            <th>Số câu</th>
-                            <th style="border-right: 1px solid;">TGLB</th>
+                            <th>{{ $store.state.Type == 2 ? 'Tỷ lệ hoàn thành' : 'Tỷ lệ làm bài' }}</th>
+                            <th style="border-right: 1px solid #000000;">{{ $store.state.Type == 2 ? 'Tổng thời gian luyện tập' : 'Thời gian LT TB' }}</th>
+
+                            <th>{{ $store.state.Type == 2 ? 'Tỷ lệ hoàn thành' : 'Tỷ lệ làm bài' }}</th>
+                            <th style="border-right: 1px solid #000000;">{{ $store.state.Type == 2 ? 'Tổng thời gian luyện tập' : 'Thời gian LT TB' }}</th>
+
+                            <th>{{ $store.state.Type == 2 ? 'Tổng số câu tự luyện' : 'Tỷ lệ làm bài' }}</th>
+                            <th style="border-right: 1px solid #000000;">{{ $store.state.Type == 2 ? 'Tổng thời gian luyện tập' : 'Thời gian LT TB' }}</th>
                         </template>
                         <!-- kiểm tra -->
                         <template v-if="$store.state.View == 2 || $store.state.View == 3">
-                            <th>TLLB (%)</th>
+                            <th v-if="$store.state.Type != 2">Tỷ lệ làm bài</th>
                             <th>Điểm TB</th>
-                            <th style="border-right: 1px solid;">TGLB</th>
-                            <th>TLLB (%)</th>
+                            <th style="border-right: 1px solid #000000;">{{  $store.state.Type == 2 ? 'Thời gian làm bài TB' : 'Thời gian LT TB' }}</th>
+                            <th v-if="$store.state.Type != 2">Tỷ lệ làm bài</th>
                             <th>Điểm TB</th>
-                            <th style="border-right: 1px solid;">TGLB</th>
+                            <th style="border-right: 1px solid #000000;">{{  $store.state.Type == 2 ? 'Thời gian làm bài TB' : 'Thời gian LT TB' }}</th>
                         </template>
+                        <!-- <template v-if="">
+                            <th>Điểm TB</th>
+                            <th style="border-right: 1px solid #000000;">Thời gian làm bài TB</th>
+                            <th>Điểm TB</th>
+                            <th style="border-right: 1px solid #000000;">Thời gian làm bài TB</th>
+                        </template> -->
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="(item, i) in $store.state.FilterTable" :key="i">
-                        <td>{{ (i + 1) }}</td>
-                        <td style="border-right: 1px solid; text-align: left;">{{ item.name }}</td>
+                        <td style="border-left: 1px solid #000000; border-right:1px solid #000000;">{{ (i + 1) }}</td>
+                        <td style="border-right: 1px solid #000000; text-align: left;">{{ item.name }}</td>
                         <!-- tổng hợp -->
                         <template v-if="$store.state.View == 0 || $store.state.View == 3">
                             <td v-for="(td, k) in getTongHop(item.id)" :key="'total' + k" :style="td.style">{{ td.text }}
@@ -184,12 +193,12 @@ export default class extends Vue {
             if (tghd && tghd.length > 0) {
                 return [{
                     text: tghd.reduce((a, b) => a + b, 0).toFixed(1),
-                    style: 'border-right: 1px solid;'
+                    style: 'border-right: 1px solid #000000;'
                 }];
             }
             return [{
                 text: "---",
-                style: 'border-right: 1px solid;'
+                style: 'border-right: 1px solid #000000;'
             }];
         }
 
@@ -250,8 +259,12 @@ export default class extends Vue {
                         style: ''
                     },
                     {
+                        text: '',
+                        style: ''
+                    },
+                    {
                         text: tghd.toFixed(1),
-                        style: 'border-right: 1px solid;'
+                        style: 'border-right: 1px solid #000000;'
                     }
                 ];
             }
@@ -262,12 +275,16 @@ export default class extends Vue {
                         style: ''
                     },
                     {
-                        text: studentActive.length + " (" + dataStudentActive.toFixed(1) + "%)",
+                        text: studentActive.length,
+                        style: ''
+                    },
+                    {
+                        text: dataStudentActive.toFixed(1) + "%",
                         style: ''
                     },
                     {
                         text: tghd.toFixed(1),
-                        style: 'border-right: 1px solid;'
+                        style: 'border-right: 1px solid #000000;'
                     }
                 ];
             }
@@ -284,7 +301,11 @@ export default class extends Vue {
                 },
                 {
                     text: "---",
-                    style: 'border-right: 1px solid;'
+                    style: ''
+                },
+                {
+                    text: "---",
+                    style: 'border-right: 1px solid #000000;'
                 }
             ]
 
@@ -299,8 +320,12 @@ export default class extends Vue {
                     style: ''
                 },
                 {
+                    text: "---",
+                    style: ''
+                },
+                {
                     text: tghd > 0 ? tghd.toFixed(1) : '---',
-                    style: 'border-right: 1px solid;'
+                    style: 'border-right: 1px solid #000000;'
                 }
             ]
     }
@@ -320,7 +345,7 @@ export default class extends Vue {
                             },
                             {
                                 text: dataStudent.thoiGian.toFixed(1),
-                                style: 'border-right: 1px solid;'
+                                style: 'border-right: 1px solid #000000;'
                             }
                         ];
                     }
@@ -333,7 +358,7 @@ export default class extends Vue {
                 },
                 {
                     text: "---",
-                    style: 'border-right: 1px solid;'
+                    style: 'border-right: 1px solid #000000;'
                 }
             ];
 
@@ -343,12 +368,12 @@ export default class extends Vue {
 
         if (linkData && linkData.studentIDs && linkData.studentIDs.length > 0) {
             return [{
-                text: linkData.tyleThamGia.toFixed(1),
+                text: linkData.studentIDs.length +"/"+linkData.siSo,
                 style: ''
             },
             {
                 text: linkData.times.toFixed(1),
-                style: 'border-right: 1px solid;'
+                style: 'border-right: 1px solid #000000;'
             }];
         }
 
@@ -358,7 +383,7 @@ export default class extends Vue {
         },
         {
             text: "---",
-            style: 'border-right: 1px solid;'
+            style: 'border-right: 1px solid #000000;'
         }];
     }
     public getLuyenTap(id: string) {
@@ -374,7 +399,7 @@ export default class extends Vue {
                         },
                         {
                             text: dataStudent.thoiGian.toFixed(1),
-                            style: 'border-right: 1px solid;'
+                            style: 'border-right: 1px solid #000000;'
                         }];
                     }
                 }
@@ -385,18 +410,18 @@ export default class extends Vue {
             },
             {
                 text: "---",
-                style: 'border-right: 1px solid;'
+                style: 'border-right: 1px solid #000000;'
             }];
         }
         const linkData = store.state.LuyenTap.Class.find(o => o.classID == id);
         if (linkData && linkData.studentIDs && linkData.studentIDs.length > 0) {
             return [{
-                text: linkData.tyleThamGia.toFixed(1),
+                text: linkData.studentIDs.length +"/"+linkData.siSo,
                 style: ''
             },
             {
                 text: linkData.times.toFixed(1),
-                style: 'border-right: 1px solid;'
+                style: 'border-right: 1px solid #000000;'
             }];
         }
 
@@ -406,7 +431,7 @@ export default class extends Vue {
         },
         {
             text: "---",
-            style: 'border-right: 1px solid;'
+            style: 'border-right: 1px solid #000000;'
         }];
     }
     public getKiemTra(id: string) {
@@ -416,17 +441,14 @@ export default class extends Vue {
                 var dataStudent = dataClass.details.find(o => o.id == id);
                 if (dataStudent) {
                     if (dataStudent.tyLeThamGia > 0) {
-                        return [{
-                            text: dataStudent.tyLeThamGia.toFixed(0),
-                            style: ''
-                        },
+                        return [
                         {
                             text: dataStudent.diem.toFixed(0),
                             style: ''
                         },
                         {
                             text: dataStudent.thoiGian.toFixed(1),
-                            style: 'border-right: 1px solid;'
+                            style: 'border-right: 1px solid #000000;'
                         }];
                     }
                 }
@@ -437,17 +459,13 @@ export default class extends Vue {
             },
             {
                 text: "---",
-                style: ''
-            },
-            {
-                text: "---",
-                style: 'border-right: 1px solid;'
+                style: 'border-right: 1px solid #000000;'
             }];
         }
         const linkData = store.state.kiemTra.Class.find(o => o.classID == id);
         if (linkData && linkData.studentIDs && linkData.studentIDs.length > 0) {
             return [{
-                text: linkData.tyleThamGia.toFixed(1),
+                text: linkData.studentIDs.length +"/"+linkData.siSo,
                 style: ''
             },
             {
@@ -456,7 +474,7 @@ export default class extends Vue {
             },
             {
                 text: linkData.times.toFixed(1),
-                style: 'border-right: 1px solid;'
+                style: 'border-right: 1px solid #000000;'
             }];
         }
         return [{
@@ -469,7 +487,7 @@ export default class extends Vue {
         },
         {
             text: "---",
-            style: 'border-right: 1px solid;'
+            style: 'border-right: 1px solid #000000;'
         }];
     }
     public getKhaoThi(id: string) {
@@ -479,17 +497,14 @@ export default class extends Vue {
                 var dataStudent = dataClass.details.find(o => o.id == id);
                 if (dataStudent) {
                     if (dataStudent.tyLeThamGia > 0) {
-                        return [{
-                            text: dataStudent.tyLeThamGia.toFixed(0),
-                            style: ''
-                        },
+                        return [
                         {
                             text: dataStudent.diem.toFixed(0),
                             style: ''
                         },
                         {
                             text: dataStudent.thoiGian.toFixed(1),
-                            style: 'border-right: 1px solid;'
+                            style: 'border-right: 1px solid #000000;'
                         }];
                     }
                 }
@@ -500,17 +515,13 @@ export default class extends Vue {
             },
             {
                 text: "---",
-                style: ''
-            },
-            {
-                text: "---",
-                style: 'border-right: 1px solid;'
+                style: 'border-right: 1px solid #000000;'
             }];
         }
         const linkData = store.state.kiemTra.Exam.find(o => o.classID == id);
         if (linkData && linkData.studentIDs && linkData.studentIDs.length > 0) {
             return [{
-                text: linkData.tyleThamGia.toFixed(1),
+                text: linkData.studentIDs.length+'/'+linkData.siSo,
                 style: ''
             },
             {
@@ -519,7 +530,7 @@ export default class extends Vue {
             },
             {
                 text: linkData.times.toFixed(1),
-                style: 'border-right: 1px solid;'
+                style: 'border-right: 1px solid #000000;'
             }];
         }
         return [{
@@ -532,7 +543,7 @@ export default class extends Vue {
         },
         {
             text: "---",
-            style: 'border-right: 1px solid;'
+            style: 'border-right: 1px solid #000000;'
         }];
     }
     public getTuLuyen(id: string) {
@@ -548,7 +559,7 @@ export default class extends Vue {
                         },
                         {
                             text: dataStudent.timeTotal.toFixed(1),
-                            style: 'border-right: 1px solid;'
+                            style: 'border-right: 1px solid #000000;'
                         }];
                     }
                 }
@@ -559,18 +570,18 @@ export default class extends Vue {
             },
             {
                 text: "---",
-                style: 'border-right: 1px solid;'
+                style: 'border-right: 1px solid #000000;'
             }];
         }
         const linkData = store.state.LuyenTap.TuLuyen.find(o => o.id == id);
         if (linkData && linkData.hstg && linkData.hstg.length > 0 && linkData.qtt > 0) {
             return [{
-                text: linkData.qtt,
+                text: linkData.hstg.length + "/" + linkData.siso,
                 style: ''
             },
             {
                 text: linkData.tgtl.toFixed(1),
-                style: 'border-right: 1px solid;'
+                style: 'border-right: 1px solid #000000;'
             }];
         }
         return [{
@@ -579,7 +590,7 @@ export default class extends Vue {
         },
         {
             text: "---",
-            style: 'border-right: 1px solid;'
+            style: 'border-right: 1px solid #000000;'
         }];
     }
 
