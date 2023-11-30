@@ -2,7 +2,7 @@
 <template>
     <div class="table-data">
         <div class="table-data-box">
-            <table class="table table-striped table-bordered">
+            <table class="table table-striped table-bordered table-report-table">
                 <thead style="position: sticky; top: 0px;">
                     <tr>
                         <th rowspan="3" style="border-left: 1px solid #000000;border-right:1px solid #000000; border-top: 1px solid #000000;">STT</th>
@@ -193,12 +193,12 @@ export default class extends Vue {
             if (tghd && tghd.length > 0) {
                 return [{
                     text: tghd.reduce((a, b) => a + b, 0).toFixed(1),
-                    style: 'border-right: 1px solid #000000;'
+                    style: 'border-right: 1px solid #000000;text-align: center'
                 }];
             }
             return [{
                 text: "---",
-                style: 'border-right: 1px solid #000000;'
+                style: 'border-right: 1px solid #000000;text-align: center'
             }];
         }
 
@@ -252,19 +252,19 @@ export default class extends Vue {
                 return [
                     {
                         text: siso,
-                        style: ''
+                        style: 'text-align: center'
                     },
                     {
                         text: studentActive.length,
-                        style: ''
+                        style: 'text-align: center'
                     },
                     {
                         text: '',
-                        style: ''
+                        style: 'text-align: center'
                     },
                     {
                         text: tghd.toFixed(1),
-                        style: 'border-right: 1px solid #000000;'
+                        style: 'border-right: 1px solid #000000;text-align: center'
                     }
                 ];
             }
@@ -272,19 +272,19 @@ export default class extends Vue {
                 return [
                     {
                         text: siso,
-                        style: ''
+                        style: 'text-align: center'
                     },
                     {
                         text: studentActive.length,
-                        style: ''
+                        style: 'text-align: center'
                     },
                     {
                         text: dataStudentActive.toFixed(1) + "%",
-                        style: ''
+                        style: 'text-align: center'
                     },
                     {
                         text: tghd.toFixed(1),
-                        style: 'border-right: 1px solid #000000;'
+                        style: 'border-right: 1px solid #000000;text-align: center'
                     }
                 ];
             }
@@ -293,19 +293,19 @@ export default class extends Vue {
             [
                 {
                     text: "---",
-                    style: ''
+                    style: 'text-align: center'
                 },
                 {
                     text: "---",
-                    style: ''
+                    style: 'text-align: center'
                 },
                 {
                     text: "---",
-                    style: ''
+                    style: 'text-align: center'
                 },
                 {
                     text: "---",
-                    style: 'border-right: 1px solid #000000;'
+                    style: 'border-right: 1px solid #000000; text-align: center;'
                 }
             ]
 
@@ -313,19 +313,19 @@ export default class extends Vue {
             [
                 {
                     text: siso,
-                    style: ''
+                    style: 'text-align: center'
                 },
                 {
                     text: "---",
-                    style: ''
+                    style: 'text-align: center'
                 },
                 {
                     text: "---",
-                    style: ''
+                    style: 'text-align: center'
                 },
                 {
                     text: tghd > 0 ? tghd.toFixed(1) : '---',
-                    style: 'border-right: 1px solid #000000;'
+                    style: 'border-right: 1px solid #000000; text-align: center'
                 }
             ]
     }
@@ -340,12 +340,12 @@ export default class extends Vue {
                     if (dataStudent.tyLeThamGia > 0) {
                         return [
                             {
-                                text: dataStudent.tyLeThamGia.toFixed(0),
-                                style: ''
+                                text: dataStudent.tyLeThamGia.toFixed(0)+"/"+dataClass.totalLesson,
+                                style: 'text-align: center'
                             },
                             {
                                 text: dataStudent.thoiGian.toFixed(1),
-                                style: 'border-right: 1px solid #000000;'
+                                style: 'border-right: 1px solid #000000; text-align: center'
                             }
                         ];
                     }
@@ -354,11 +354,11 @@ export default class extends Vue {
             return [
                 {
                     text: "---",
-                    style: ''
+                    style: 'text-align: center'
                 },
                 {
                     text: "---",
-                    style: 'border-right: 1px solid #000000;'
+                    style: 'border-right: 1px solid #000000; text-align: center'
                 }
             ];
 
@@ -368,22 +368,22 @@ export default class extends Vue {
 
         if (linkData && linkData.studentIDs && linkData.studentIDs.length > 0) {
             return [{
-                text: linkData.studentIDs.length +"/"+linkData.siSo,
-                style: ''
+                text: (linkData.studentIDs.length*100/linkData.siSo).toFixed(1)+"%",
+                style: 'text-align: center'
             },
             {
                 text: linkData.times.toFixed(1),
-                style: 'border-right: 1px solid #000000;'
+                style: 'border-right: 1px solid #000000; text-align: center'
             }];
         }
 
         return [{
             text: "---",
-            style: ''
+            style: 'text-align: center'
         },
         {
             text: "---",
-            style: 'border-right: 1px solid #000000;'
+            style: 'border-right: 1px solid #000000; text-align: center'
         }];
     }
     public getLuyenTap(id: string) {
@@ -395,43 +395,43 @@ export default class extends Vue {
                     if (dataStudent.tyLeThamGia > 0) {
                         return [{
                             text: dataStudent.tyLeThamGia.toFixed(0),
-                            style: ''
+                            style: 'text-align: center'
                         },
                         {
                             text: dataStudent.thoiGian.toFixed(1),
-                            style: 'border-right: 1px solid #000000;'
+                            style: 'border-right: 1px solid #000000; text-align: center'
                         }];
                     }
                 }
             }
             return [{
                 text: "---",
-                style: ''
+                style: 'text-align: center'
             },
             {
                 text: "---",
-                style: 'border-right: 1px solid #000000;'
+                style: 'border-right: 1px solid #000000; text-align: center'
             }];
         }
         const linkData = store.state.LuyenTap.Class.find(o => o.classID == id);
         if (linkData && linkData.studentIDs && linkData.studentIDs.length > 0) {
             return [{
-                text: linkData.studentIDs.length +"/"+linkData.siSo,
-                style: ''
+                text: linkData.tyleThamGia.toFixed(1)+"%",
+                style: 'text-align: center'
             },
             {
                 text: linkData.times.toFixed(1),
-                style: 'border-right: 1px solid #000000;'
+                style: 'border-right: 1px solid #000000; text-align: center'
             }];
         }
 
         return [{
             text: "---",
-            style: ''
+            style: 'text-align: center'
         },
         {
             text: "---",
-            style: 'border-right: 1px solid #000000;'
+            style: 'border-right: 1px solid #000000; text-align: center'
         }];
     }
     public getKiemTra(id: string) {
@@ -443,51 +443,51 @@ export default class extends Vue {
                     if (dataStudent.tyLeThamGia > 0) {
                         return [
                         {
-                            text: dataStudent.diem.toFixed(0),
-                            style: ''
+                            text: dataStudent.diem.toFixed(1),
+                            style: 'text-align: center'
                         },
                         {
                             text: dataStudent.thoiGian.toFixed(1),
-                            style: 'border-right: 1px solid #000000;'
+                            style: 'border-right: 1px solid #000000; text-align: center'
                         }];
                     }
                 }
             }
             return [{
                 text: "---",
-                style: ''
+                style: 'text-align: center'
             },
             {
                 text: "---",
-                style: 'border-right: 1px solid #000000;'
+                style: 'border-right: 1px solid #000000; text-align: center'
             }];
         }
         const linkData = store.state.kiemTra.Class.find(o => o.classID == id);
         if (linkData && linkData.studentIDs && linkData.studentIDs.length > 0) {
             return [{
-                text: linkData.studentIDs.length +"/"+linkData.siSo,
-                style: ''
+                text: linkData.tyleThamGia.toFixed(1)+"%",
+                style: 'text-align: center'
             },
             {
                 text: linkData.points.toFixed(1),
-                style: ''
+                style: 'text-align: center'
             },
             {
                 text: linkData.times.toFixed(1),
-                style: 'border-right: 1px solid #000000;'
+                style: 'border-right: 1px solid #000000; text-align: center'
             }];
         }
         return [{
             text: "---",
-            style: ''
+            style: 'text-align: center'
         },
         {
             text: "---",
-            style: ''
+            style: 'text-align: center'
         },
         {
             text: "---",
-            style: 'border-right: 1px solid #000000;'
+            style: 'border-right: 1px solid #000000; text-align: center'
         }];
     }
     public getKhaoThi(id: string) {
@@ -499,51 +499,51 @@ export default class extends Vue {
                     if (dataStudent.tyLeThamGia > 0) {
                         return [
                         {
-                            text: dataStudent.diem.toFixed(0),
-                            style: ''
+                            text: dataStudent.diem.toFixed(1),
+                            style: 'text-align: center'
                         },
                         {
                             text: dataStudent.thoiGian.toFixed(1),
-                            style: 'border-right: 1px solid #000000;'
+                            style: 'border-right: 1px solid #000000; text-align: center'
                         }];
                     }
                 }
             }
             return [{
                 text: "---",
-                style: ''
+                style: 'text-align: center'
             },
             {
                 text: "---",
-                style: 'border-right: 1px solid #000000;'
+                style: 'border-right: 1px solid #000000; text-align: center'
             }];
         }
         const linkData = store.state.kiemTra.Exam.find(o => o.classID == id);
         if (linkData && linkData.studentIDs && linkData.studentIDs.length > 0) {
             return [{
-                text: linkData.studentIDs.length+'/'+linkData.siSo,
-                style: ''
+                text: linkData.tyleThamGia.toFixed(1)+"%",
+                style: 'text-align: center'
             },
             {
                 text: linkData.points.toFixed(1),
-                style: ''
+                style: 'text-align: center'
             },
             {
                 text: linkData.times.toFixed(1),
-                style: 'border-right: 1px solid #000000;'
+                style: 'border-right: 1px solid #000000; text-align: center'
             }];
         }
         return [{
             text: "---",
-            style: ''
+            style: 'text-align: center'
         },
         {
             text: "---",
-            style: ''
+            style: 'text-align: center'
         },
         {
             text: "---",
-            style: 'border-right: 1px solid #000000;'
+            style: 'border-right: 1px solid #000000; text-align: center'
         }];
     }
     public getTuLuyen(id: string) {
@@ -555,45 +555,52 @@ export default class extends Vue {
                     if (dataStudent.questionTotal > 0) {
                         return [{
                             text: dataStudent.questionTotal.toFixed(0),
-                            style: ''
+                            style: 'text-align: center'
                         },
                         {
                             text: dataStudent.timeTotal.toFixed(1),
-                            style: 'border-right: 1px solid #000000;'
+                            style: 'border-right: 1px solid #000000; text-align: center'
                         }];
                     }
                 }
             }
             return [{
                 text: "---",
-                style: ''
+                style: 'text-align: center'
             },
             {
                 text: "---",
-                style: 'border-right: 1px solid #000000;'
+                style: 'border-right: 1px solid #000000; text-align: center'
             }];
         }
         const linkData = store.state.LuyenTap.TuLuyen.find(o => o.id == id);
         if (linkData && linkData.hstg && linkData.hstg.length > 0 && linkData.qtt > 0) {
             return [{
-                text: linkData.hstg.length + "/" + linkData.siso,
-                style: ''
+                text: ((linkData.hstg.length/linkData.siso)*100).toFixed(1)+"%",
+                style: 'text-align: center'
             },
             {
                 text: linkData.tgtl.toFixed(1),
-                style: 'border-right: 1px solid #000000;'
+                style: 'border-right: 1px solid #000000; text-align: center'
             }];
         }
         return [{
             text: "---",
-            style: ''
+            style: 'text-align: center'
         },
         {
             text: "---",
-            style: 'border-right: 1px solid #000000;'
+            style: 'border-right: 1px solid #000000; text-align: center'
         }];
     }
 
 }
 
 </script>
+
+<style>
+.table-report-table th{
+    text-align: center;
+    vertical-align: middle;
+}
+</style>
