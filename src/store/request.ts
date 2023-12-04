@@ -23,7 +23,17 @@ instance.interceptors.request.use((config)=>config,(error)=> Promise.reject(erro
 
 instance.interceptors.response.use((res)=> res,(err)=> Promise.reject(err));
 
+const ExportExcel = function(dataTable:{thead:any[],tbody:any[]},url:string){
+    axios.post(url,dataTable).then((result)=>{
+        if (result.status == 200) {
+            const link = result.data;
+            window.open(link, "_blank");
+        }
+    })
+}
+
 export {
     configs,
-    instance
+    instance,
+    ExportExcel
 };

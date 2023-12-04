@@ -6,11 +6,11 @@
             </div>
             <div class="rt-filter-group">
                 <filter-item name="report-region" :multiple="false" placeholder="Chọn khu vực" :options="Regions"
-                    :select-first="!$store.state.User.Type" :hide-selected="false" @on-change="changeRegions"
+                    :select-first="$store.state.CenterCode != 'eduso'" :hide-selected="false" @on-change="changeRegions"
                     @close="loadCenters"></filter-item>
 
                 <filter-item name="report-center" :multiple="false" placeholder="Chọn cơ sở" :options="Centers"
-                    :select-first="!$store.state.User.Type" :hide-selected="false" @on-change="changeCenter" @close="loadClass"></filter-item>
+                    :select-first="$store.state.CenterCode != 'eduso'" :hide-selected="false" @on-change="changeCenter" @close="loadClass"></filter-item>
                 <filter-item name="report-level" :multiple="false" placeholder="Chọn khối" 
                     :options="$store.state.Levels"
                     :select-first="false" :hide-selected="false" @on-change="changeLevel"></filter-item>
@@ -20,17 +20,19 @@
             </div>
             <filter-tab class="rt-filter-group" :data="DataReportView" @on-select="changeView" :text="'Tùy chọn báo cáo :'"
                 :name="'report-type'"></filter-tab>
-            <button class="btn btn-primary" @click="applyFilter" style="position: absolute; top: 10px;right: 10px;">Áp dụng</button>
+            <button class="btn btn-primary" @click="applyFilter" style="position: absolute; bottom: 10px;right: 10px;">Áp dụng</button>
+            <button class="btn btn-primary" @click="exportExcel" style="position: absolute; bottom: 10px;right: 100px;">Export</button>
         </div>
     </div>
 </template>
 <script lang="ts" setup>
 import { computed, onMounted, ref,defineProps } from 'vue';
-import { caculatorDate } from "../utils/common";
+import { caculatorDate, exportExcelFromTable } from "../utils/common";
 import FilterItem from './FilterItem.vue';
 import FilterDate from './FilterDate.vue';
 import store from '@/store';
 import FilterTab from './FilterTab.vue';
+import { ExportExcel } from '@/store/request';
 // import Helper from '../store/helper';
 
 
@@ -282,6 +284,12 @@ const applyFilter = function () {
     loadFilterData(type);
 }
 
+const exportExcel = function(){
+    const start = filterRange.value.start.getFullYear()+"-"+(filterRange.value.start.getMonth()+1)+"-"+filterRange.value.start.getDate();
+    const end = filterRange.value.end.getFullYear()+"-"+(filterRange.value.end.getMonth()+1)+"-"+filterRange.value.end.getDate();
+    var data = exportExcelFromTable('report-table','baocaotonghop',start,end);
+    ExportExcel(data.data,data.url);
+}
 
 </script>
 <style lang="scss" scoped>

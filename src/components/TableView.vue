@@ -2,8 +2,8 @@
 <template>
     <div class="table-data">
         <div class="table-data-box">
-            <table class="table table-striped table-bordered table-report-table">
-                <thead style="position: sticky; top: 0px;">
+            <table id="report-table" class="table table-striped table-bordered table-report-table">
+                <thead style="position: sticky; top: 0px; background-color: #fff;">
                     <tr>
                         <th rowspan="3" style="border-left: 1px solid #000000;border-right:1px solid #000000; border-top: 1px solid #000000;">STT</th>
                         <th rowspan="3" style="border-right:1px solid #000000; border-top: 1px solid #000000;">Tên</th>
