@@ -5,19 +5,24 @@
             <table id="report-table" class="table table-striped table-bordered table-report-table">
                 <thead style="position: sticky; top: 0px; background-color: #fff;">
                     <tr>
-                        <th rowspan="3" style="border-left: 1px solid #000000;border-right:1px solid #000000; border-top: 1px solid #000000;">STT</th>
+                        <th rowspan="3"
+                            style="border-left: 1px solid #000000;border-right:1px solid #000000; border-top: 1px solid #000000;">
+                            STT</th>
                         <th rowspan="3" style="border-right:1px solid #000000; border-top: 1px solid #000000;">Tên</th>
                         <!-- tổng hợp -->
                         <template v-if="$store.state.View == 0 || $store.state.View == 3">
-                            <th style="border-right:1px solid #000000; border-top: 1px solid #000000;" :colspan="$store.state.Type == 2 ? '1' : '4'">Tổng hợp</th>
+                            <th style="border-right:1px solid #000000; border-top: 1px solid #000000;"
+                                :colspan="$store.state.Type == 2 ? '1' : '4'">Tổng hợp</th>
                         </template>
                         <!--  luyện tập -->
                         <template v-if="$store.state.View == 1 || $store.state.View == 3">
-                            <th style="border-right:1px solid #000000; border-top: 1px solid #000000;" colspan="6">Luyện tập</th>
+                            <th style="border-right:1px solid #000000; border-top: 1px solid #000000;" colspan="6">Luyện tập
+                            </th>
                         </template>
                         <!-- kiểm tra -->
                         <template v-if="$store.state.View == 2 || $store.state.View == 3">
-                            <th style="border-right:1px solid #000000; border-top: 1px solid #000000;" :colspan="$store.state.Type == 2 ? '4' : '6'">Kiểm tra</th>
+                            <th style="border-right:1px solid #000000; border-top: 1px solid #000000;"
+                                :colspan="$store.state.Type == 2 ? '4' : '6'">Kiểm tra</th>
                         </template>
                     </tr>
                     <tr>
@@ -42,8 +47,10 @@
                         </template>
                         <!-- kiểm tra -->
                         <template v-if="$store.state.View == 2 || $store.state.View == 3">
-                            <th style="border-left: 1px solid #000000; border-right: 1px solid #000000;" :colspan="$store.state.Type == 2 ? '2' : '3'">Bài kiểm tra trong lớp</th>
-                            <th style="border-left: 1px solid #000000; border-right: 1px solid #000000;" :colspan="$store.state.Type == 2 ? '2' : '3'">Bài kiểm tra trên khảo thí</th>
+                            <th style="border-left: 1px solid #000000; border-right: 1px solid #000000;"
+                                :colspan="$store.state.Type == 2 ? '2' : '3'">Bài kiểm tra trong lớp</th>
+                            <th style="border-left: 1px solid #000000; border-right: 1px solid #000000;"
+                                :colspan="$store.state.Type == 2 ? '2' : '3'">Bài kiểm tra trên khảo thí</th>
                         </template>
                     </tr>
                     <tr>
@@ -62,10 +69,12 @@
                         <template v-if="$store.state.View == 2 || $store.state.View == 3">
                             <th v-if="$store.state.Type != 2">Tỷ lệ làm bài</th>
                             <th>Điểm TB</th>
-                            <th style="border-right: 1px solid #000000;">{{  $store.state.Type == 2 ? 'Thời gian làm bài TB' : 'Thời gian LT TB' }}</th>
+                            <th style="border-right: 1px solid #000000;">{{ $store.state.Type == 2 ? 'Thời gian làm bài TB'
+                                : 'Thời gian LT TB' }}</th>
                             <th v-if="$store.state.Type != 2">Tỷ lệ làm bài</th>
                             <th>Điểm TB</th>
-                            <th style="border-right: 1px solid #000000;">{{  $store.state.Type == 2 ? 'Thời gian làm bài TB' : 'Thời gian LT TB' }}</th>
+                            <th style="border-right: 1px solid #000000;">{{ $store.state.Type == 2 ? 'Thời gian làm bài TB'
+                                : 'Thời gian LT TB' }}</th>
                         </template>
                         <!-- <template v-if="">
                             <th>Điểm TB</th>
@@ -108,6 +117,38 @@
                         </template>
 
                     </tr>
+                    <tr style="border: 1px solid #000000; position: sticky; z-index: 2; bottom: 0;">
+                        <td style="border-left: 1px solid #000000; border-right:1px solid #000000;" colspan="2">Tổng kết
+                        </td>
+                        <!-- <td style="border-right: 1px solid #000000; text-align: left;">{{ item.name }}</td> -->
+                        <!-- tổng hợp -->
+                        <template v-if="$store.state.View == 0 || $store.state.View == 3">
+                            <td v-for="(td, k) in getAllTongHop()   " :key="'total' + k" :style="td.style">{{ td.text }}
+                            </td>
+                        </template>
+                        <!-- link -->
+                        <template v-if="$store.state.View == 1 || $store.state.View == 3">
+                            <td v-for="(td, k) in getAllLink()      " :key="'link' + k" :style="td.style">{{ td.text }}</td>
+                        </template>
+                        <!--  luyện tập -->
+                        <template v-if="$store.state.View == 1 || $store.state.View == 3">
+                            <td v-for="(td, k) in getAllLuyenTap()  " :key="'lt' + k" :style="td.style">{{ td.text }}</td>
+                        </template>
+                        <!--tự luyện -->
+                        <template v-if="$store.state.View == 1 || $store.state.View == 3">
+                            <td v-for="(td, k) in getAllTuLuyen()   " :key="'tl' + k" :style="td.style">{{ td.text }}</td>
+                        </template>
+
+                        <!-- kiểm tra -->
+                        <template v-if="$store.state.View == 2 || $store.state.View == 3">
+                            <td v-for="(td, k) in getAllKiemTra()   " :key="'bg' + k" :style="td.style">{{ td.text }}</td>
+                        </template>
+
+                        <!-- khao thi -->
+                        <template v-if="$store.state.View == 2 || $store.state.View == 3">
+                            <td v-for="(td, k) in getAllKhaoThi()   " :key="'kt' + k" :style="td.style">{{ td.text }}</td>
+                        </template>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -122,6 +163,39 @@ export default class extends Vue {
     @Prop()
     type !: number;
 
+    public totalData :{
+        TongHop: {
+            HS: Number[],
+            HSHD: Number[],
+            TyLe: Number[],
+            TGHDTB: Number[]
+        },
+        LuyenTap: {
+            link: {TyLe:Number[],TGLB:Number[]},
+            Class: {TyLe:Number[],TGLB:Number[]},
+            Self: {TyLe:Number[],TGLB:Number[]}
+        },
+        KiemTra: {
+            Class: {TyLe:Number[],TGLB:Number[],DTB:Number[]},
+            Exam: {TyLe:Number[],TGLB:Number[],DTB:Number[]}
+        }
+    } = {
+        TongHop: {
+            HS: [],
+            HSHD: [],
+            TyLe: [],
+            TGHDTB:[]
+        },
+        LuyenTap: {
+            link: {TyLe:[],TGLB:[]},
+            Class: {TyLe:[],TGLB:[]},
+            Self: {TyLe:[],TGLB:[]}
+        },
+        KiemTra: {
+            Class: {TyLe:[],TGLB:[],DTB:[]},
+            Exam: {TyLe:[],TGLB:[],DTB:[]}
+        }
+    }
 
     public getListClass(id: string) {
         let data: { id: string, name: string, centerID: string, regionID: string, level: string }[] = [];
@@ -139,7 +213,6 @@ export default class extends Vue {
         }
         return data;
     }
-
     public getTongHop(id: string) {
         if (store.state.Type == 2) {
             let tghd: number[] = [];
@@ -244,11 +317,19 @@ export default class extends Vue {
             // console.log(tuLuyenData.hstg)
         }
         var studentActive = Array.from(new Set(dataStudens)).filter(o => o != null && o.length > 10);
+
+        this.totalData.TongHop.HS.push(siso);
+        
+
         // console.log(studentActive)
         // console.log("----------------------")
         if (studentActive.length > 0) {
             const dataStudentActive: number = ((studentActive.length / siso) * 100);
             if (dataStudentActive == Infinity) {
+
+                this.totalData.TongHop.HSHD.push(studentActive.length);
+                this.totalData.TongHop.TyLe.push(dataStudentActive);
+
                 return [
                     {
                         text: siso,
@@ -329,8 +410,6 @@ export default class extends Vue {
                 }
             ]
     }
-
-
     public getLink(id: string) {
         if (store.state.Type == 2) {
             const dataClass = store.state.LuyenTap.Link.find(o => o.classID == store.state.FilterClass);
@@ -340,7 +419,7 @@ export default class extends Vue {
                     if (dataStudent.tyLeThamGia > 0) {
                         return [
                             {
-                                text: dataStudent.tyLeThamGia.toFixed(0)+"/"+dataClass.totalLesson,
+                                text: dataStudent.tyLeThamGia.toFixed(0) + "/" + dataClass.totalLesson,
                                 style: 'text-align: center'
                             },
                             {
@@ -368,7 +447,7 @@ export default class extends Vue {
 
         if (linkData && linkData.studentIDs && linkData.studentIDs.length > 0) {
             return [{
-                text: (linkData.studentIDs.length*100/linkData.siSo).toFixed(1)+"%",
+                text: (linkData.studentIDs.length * 100 / linkData.siSo).toFixed(1) + "%",
                 style: 'text-align: center'
             },
             {
@@ -394,7 +473,7 @@ export default class extends Vue {
                 if (dataStudent) {
                     if (dataStudent.tyLeThamGia > 0) {
                         return [{
-                            text: dataStudent.tyLeThamGia.toFixed(0),
+                            text: dataStudent.tyLeThamGia.toFixed(0) + "/" + dataClass.totalLesson,
                             style: 'text-align: center'
                         },
                         {
@@ -402,6 +481,16 @@ export default class extends Vue {
                             style: 'border-right: 1px solid #000000; text-align: center'
                         }];
                     }
+                }
+                else {
+                    return [{
+                        text: "0/" + dataClass.totalLesson,
+                        style: 'text-align: center'
+                    },
+                    {
+                        text: '---',
+                        style: 'border-right: 1px solid #000000; text-align: center'
+                    }];
                 }
             }
             return [{
@@ -416,7 +505,7 @@ export default class extends Vue {
         const linkData = store.state.LuyenTap.Class.find(o => o.classID == id);
         if (linkData && linkData.studentIDs && linkData.studentIDs.length > 0) {
             return [{
-                text: linkData.tyleThamGia.toFixed(1)+"%",
+                text: linkData.tyleThamGia.toFixed(1) + "%",
                 style: 'text-align: center'
             },
             {
@@ -442,15 +531,25 @@ export default class extends Vue {
                 if (dataStudent) {
                     if (dataStudent.tyLeThamGia > 0) {
                         return [
-                        {
-                            text: dataStudent.diem.toFixed(1),
-                            style: 'text-align: center'
-                        },
-                        {
-                            text: dataStudent.thoiGian.toFixed(1),
-                            style: 'border-right: 1px solid #000000; text-align: center'
-                        }];
+                            {
+                                text: dataStudent.diem.toFixed(1),
+                                style: 'text-align: center'
+                            },
+                            {
+                                text: dataStudent.thoiGian.toFixed(1),
+                                style: 'border-right: 1px solid #000000; text-align: center'
+                            }];
                     }
+                }
+                else {
+                    return [{
+                        text: "0/" + dataClass.totalLesson,
+                        style: 'text-align: center'
+                    },
+                    {
+                        text: '---',
+                        style: 'border-right: 1px solid #000000; text-align: center'
+                    }];
                 }
             }
             return [{
@@ -465,7 +564,7 @@ export default class extends Vue {
         const linkData = store.state.kiemTra.Class.find(o => o.classID == id);
         if (linkData && linkData.studentIDs && linkData.studentIDs.length > 0) {
             return [{
-                text: linkData.tyleThamGia.toFixed(1)+"%",
+                text: linkData.tyleThamGia.toFixed(1) + "%",
                 style: 'text-align: center'
             },
             {
@@ -498,14 +597,14 @@ export default class extends Vue {
                 if (dataStudent) {
                     if (dataStudent.tyLeThamGia > 0) {
                         return [
-                        {
-                            text: dataStudent.diem.toFixed(1),
-                            style: 'text-align: center'
-                        },
-                        {
-                            text: dataStudent.thoiGian.toFixed(1),
-                            style: 'border-right: 1px solid #000000; text-align: center'
-                        }];
+                            {
+                                text: dataStudent.diem.toFixed(1),
+                                style: 'text-align: center'
+                            },
+                            {
+                                text: dataStudent.thoiGian.toFixed(1),
+                                style: 'border-right: 1px solid #000000; text-align: center'
+                            }];
                     }
                 }
             }
@@ -521,7 +620,7 @@ export default class extends Vue {
         const linkData = store.state.kiemTra.Exam.find(o => o.classID == id);
         if (linkData && linkData.studentIDs && linkData.studentIDs.length > 0) {
             return [{
-                text: linkData.tyleThamGia.toFixed(1)+"%",
+                text: linkData.tyleThamGia.toFixed(1) + "%",
                 style: 'text-align: center'
             },
             {
@@ -576,7 +675,7 @@ export default class extends Vue {
         const linkData = store.state.LuyenTap.TuLuyen.find(o => o.id == id);
         if (linkData && linkData.hstg && linkData.hstg.length > 0 && linkData.qtt > 0) {
             return [{
-                text: ((linkData.hstg.length/linkData.siso)*100).toFixed(1)+"%",
+                text: ((linkData.hstg.length / linkData.siso) * 100).toFixed(1) + "%",
                 style: 'text-align: center'
             },
             {
@@ -593,14 +692,83 @@ export default class extends Vue {
             style: 'border-right: 1px solid #000000; text-align: center'
         }];
     }
+    public getAllTongHop() {
+        console.log("getAllTongHop")
+        // if (store.state.Type == 2) {
+
+        // }
+
+
+        return [{
+            text: "---",
+            style: 'text-align: center'
+        },
+        {
+            text: "---",
+            style: 'border-right: 1px solid #000000; text-align: center'
+        }];
+    }
+    public getAllLink() {
+        console.log("getAllLink")
+        return [{
+            text: "---",
+            style: 'text-align: center'
+        },
+        {
+            text: "---",
+            style: 'border-right: 1px solid #000000; text-align: center'
+        }];
+    }
+    public getAllLuyenTap() {
+        console.log("getAllLuyenTap")
+        return [{
+            text: "---",
+            style: 'text-align: center'
+        },
+        {
+            text: "---",
+            style: 'border-right: 1px solid #000000; text-align: center'
+        }];
+    }
+    public getAllTuLuyen() {
+        console.log("getAllTuLuyen")
+        return [{
+            text: "---",
+            style: 'text-align: center'
+        },
+        {
+            text: "---",
+            style: 'border-right: 1px solid #000000; text-align: center'
+        }];
+    }
+    public getAllKiemTra() {
+        console.log("getAllKiemTra")
+        return [{
+            text: "---",
+            style: 'text-align: center'
+        },
+        {
+            text: "---",
+            style: 'border-right: 1px solid #000000; text-align: center'
+        }];
+    }
+    public getAllKhaoThi() {
+        console.log("getAllKhaoThi")
+        return [{
+            text: "---",
+            style: 'text-align: center'
+        },
+        {
+            text: "---",
+            style: 'border-right: 1px solid #000000; text-align: center'
+        }];
+    }
 
 }
 
 </script>
 
-<style>
-.table-report-table th{
+<style>.table-report-table th {
     text-align: center;
     vertical-align: middle;
-}
-</style>
+}</style>
