@@ -53,7 +53,7 @@
                                 :colspan="$store.state.Type == 2 ? '2' : '3'">Bài kiểm tra trên khảo thí</th>
                         </template>
                     </tr>
-                    <tr>
+                    <tr v-if="$store.state.View == 1 || $store.state.View == 3 || $store.state.View == 2">
                         <!--  luyện tập -->
                         <template v-if="$store.state.View == 1 || $store.state.View == 3">
                             <th>{{ $store.state.Type == 2 ? 'Tỷ lệ hoàn thành' : 'Tỷ lệ làm bài' }}</th>
@@ -76,12 +76,6 @@
                             <th style="border-right: 1px solid #000000;">{{ $store.state.Type == 2 ? 'Thời gian làm bài TB'
                                 : 'Thời gian LT TB' }}</th>
                         </template>
-                        <!-- <template v-if="">
-                            <th>Điểm TB</th>
-                            <th style="border-right: 1px solid #000000;">Thời gian làm bài TB</th>
-                            <th>Điểm TB</th>
-                            <th style="border-right: 1px solid #000000;">Thời gian làm bài TB</th>
-                        </template> -->
                     </tr>
                 </thead>
                 <tbody>
@@ -115,39 +109,10 @@
                         <template v-if="$store.state.View == 2 || $store.state.View == 3">
                             <td v-for="(td, k) in getKhaoThi(item.id)" :key="'kt' + k" :style="td.style">{{ td.text }}</td>
                         </template>
-
                     </tr>
-                    <tr style="border: 1px solid #000000; position: sticky; z-index: 2; bottom: 0;">
-                        <td style="border-left: 1px solid #000000; border-right:1px solid #000000;" colspan="2">Tổng kết
-                        </td>
-                        <!-- <td style="border-right: 1px solid #000000; text-align: left;">{{ item.name }}</td> -->
-                        <!-- tổng hợp -->
-                        <template v-if="$store.state.View == 0 || $store.state.View == 3">
-                            <td v-for="(td, k) in getAllTongHop()   " :key="'total' + k" :style="td.style">{{ td.text }}
-                            </td>
-                        </template>
-                        <!-- link -->
-                        <template v-if="$store.state.View == 1 || $store.state.View == 3">
-                            <td v-for="(td, k) in getAllLink()      " :key="'link' + k" :style="td.style">{{ td.text }}</td>
-                        </template>
-                        <!--  luyện tập -->
-                        <template v-if="$store.state.View == 1 || $store.state.View == 3">
-                            <td v-for="(td, k) in getAllLuyenTap()  " :key="'lt' + k" :style="td.style">{{ td.text }}</td>
-                        </template>
-                        <!--tự luyện -->
-                        <template v-if="$store.state.View == 1 || $store.state.View == 3">
-                            <td v-for="(td, k) in getAllTuLuyen()   " :key="'tl' + k" :style="td.style">{{ td.text }}</td>
-                        </template>
-
-                        <!-- kiểm tra -->
-                        <template v-if="$store.state.View == 2 || $store.state.View == 3">
-                            <td v-for="(td, k) in getAllKiemTra()   " :key="'bg' + k" :style="td.style">{{ td.text }}</td>
-                        </template>
-
-                        <!-- khao thi -->
-                        <template v-if="$store.state.View == 2 || $store.state.View == 3">
-                            <td v-for="(td, k) in getAllKhaoThi()   " :key="'kt' + k" :style="td.style">{{ td.text }}</td>
-                        </template>
+                    <tr>
+                        <td style="border-left: 1px solid #000000; border-right:1px solid #000000;" colspan="2">Tổng kết</td>
+                        <td v-for="(td,k) in getTongKet()" :key="'tk' + k" :style="td.style">{{ td.text }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -162,41 +127,6 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 export default class extends Vue {
     @Prop()
     type !: number;
-
-    public totalData :{
-        TongHop: {
-            HS: Number[],
-            HSHD: Number[],
-            TyLe: Number[],
-            TGHDTB: Number[]
-        },
-        LuyenTap: {
-            link: {TyLe:Number[],TGLB:Number[]},
-            Class: {TyLe:Number[],TGLB:Number[]},
-            Self: {TyLe:Number[],TGLB:Number[]}
-        },
-        KiemTra: {
-            Class: {TyLe:Number[],TGLB:Number[],DTB:Number[]},
-            Exam: {TyLe:Number[],TGLB:Number[],DTB:Number[]}
-        }
-    } = {
-        TongHop: {
-            HS: [],
-            HSHD: [],
-            TyLe: [],
-            TGHDTB:[]
-        },
-        LuyenTap: {
-            link: {TyLe:[],TGLB:[]},
-            Class: {TyLe:[],TGLB:[]},
-            Self: {TyLe:[],TGLB:[]}
-        },
-        KiemTra: {
-            Class: {TyLe:[],TGLB:[],DTB:[]},
-            Exam: {TyLe:[],TGLB:[],DTB:[]}
-        }
-    }
-
     public getListClass(id: string) {
         let data: { id: string, name: string, centerID: string, regionID: string, level: string }[] = [];
         switch (store.state.Type) {
@@ -277,6 +207,7 @@ export default class extends Vue {
 
         let dataStudens: string[] = [];
         let tghd = 0;
+        let tglt = 0, tglink = 0, tgkt = 0, tgkt2 = 0 , tgtl = 0;
         let siso = 0;
 
         const linkData = store.state.LuyenTap.Link.find(o => o.classID == id);
@@ -284,52 +215,56 @@ export default class extends Vue {
         const kiemTraData = store.state.kiemTra.Class.find(o => o.classID == id);
         const khaoThiData = store.state.kiemTra.Exam.find(o => o.classID == id);
         const tuLuyenData = store.state.LuyenTap.TuLuyen.find(o => o.id == id);
+
         // console.log("----------------------")
         if (luyenTapData) {
             siso = luyenTapData.siSo;
             tghd += luyenTapData.times;
+            tglt = luyenTapData.times;
             if (luyenTapData.studentIDs)
                 dataStudens = dataStudens.concat([], luyenTapData.studentIDs)
             // console.log(luyenTapData.studentIDs)
         }
         if (linkData) {
             tghd += linkData.times;
+            tglink = linkData.times;
             if (linkData.studentIDs)
                 dataStudens = dataStudens.concat([], linkData.studentIDs)
             // console.log(linkData.studentIDs)
         }
         if (kiemTraData) {
             tghd += kiemTraData.times;
+            tgkt = kiemTraData.times;
             if (kiemTraData.studentIDs)
                 dataStudens = dataStudens.concat([], kiemTraData.studentIDs)
             // console.log(kiemTraData.studentIDs)
         }
         if (khaoThiData) {
             tghd += khaoThiData.times;
+            tgkt2 = khaoThiData.times;
             if (khaoThiData.studentIDs)
                 dataStudens = dataStudens.concat([], khaoThiData.studentIDs)
             // console.log(khaoThiData.studentIDs)
         }
         if (tuLuyenData) {
             tghd += tuLuyenData.tgtl;
+            tgtl = tuLuyenData.tgtl;
             if (tuLuyenData.hstg)
                 dataStudens = dataStudens.concat([], tuLuyenData.hstg)
             // console.log(tuLuyenData.hstg)
         }
+
+        console.log(id,tglt, tglink, tgkt, tgkt2 , tgtl)
+
         var studentActive = Array.from(new Set(dataStudens)).filter(o => o != null && o.length > 10);
-
-        this.totalData.TongHop.HS.push(siso);
         
-
         // console.log(studentActive)
         // console.log("----------------------")
         if (studentActive.length > 0) {
             const dataStudentActive: number = ((studentActive.length / siso) * 100);
             if (dataStudentActive == Infinity) {
-
-                this.totalData.TongHop.HSHD.push(studentActive.length);
-                this.totalData.TongHop.TyLe.push(dataStudentActive);
-
+                //this.totalData.TongHop.HSHD.push(studentActive.length);
+                //this.totalData.TongHop.TyLe.push(0);
                 return [
                     {
                         text: siso,
@@ -350,6 +285,7 @@ export default class extends Vue {
                 ];
             }
             else {
+                //this.totalData.TongHop.TyLe.push(dataStudentActive)
                 return [
                     {
                         text: siso,
@@ -692,83 +628,154 @@ export default class extends Vue {
             style: 'border-right: 1px solid #000000; text-align: center'
         }];
     }
-    public getAllTongHop() {
-        console.log("getAllTongHop")
-        // if (store.state.Type == 2) {
-
-        // }
 
 
-        return [{
-            text: "---",
-            style: 'text-align: center'
-        },
-        {
-            text: "---",
-            style: 'border-right: 1px solid #000000; text-align: center'
-        }];
-    }
-    public getAllLink() {
-        console.log("getAllLink")
-        return [{
-            text: "---",
-            style: 'text-align: center'
-        },
-        {
-            text: "---",
-            style: 'border-right: 1px solid #000000; text-align: center'
-        }];
-    }
-    public getAllLuyenTap() {
-        console.log("getAllLuyenTap")
-        return [{
-            text: "---",
-            style: 'text-align: center'
-        },
-        {
-            text: "---",
-            style: 'border-right: 1px solid #000000; text-align: center'
-        }];
-    }
-    public getAllTuLuyen() {
-        console.log("getAllTuLuyen")
-        return [{
-            text: "---",
-            style: 'text-align: center'
-        },
-        {
-            text: "---",
-            style: 'border-right: 1px solid #000000; text-align: center'
-        }];
-    }
-    public getAllKiemTra() {
-        console.log("getAllKiemTra")
-        return [{
-            text: "---",
-            style: 'text-align: center'
-        },
-        {
-            text: "---",
-            style: 'border-right: 1px solid #000000; text-align: center'
-        }];
-    }
-    public getAllKhaoThi() {
-        console.log("getAllKhaoThi")
-        return [{
-            text: "---",
-            style: 'text-align: center'
-        },
-        {
-            text: "---",
-            style: 'border-right: 1px solid #000000; text-align: center'
-        }];
+    public getTongKet(){
+
+        const dataStudentLink = store.state.LuyenTap.Link.map(o=>o.studentIDs);
+        const dataStudentClass = store.state.LuyenTap.Class.map(o=>o.studentIDs);
+        const dataStudentTuLuyen = store.state.LuyenTap.TuLuyen.map(o=>o.hstg);
+        const dataStudentKiemTra = store.state.kiemTra.Class.map(o=>o.studentIDs);
+        const dataStudentKhaoThi = store.state.kiemTra.Exam.map(o=>o.studentIDs);
+
+         
+        const trueDataTimeLink      = store.state.LuyenTap.Link.map(o=>o.times).filter(o=>o > 0)  
+        const trueDataTimeClass     = store.state.LuyenTap.Class.map(o=>o.times).filter(o=>o > 0) 
+        const trueDataTimeTuLuyen   = store.state.LuyenTap.TuLuyen.map(o=>o.tgtl).filter(o=>o > 0)
+        const trueDataTimeKiemTra   = store.state.kiemTra.Class.map(o=>o.times).filter(o=>o > 0)  
+        const trueDataTimeKhaoThi   = store.state.kiemTra.Exam.map(o=>o.times).filter(o=>o > 0)   
+
+
+        const dataTimeLink      = trueDataTimeLink   .reduce((a,b)=>(a+b),0);
+        const dataTimeClass     = trueDataTimeClass  .reduce((a,b)=>(a+b),0);
+        const dataTimeTuLuyen   = trueDataTimeTuLuyen.reduce((a,b)=>(a+b),0);
+        const dataTimeKiemTra   = trueDataTimeKiemTra.reduce((a,b)=>(a+b),0);
+        const dataTimeKhaoThi   = trueDataTimeKhaoThi.reduce((a,b)=>(a+b),0);
+
+        const timeLink      = dataTimeLink > 0 ? (dataTimeLink/       trueDataTimeLink   .length) : 0;
+        const timeClass     = dataTimeClass > 0 ? (dataTimeClass/     trueDataTimeClass  .length) : 0;
+        const timeTuLuyen   = dataTimeTuLuyen > 0 ? (dataTimeTuLuyen/ trueDataTimeTuLuyen.length) : 0;
+        const timeKiemTra   = dataTimeKiemTra > 0 ? (dataTimeKiemTra/ trueDataTimeKiemTra.length) : 0;
+        const timeKhaoThi   = dataTimeKhaoThi > 0 ? (dataTimeKhaoThi/ trueDataTimeKhaoThi.length) : 0;
+        
+        console.log(dataTimeLink    + dataTimeClass   + dataTimeTuLuyen + dataTimeKiemTra + dataTimeKhaoThi);
+        console.log(trueDataTimeLink   ,trueDataTimeClass  ,trueDataTimeTuLuyen,trueDataTimeKiemTra,trueDataTimeKhaoThi);
+
+        const dataTimes = [timeLink,timeClass,timeTuLuyen,timeKiemTra,timeKhaoThi].reduce((a,b)=>a+b,0);
+
+        // console.log(dataTimes);
+
+        const listStudents = dataStudentLink.concat(dataStudentClass,dataStudentTuLuyen,dataStudentKiemTra,dataStudentKhaoThi).filter(o=> o && o.length > 0);
+        const dataActive = this.mergeArray<string[]>(listStudents,0);
+        const siso = store.state.LuyenTap.Link.map(o=>o.siSo).reduce((a,b)=>(a+b),0);
+
+        const students = Array.from(new Set(dataActive)).filter(o => o != null && o.length > 10)
+
+        const studentActive = dataActive && dataActive.length > 0 ? students.length : 0;
+        const studentTimes = dataTimes > 0 ? dataTimes.toFixed(1) : "---";
+        // console.log(data);
+        // console.log(listStudents, students);
+        return [
+                {
+                    text: siso == 0 ? "---" : siso,
+                    style: 'text-align: center'
+                },
+                {
+                    text: studentActive == 0 ? "---" : studentActive,
+                    style: 'text-align: center'
+                },
+                {
+                    text: studentActive == 0 ? "---" : ((studentActive/siso)*100).toFixed(1)+"%",
+                    style: 'text-align: center'
+                },
+                {
+                    text:studentTimes,
+                    style: 'text-align: center; border-right:1px solid #000'
+                },
+                {
+                    text: '---',
+                    style: 'text-align: center'
+                },
+                {
+                    text:timeLink > 0 ? timeLink.toFixed(1) : '---',
+                    style: 'text-align: center; border-right:1px solid #000'
+                },
+                {
+                    text: '---',
+                    style: 'text-align: center'
+                },
+                {
+                    text:timeClass > 0 ? timeClass.toFixed(1) : '---',
+                    style: 'text-align: center; border-right:1px solid #000'
+                },
+                {
+                    text: '---',
+                    style: 'text-align: center'
+                },
+                {
+                    text:timeTuLuyen > 0 ? timeTuLuyen.toFixed(1) : '---',
+                    style: 'text-align: center; border-right:1px solid #000'
+                },
+                {
+                    text: '---',
+                    style: 'text-align: center'
+                },
+                {
+                    text: '---',
+                    style: 'text-align: center'
+                },
+                {
+                    text:timeKiemTra > 0 ? timeKiemTra.toFixed(1) : '---',
+                    style: 'text-align: center; border-right:1px solid #000'
+                },
+                {
+                    text: '---',
+                    style: 'text-align: center'
+                },
+                {
+                    text: '---',
+                    style: 'text-align: center'
+                },
+                {
+                    text:timeKhaoThi > 0 ? timeKhaoThi.toFixed(1) : '---',
+                    style: 'text-align: center; border-right:1px solid #000'
+                }
+            ]
+
     }
 
+    mergeArray<T>(dataMerge:(T|null)[],isLog:number){
+        let data:T[] = [];
+        if(isLog){
+            console.log(dataMerge);
+        }
+        if(dataMerge && dataMerge.length > 0){
+            dataMerge.forEach(o=>{
+                if(o){
+                    // console.log(o,o instanceof Array);
+                    if(o instanceof Array && o.length > 0){
+                        data = data.concat(o);
+                    }
+                    if(o && typeof(o) == typeof(1)){
+                        // console.log(o)
+                        data.push(o);
+                    }
+                }
+            })
+        }
+        // console.log(data);
+        return data;
+    }
 }
 
 </script>
 
-<style>.table-report-table th {
-    text-align: center;
+<style lang="scss">
+.table-report-table {
+    th
+    {
+        text-align: center;
     vertical-align: middle;
-}</style>
+    }
+}
+</style>
