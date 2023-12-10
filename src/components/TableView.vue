@@ -79,7 +79,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(item, i) in $store.state.FilterTable" :key="i">
+                    <tr v-for="(item, i) in getDataFilter()" :key="i">
                         <td style="border-left: 1px solid #000000; border-right:1px solid #000000;">{{ (i + 1) }}</td>
                         <td style="border-right: 1px solid #000000; text-align: left;">{{ item.name }}</td>
                         <!-- tổng hợp -->
@@ -127,6 +127,20 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 export default class extends Vue {
     @Prop()
     type !: number;
+
+    public getDataFilter(){
+        let data = store.state.FilterTable.concat();
+        if(store.state.View == 1){
+            if(store.state.FilterLevel){
+                data = data.filter(o=>o.level == store.state.FilterLevel);
+            }
+            if(store.state.TeacherView && store.state.TeacherView.id.length > 10){
+                data = data.filter(o=>store.state.TeacherView.classIDs.includes(o.id));
+            }
+        }
+        return data;
+    }
+
     public getListClass(id: string) {
         let data: { id: string, name: string, centerID: string, regionID: string, level: string }[] = [];
         switch (store.state.Type) {
@@ -207,7 +221,6 @@ export default class extends Vue {
 
         let dataStudens: string[] = [];
         let tghd = 0;
-        let tglt = 0, tglink = 0, tgkt = 0, tgkt2 = 0 , tgtl = 0;
         let siso = 0;
 
         const linkData = store.state.LuyenTap.Link.find(o => o.classID == id);
@@ -219,42 +232,52 @@ export default class extends Vue {
         // console.log("----------------------")
         if (luyenTapData) {
             siso = luyenTapData.siSo;
-            tghd += luyenTapData.times;
-            tglt = luyenTapData.times;
-            if (luyenTapData.studentIDs)
-                dataStudens = dataStudens.concat([], luyenTapData.studentIDs)
+            
+            if (luyenTapData.studentIDs){
+                if(luyenTapData.studentIDs.length > 0){
+                    tghd += luyenTapData.times/luyenTapData.studentIDs.length;
+                    dataStudens = dataStudens.concat([], luyenTapData.studentIDs)
+                }
+            }
+                
             // console.log(luyenTapData.studentIDs)
         }
         if (linkData) {
-            tghd += linkData.times;
-            tglink = linkData.times;
-            if (linkData.studentIDs)
+            if (linkData.studentIDs && linkData.studentIDs.length > 0){
+                tghd += linkData.times/linkData.studentIDs.length;
                 dataStudens = dataStudens.concat([], linkData.studentIDs)
+            }
+                
             // console.log(linkData.studentIDs)
         }
         if (kiemTraData) {
-            tghd += kiemTraData.times;
-            tgkt = kiemTraData.times;
-            if (kiemTraData.studentIDs)
+           
+            if (kiemTraData.studentIDs && kiemTraData.studentIDs.length > 0){
+                tghd += kiemTraData.times/kiemTraData.studentIDs.length;
                 dataStudens = dataStudens.concat([], kiemTraData.studentIDs)
+            }
+                
             // console.log(kiemTraData.studentIDs)
         }
         if (khaoThiData) {
-            tghd += khaoThiData.times;
-            tgkt2 = khaoThiData.times;
-            if (khaoThiData.studentIDs)
-                dataStudens = dataStudens.concat([], khaoThiData.studentIDs)
+            
+            if (khaoThiData.studentIDs && khaoThiData.studentIDs.length > 0)
+            {
+            tghd += khaoThiData.times;  
+            dataStudens = dataStudens.concat([], khaoThiData.studentIDs)
+            }
             // console.log(khaoThiData.studentIDs)
         }
         if (tuLuyenData) {
-            tghd += tuLuyenData.tgtl;
-            tgtl = tuLuyenData.tgtl;
-            if (tuLuyenData.hstg)
+            
+            if (tuLuyenData.hstg && tuLuyenData.hstg.length > 0){
+                tghd += tuLuyenData.tgtl/tuLuyenData.hstg.length;
                 dataStudens = dataStudens.concat([], tuLuyenData.hstg)
+            }
+                
             // console.log(tuLuyenData.hstg)
         }
 
-        console.log(id,tglt, tglink, tgkt, tgkt2 , tgtl)
 
         var studentActive = Array.from(new Set(dataStudens)).filter(o => o != null && o.length > 10);
         
@@ -387,7 +410,7 @@ export default class extends Vue {
                 style: 'text-align: center'
             },
             {
-                text: linkData.times.toFixed(1),
+                text: (linkData.times/linkData.studentIDs.length).toFixed(1),
                 style: 'border-right: 1px solid #000000; text-align: center'
             }];
         }
@@ -445,7 +468,7 @@ export default class extends Vue {
                 style: 'text-align: center'
             },
             {
-                text: linkData.times.toFixed(1),
+                text:  (linkData.times/linkData.studentIDs.length).toFixed(1),
                 style: 'border-right: 1px solid #000000; text-align: center'
             }];
         }
@@ -508,7 +531,7 @@ export default class extends Vue {
                 style: 'text-align: center'
             },
             {
-                text: linkData.times.toFixed(1),
+                text: (linkData.times/linkData.studentIDs.length).toFixed(1),
                 style: 'border-right: 1px solid #000000; text-align: center'
             }];
         }
@@ -556,7 +579,7 @@ export default class extends Vue {
         const linkData = store.state.kiemTra.Exam.find(o => o.classID == id);
         if (linkData && linkData.studentIDs && linkData.studentIDs.length > 0) {
             return [{
-                text: linkData.tyleThamGia.toFixed(1) + "%",
+                text: (linkData.studentIDs.length*100/linkData.siSo).toFixed(1) + "%",
                 style: 'text-align: center'
             },
             {
@@ -564,7 +587,8 @@ export default class extends Vue {
                 style: 'text-align: center'
             },
             {
-                text: linkData.times.toFixed(1),
+                ///linkData.studentIDs.length
+                text: (linkData.times).toFixed(1),
                 style: 'border-right: 1px solid #000000; text-align: center'
             }];
         }
@@ -615,7 +639,7 @@ export default class extends Vue {
                 style: 'text-align: center'
             },
             {
-                text: linkData.tgtl.toFixed(1),
+                text: (linkData.tgtl/linkData.hstg.length).toFixed(1),
                 style: 'border-right: 1px solid #000000; text-align: center'
             }];
         }
@@ -631,8 +655,94 @@ export default class extends Vue {
 
 
     public getTongKet(){
+        if(store.state.Type == 2){
+            let tghd = 0;
+            const linkData = store.state.LuyenTap.Link.find(o => o.classID == store.state.FilterClass);
+            const luyenTapData = store.state.LuyenTap.Class.find(o => o.classID == store.state.FilterClass);
+            const kiemTraData = store.state.kiemTra.Class.find(o => o.classID == store.state.FilterClass);
+            const khaoThiData = store.state.kiemTra.Exam.find(o => o.classID == store.state.FilterClass);
+            const tuLuyenData = store.state.LuyenTap.TuLuyen.find(o => o.id == store.state.FilterClass);
 
-        const dataStudentLink = store.state.LuyenTap.Link.map(o=>o.studentIDs);
+            if(linkData && linkData.studentIDs && linkData.studentIDs.length > 0){
+                tghd += linkData.times/linkData.studentIDs.length;
+            }
+            if(luyenTapData && luyenTapData.studentIDs && luyenTapData.studentIDs.length > 0){
+                tghd += luyenTapData.times;
+            }
+            if(kiemTraData && kiemTraData.studentIDs && kiemTraData.studentIDs.length > 0){
+                tghd += kiemTraData.times;
+            }
+            if(khaoThiData && khaoThiData.studentIDs && khaoThiData.studentIDs.length > 0){
+                tghd += khaoThiData.times;
+            }
+            if(tuLuyenData && tuLuyenData.ds && tuLuyenData.ds.length > 0){
+                tghd += tuLuyenData.tgtl;
+            }
+
+            return [
+                // tổng hợp
+                {
+                    text: tghd > 0 ? tghd.toFixed(1) :"---",
+                    style: 'text-align: center; border-right:1px solid #000'
+                },
+                // bai link
+                {
+                    text: linkData != null && linkData.studentIDs && linkData.studentIDs.length >0 ? ((linkData.studentIDs.length/linkData.siSo)*100).toFixed(1)+"%" : "---",
+                    style: 'text-align: center'
+                },
+                {
+                    text:linkData != null && linkData.studentIDs && linkData.studentIDs.length >0 ? (linkData.times/linkData.studentIDs.length).toFixed(1) : '---',
+                    style: 'text-align: center; border-right:1px solid #000'
+                },
+                // luyện tập lớp
+                {
+                    text:luyenTapData != null && luyenTapData.studentIDs && luyenTapData.studentIDs.length >0 ? ((luyenTapData.studentIDs.length/luyenTapData.siSo)*100).toFixed(1)+"%" : "---",
+                    style: 'text-align: center'
+                },
+                {
+                    text:luyenTapData != null && luyenTapData.studentIDs && luyenTapData.studentIDs.length >0 ? (luyenTapData.times/luyenTapData.studentIDs.length).toFixed(1) : '---',
+                    style: 'text-align: center; border-right:1px solid #000'
+                },
+                //tu luyen
+                {
+                    text: tuLuyenData != null && tuLuyenData.ds && tuLuyenData.ds.length >0 ? ((tuLuyenData.ds.length/tuLuyenData.siso)*100).toFixed(1)+"%" : "---",
+                    style: 'text-align: center'
+                },
+                {
+                    text:tuLuyenData != null && tuLuyenData.ds && tuLuyenData.ds.length >0 ? tuLuyenData.tgtl.toFixed(1) : '---',
+                    style: 'text-align: center; border-right:1px solid #000'
+                },
+                // bai kiểm tra
+                {
+                    text: kiemTraData != null && kiemTraData.studentIDs && kiemTraData.studentIDs.length >0 ? ((kiemTraData.studentIDs.length/kiemTraData.siSo)*100).toFixed(1)+"%" : "---",
+                    style: 'text-align: center'
+                },
+                {
+                    text: '---',
+                    style: 'text-align: center'
+                },
+                {
+                    text:kiemTraData != null && kiemTraData.studentIDs && kiemTraData.studentIDs.length >0 ? (kiemTraData.times/kiemTraData.studentIDs.length).toFixed(1) : '---',
+                    style: 'text-align: center; border-right:1px solid #000'
+                },
+                // bai khao thi
+                {
+                    text: khaoThiData != null && khaoThiData.studentIDs && khaoThiData.studentIDs.length >0 ? ((khaoThiData.studentIDs.length/khaoThiData.siSo)*100).toFixed(1)+"%" : "---",
+                    style: 'text-align: center'
+                },
+                {
+                    text: '---',
+                    style: 'text-align: center'
+                },
+                {
+                    text:khaoThiData != null && khaoThiData.studentIDs && khaoThiData.studentIDs.length >0 ? khaoThiData.times.toFixed(1) : '---',
+                    style: 'text-align: center; border-right:1px solid #000'
+                }
+            ];
+        }
+
+        else{
+            const dataStudentLink = store.state.LuyenTap.Link.map(o=>o.studentIDs);
         const dataStudentClass = store.state.LuyenTap.Class.map(o=>o.studentIDs);
         const dataStudentTuLuyen = store.state.LuyenTap.TuLuyen.map(o=>o.hstg);
         const dataStudentKiemTra = store.state.kiemTra.Class.map(o=>o.studentIDs);
@@ -643,7 +753,30 @@ export default class extends Vue {
         const trueDataTimeClass     = store.state.LuyenTap.Class.map(o=>o.times).filter(o=>o > 0) 
         const trueDataTimeTuLuyen   = store.state.LuyenTap.TuLuyen.map(o=>o.tgtl).filter(o=>o > 0)
         const trueDataTimeKiemTra   = store.state.kiemTra.Class.map(o=>o.times).filter(o=>o > 0)  
-        const trueDataTimeKhaoThi   = store.state.kiemTra.Exam.map(o=>o.times).filter(o=>o > 0)   
+        const trueDataTimeKhaoThi   = store.state.kiemTra.Exam.map(o=>o.times*o.tyleThamGia*o.siSo/100).filter(o=>o > 0)   
+
+        const totalDataTimeLink      = store.state.LuyenTap.Link.map(o=>(o.tyleThamGia*o.siSo/100)).reduce((a,b)=>a+b,0)
+        const totalDataTimeClass     = store.state.LuyenTap.Class.map(o=>(o.tyleThamGia*o.siSo/100)).reduce((a,b)=>a+b,0)
+        const totalDataTimeTuLuyen   = store.state.LuyenTap.TuLuyen.map(o=>(o.tltg)).reduce((a,b)=>a+b,0)
+        const totalDataTimeKiemTra   = store.state.kiemTra.Class.map(o=>(o.tyleThamGia*o.siSo/100)).reduce((a,b)=>a+b,0)
+        const totalDataTimeKhaoThi   = store.state.kiemTra.Exam.map(o=>(o.tyleThamGia*o.siSo/100)).reduce((a,b)=>a+b,0)
+
+        const trueTyLeThamGiaLink      = store.state.LuyenTap.Link.map(o=>o.tyleThamGia).filter(o=>o > 0)  
+        const trueTyLeThamGiaClass     = store.state.LuyenTap.Class.map(o=>o.tyleThamGia).filter(o=>o > 0) 
+        const trueTyLeThamGiaTuLuyen   = store.state.LuyenTap.TuLuyen.map(o=>o.tltg).filter(o=>o > 0)
+        const trueTyLeThamGiaKiemTra   = store.state.kiemTra.Class.map(o=>o.tyleThamGia).filter(o=>o > 0)  
+        const trueTyLeThamGiaKhaoThi   = store.state.kiemTra.Exam.map(o=>o.tyleThamGia).filter(o=>o > 0)   
+
+       
+        
+        console.log(trueTyLeThamGiaLink   ,trueTyLeThamGiaClass  ,trueTyLeThamGiaTuLuyen,trueTyLeThamGiaKiemTra,trueTyLeThamGiaKhaoThi);
+
+
+        const listStudentActiveLink = this.mergeArray(dataStudentLink,0);
+        const listStudentActiveClass = this.mergeArray(dataStudentClass,0);
+        const listStudentActiveKhaoThi = this.mergeArray(dataStudentKhaoThi,0);
+        const listStudentActiveKiemTra = this.mergeArray(dataStudentKiemTra,0);
+        const listStudentActiveTuLuyen = this.mergeArray(dataStudentTuLuyen,0);
 
 
         const dataTimeLink      = trueDataTimeLink   .reduce((a,b)=>(a+b),0);
@@ -652,11 +785,11 @@ export default class extends Vue {
         const dataTimeKiemTra   = trueDataTimeKiemTra.reduce((a,b)=>(a+b),0);
         const dataTimeKhaoThi   = trueDataTimeKhaoThi.reduce((a,b)=>(a+b),0);
 
-        const timeLink      = dataTimeLink > 0 ? (dataTimeLink/       trueDataTimeLink   .length) : 0;
-        const timeClass     = dataTimeClass > 0 ? (dataTimeClass/     trueDataTimeClass  .length) : 0;
-        const timeTuLuyen   = dataTimeTuLuyen > 0 ? (dataTimeTuLuyen/ trueDataTimeTuLuyen.length) : 0;
-        const timeKiemTra   = dataTimeKiemTra > 0 ? (dataTimeKiemTra/ trueDataTimeKiemTra.length) : 0;
-        const timeKhaoThi   = dataTimeKhaoThi > 0 ? (dataTimeKhaoThi/ trueDataTimeKhaoThi.length) : 0;
+        const timeLink      = dataTimeLink > 0 ? (dataTimeLink/       totalDataTimeLink) : 0;
+        const timeClass     = dataTimeClass > 0 ? (dataTimeClass/     totalDataTimeClass) : 0;
+        const timeTuLuyen   = dataTimeTuLuyen > 0 ? (dataTimeTuLuyen/ totalDataTimeTuLuyen) : 0;
+        const timeKiemTra   = dataTimeKiemTra > 0 ? (dataTimeKiemTra/ totalDataTimeKiemTra) : 0;
+        const timeKhaoThi   = dataTimeKhaoThi > 0 ? (dataTimeKhaoThi/ totalDataTimeKhaoThi) : 0;
         
         console.log(dataTimeLink    + dataTimeClass   + dataTimeTuLuyen + dataTimeKiemTra + dataTimeKhaoThi);
         console.log(trueDataTimeLink   ,trueDataTimeClass  ,trueDataTimeTuLuyen,trueDataTimeKiemTra,trueDataTimeKhaoThi);
@@ -664,6 +797,7 @@ export default class extends Vue {
         const dataTimes = [timeLink,timeClass,timeTuLuyen,timeKiemTra,timeKhaoThi].reduce((a,b)=>a+b,0);
 
         // console.log(dataTimes);
+        
 
         const listStudents = dataStudentLink.concat(dataStudentClass,dataStudentTuLuyen,dataStudentKiemTra,dataStudentKhaoThi).filter(o=> o && o.length > 0);
         const dataActive = this.mergeArray<string[]>(listStudents,0);
@@ -673,9 +807,18 @@ export default class extends Vue {
 
         const studentActive = dataActive && dataActive.length > 0 ? students.length : 0;
         const studentTimes = dataTimes > 0 ? dataTimes.toFixed(1) : "---";
+
+        ///công thức tính thời gian trung bình bằng :
+        /// a  = tổng số học sinh hoạt động : 
+        /// b  = tổng thời gian * học sinh hoạt động
+        /// c  = b/a =>  thời gian trung bình của khu vực / cơ sở
+
+
+
         // console.log(data);
         // console.log(listStudents, students);
         return [
+                // tổng hợp
                 {
                     text: siso == 0 ? "---" : siso,
                     style: 'text-align: center'
@@ -692,32 +835,36 @@ export default class extends Vue {
                     text:studentTimes,
                     style: 'text-align: center; border-right:1px solid #000'
                 },
+                // bai link
                 {
-                    text: '---',
+                    text: listStudentActiveLink != null && listStudentActiveLink.length >0 ? ((listStudentActiveLink.length/siso)*100).toFixed(1)+"%" : "---",
                     style: 'text-align: center'
                 },
                 {
                     text:timeLink > 0 ? timeLink.toFixed(1) : '---',
                     style: 'text-align: center; border-right:1px solid #000'
                 },
+                // luyện tập lớp
                 {
-                    text: '---',
+                    text:listStudentActiveClass != null && listStudentActiveClass.length >0 ? ((listStudentActiveClass.length/siso)*100).toFixed(1)+"%" : "---",
                     style: 'text-align: center'
                 },
                 {
                     text:timeClass > 0 ? timeClass.toFixed(1) : '---',
                     style: 'text-align: center; border-right:1px solid #000'
                 },
+                //tu luyen
                 {
-                    text: '---',
+                    text: listStudentActiveTuLuyen != null && listStudentActiveTuLuyen.length >0 ? ((listStudentActiveTuLuyen.length/siso)*100).toFixed(1)+"%" : "---",
                     style: 'text-align: center'
                 },
                 {
                     text:timeTuLuyen > 0 ? timeTuLuyen.toFixed(1) : '---',
                     style: 'text-align: center; border-right:1px solid #000'
                 },
+                // bai kiểm tra
                 {
-                    text: '---',
+                    text: listStudentActiveKiemTra != null && listStudentActiveKiemTra.length >0 ? ((listStudentActiveKiemTra.length/siso)*100).toFixed(1)+"%" : "---",
                     style: 'text-align: center'
                 },
                 {
@@ -728,8 +875,9 @@ export default class extends Vue {
                     text:timeKiemTra > 0 ? timeKiemTra.toFixed(1) : '---',
                     style: 'text-align: center; border-right:1px solid #000'
                 },
+                // bai khao thi
                 {
-                    text: '---',
+                    text: listStudentActiveKhaoThi != null && listStudentActiveKhaoThi.length >0 ? ((listStudentActiveKhaoThi.length/siso)*100).toFixed(1)+"%" : "---",
                     style: 'text-align: center'
                 },
                 {
@@ -742,6 +890,7 @@ export default class extends Vue {
                 }
             ]
 
+        }
     }
 
     mergeArray<T>(dataMerge:(T|null)[],isLog:number){

@@ -1,5 +1,5 @@
 <template>
-    <div class="filter-item">
+    <div class="rt-filter-item">
         <label for="name">
             <slot></slot>
         </label>
@@ -83,3 +83,21 @@ export default class FilterItem extends Vue {
 </script>
 
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
+<style lang="scss">
+.multiselect{
+    min-height: 36px;
+}
+.multiselect__input, .multiselect__single{
+    margin-bottom: 2px;
+}
+.multiselect__placeholder{
+    margin-bottom: 0;
+}
+.multiselect__select{
+    height: 36px;
+}
+.multiselect__tags{
+    min-height: 36px;
+    padding: 4px 40px 0 8px;
+}
+</style>

@@ -1,9 +1,8 @@
 <template>
-    <div class="filter-item row">
-        <button class="col btn btn-tab" @click="choisData('month')">Tháng</button>
-        <button class="col btn btn-tab" @click="choisData('week')">Tuần</button>
-        <date-range-picker @toggle="toggle" @update="updateValue" @start-selection="runLimit" v-model="dateRange"
-             :auto-apply="true"></date-range-picker>
+    <div class="rt-filter-item">
+        <!-- <button class="col btn btn-tab" @click="choisData('month')">Tháng</button> -->
+        <!-- <button class="col btn btn-tab" @click="choisData('week')">Tuần</button> -->
+        <date-range-picker @toggle="toggle" @update="updateValue" @start-selection="runLimit" v-model="dateRange" :auto-apply="true"></date-range-picker>
     </div>
 </template>
 <script setup>
@@ -35,18 +34,6 @@ const dateRange = {
     endDate: now.value.last,
 }
 
-const choisData = function(value){
-    if(type.value != value){
-        type.value = value;
-        now.value = caculatorDate(new Date,type.value);
-        flagLastDate.value = now.value.last;
-        flagFirstDate.value = now.value.first;
-        dateRange.startDate =  now.value.first;
-        dateRange.endDate = now.value.last;
-    }
-    console.log(dateRange)
-}
-
 const toggle = function (data) {
     flag.value = !data;
 }
@@ -60,14 +47,6 @@ const runLimit = function (value) {
     dateRange.endDate = dateData.last;
 }
 
-
-
-// const dateFormat = function (classes, date) {
-//     if (!classes.disabled && flag.value) {
-//         classes.disabled = date.getTime() > flagLastDate.value || date.getTime() < flagFirstDate.value
-//     }
-//     return classes
-// }
 const updateValue = function (value) { emits('on-update', value); }
 
 </script>

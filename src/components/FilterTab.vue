@@ -19,7 +19,7 @@ const ChoiseValue = (item: { id: string; name: string; }) => {
 </script>
 <style lang="scss" scoped>
 .filter-tab{    
-    margin: 10px 0;
+    margin: 5px 0;
 }
 .label-tab-filter{
     display: flex;

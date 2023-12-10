@@ -1,6 +1,7 @@
 <template>
-    <div class="container-fluid">
+    <div class="container">
         <filter-table :TeacherID="teacherId" :HeadTeacher="userType" :CenterCode="centerCode"></filter-table>
+        <hr style="margin: 0 0 8px 0;"/>
         <table-view></table-view>
     </div>
 </template>

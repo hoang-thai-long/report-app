@@ -67,7 +67,7 @@ const getColor = function(td:HTMLTableCellElement|null|undefined) {
 }
 const exportExcelFromTable = function(tableid:string,name:string,start:string, end:string) {
     const table = document.getElementById(tableid);
-    const tableJson:{thead:any[],tbody:any[]} = {
+    const tableJson:{thead:{row:number,col:number,text:string,color:string}[][],tbody:{row:number,col:number,text:string,color:string}[][]} = {
         thead: [],
         tbody: []
     };

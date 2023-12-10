@@ -1,10 +1,9 @@
 <template>
-    <div class="rt-filter">
+    <div class="rt-filter mt-1">
         <div class="rt-filter-box" style="position: relative;">
             <div class="rt-filter-group">
                 <filter-date @on-update="updateDate" v-model="filterRange"></filter-date>
-            </div>
-            <div class="rt-filter-group">
+
                 <filter-item name="report-region" :multiple="false" placeholder="Chọn khu vực" :options="Regions"
                     :select-first="$store.state.CenterCode != 'eduso'" :hide-selected="false" @on-change="changeRegions"
                     @close="loadCenters"></filter-item>
@@ -17,6 +16,8 @@
 
                 <filter-item name="report-class" :multiple="false" placeholder="Chọn lớp" :options="ListClass"
                     :select-first="false" :hide-selected="false" @on-change="changeClass"></filter-item>
+                <filter-item v-if="filterCenter && !filterClass" name="report-teacher" :multiple="false" placeholder="Chọn giáo viên" :options="ListTeacher"
+                    :select-first="false" :hide-selected="false" @on-change="changeTeacher"></filter-item>
             </div>
             <filter-tab class="rt-filter-group" :data="DataReportView" @on-select="changeView" :text="'Tùy chọn báo cáo :'"
                 :name="'report-type'"></filter-tab>
@@ -66,6 +67,7 @@ const filterRegion = ref<{ id: string, name: string } | null>(null);
 const filterLevel = ref<{ id: string, name: string } | null>(null);
 
 // const Levels = computed(() => { return store.state.Levels });
+const ListTeacher = computed(() => { return store.state.ListTeachers ?? []; });
 const ListClass = computed(() => { return store.state.Class ?? []; });
 const Regions = computed(() => { return store.state.Regions ?? []; });
 const Centers = computed(() => { return store.state.Centers ?? []; });
@@ -99,6 +101,9 @@ const changeClass = function (value: { id: string, name: string, center: string,
         store.commit('SET_CLASS_FILTER', value.id);
         store.dispatch('getStudents', value.id);
     }
+}
+const changeTeacher = function(value:{id:string,name:string,classIDs:string[]}|null){
+    store.commit('SET_TEACHER_VIEW',value)
 }
 const changeView = function (value: { id: string, name: string }) {
     console.log('changeView',value);
@@ -301,6 +306,8 @@ const exportExcel = function(){
     align-items: center;
 
     .rt-filter-item {
+        display: flex;
+        margin-right: 5px;
         flex: 0 0 auto;
         padding: 0 2px;
     }

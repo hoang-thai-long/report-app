@@ -1,6 +1,6 @@
 import axios from 'axios';
 const configs = {
-    BASE_URL:"https://test_report.eduso.vn/data/",
+    BASE_URL:"https://localhost:56456/data/",
     GET_REGIONS:'GetRegions',
     GET_CENTERS:'GetCenters',
     GET_CLASS :'GetClass',
@@ -23,7 +23,7 @@ instance.interceptors.request.use((config)=>config,(error)=> Promise.reject(erro
 
 instance.interceptors.response.use((res)=> res,(err)=> Promise.reject(err));
 
-const ExportExcel = function(dataTable:{thead:any[],tbody:any[]},url:string){
+const ExportExcel = function(dataTable:{thead:{row:number,col:number,text:string,color:string}[][],tbody:{row:number,col:number,text:string,color:string}[][]},url:string){
     axios.post(url,dataTable).then((result)=>{
         if (result.status == 200) {
             const link = result.data;
