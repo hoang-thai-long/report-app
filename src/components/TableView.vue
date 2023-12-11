@@ -84,8 +84,7 @@
                         <td style="border-right: 1px solid #000000; text-align: left;">{{ item.name }}</td>
                         <!-- tổng hợp -->
                         <template v-if="$store.state.View == 0 || $store.state.View == 3">
-                            <td v-for="(td, k) in getTongHop(item.id)" :key="'total' + k" :style="td.style">{{ td.text }}
-                            </td>
+                            <td v-for="(td, k) in getTongHop(item.id)" :key="'total' + k" :style="td.style">{{ td.text }}</td>
                         </template>
                         <!-- link -->
                         <template v-if="$store.state.View == 1 || $store.state.View == 3">
@@ -121,6 +120,7 @@
 </template>
 <script lang="ts">
 import store from '@/store';
+import { typeExam, typeTuLuyen } from '@/utils/model';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 
 @Component
@@ -679,6 +679,93 @@ export default class extends Vue {
                 tghd += tuLuyenData.tgtl;
             }
 
+            return this.createViewTongKet_Student(tghd,linkData, luyenTapData, tuLuyenData, kiemTraData, khaoThiData)
+        }
+
+        else{
+            const dataStudentLink = store.state.LuyenTap.Link.map(o=>o.studentIDs);
+            const dataStudentClass = store.state.LuyenTap.Class.map(o=>o.studentIDs);
+            const dataStudentTuLuyen = store.state.LuyenTap.TuLuyen.map(o=>o.hstg);
+            const dataStudentKiemTra = store.state.kiemTra.Class.map(o=>o.studentIDs);
+            const dataStudentKhaoThi = store.state.kiemTra.Exam.map(o=>o.studentIDs);
+
+            
+            const pointDataTimeKiemTra   = store.state.kiemTra.Class.map(o=>o.points).filter(o=>o > 0) 
+            const pointDataTimeKhaoThi   = store.state.kiemTra.Exam.map(o=>o.points).filter(o=>o > 0)
+
+            
+            const trueDataTimeLink      = store.state.LuyenTap.Link.map(o=>o.times).filter(o=>o > 0)  
+            const trueDataTimeClass     = store.state.LuyenTap.Class.map(o=>o.times).filter(o=>o > 0) 
+            const trueDataTimeTuLuyen   = store.state.LuyenTap.TuLuyen.map(o=>o.tgtl).filter(o=>o > 0)
+            const trueDataTimeKiemTra   = store.state.kiemTra.Class.map(o=>o.times).filter(o=>o > 0)  
+            const trueDataTimeKhaoThi   = store.state.kiemTra.Exam.map(o=>o.times*o.tyleThamGia*o.siSo/100).filter(o=>o > 0)   
+
+            const totalDataTimeLink      = store.state.LuyenTap.Link.map(o=>(o.tyleThamGia*o.siSo/100)).reduce((a,b)=>a+b,0)
+            const totalDataTimeClass     = store.state.LuyenTap.Class.map(o=>(o.tyleThamGia*o.siSo/100)).reduce((a,b)=>a+b,0)
+            const totalDataTimeTuLuyen   = store.state.LuyenTap.TuLuyen.map(o=>(o.tltg)).reduce((a,b)=>a+b,0)
+            const totalDataTimeKiemTra   = store.state.kiemTra.Class.map(o=>(o.tyleThamGia*o.siSo/100)).reduce((a,b)=>a+b,0)
+            const totalDataTimeKhaoThi   = store.state.kiemTra.Exam.map(o=>(o.tyleThamGia*o.siSo/100)).reduce((a,b)=>a+b,0)
+
+            const listStudentActiveLink = this.mergeArray(dataStudentLink,0);
+            const listStudentActiveClass = this.mergeArray(dataStudentClass,0);
+            const listStudentActiveKhaoThi = this.mergeArray(dataStudentKhaoThi,0);
+            const listStudentActiveKiemTra = this.mergeArray(dataStudentKiemTra,0);
+            const listStudentActiveTuLuyen = this.mergeArray(dataStudentTuLuyen,0);
+
+
+            const dataTimeLink      = trueDataTimeLink   .reduce((a,b)=>(a+b),0);
+            const dataTimeClass     = trueDataTimeClass  .reduce((a,b)=>(a+b),0);
+            const dataTimeTuLuyen   = trueDataTimeTuLuyen.reduce((a,b)=>(a+b),0);
+            const dataTimeKiemTra   = trueDataTimeKiemTra.reduce((a,b)=>(a+b),0);
+            const dataTimeKhaoThi   = trueDataTimeKhaoThi.reduce((a,b)=>(a+b),0);
+
+            const timeLink      = dataTimeLink > 0 ? (dataTimeLink/       totalDataTimeLink) : 0;
+            const timeClass     = dataTimeClass > 0 ? (dataTimeClass/     totalDataTimeClass) : 0;
+            const timeTuLuyen   = dataTimeTuLuyen > 0 ? (dataTimeTuLuyen/ totalDataTimeTuLuyen) : 0;
+            const timeKiemTra   = dataTimeKiemTra > 0 ? (dataTimeKiemTra/ totalDataTimeKiemTra) : 0;
+            const timeKhaoThi   = dataTimeKhaoThi > 0 ? (dataTimeKhaoThi/ totalDataTimeKhaoThi) : 0;
+            
+            const dataTimes = [timeLink,timeClass,timeTuLuyen,timeKiemTra,timeKhaoThi].reduce((a,b)=>a+b,0);
+
+            // console.log(dataTimes);
+            
+
+            const listStudents = dataStudentLink.concat(dataStudentClass,dataStudentTuLuyen,dataStudentKiemTra,dataStudentKhaoThi).filter(o=> o && o.length > 0);
+            const dataActive = this.mergeArray<string[]>(listStudents,0);
+            const siso = store.state.LuyenTap.Link.map(o=>o.siSo).reduce((a,b)=>(a+b),0);
+
+            const students = Array.from(new Set(dataActive)).filter(o => o != null && o.length > 10)
+
+            const studentActive = dataActive && dataActive.length > 0 ? students.length : 0;
+            const studentTimes = dataTimes > 0 ? dataTimes.toFixed(1) : "---";
+
+            ///công thức tính thời gian trung bình bằng :
+            /// a  = tổng số học sinh hoạt động : 
+            /// b  = tổng thời gian * học sinh hoạt động
+            /// c  = b/a =>  thời gian trung bình của khu vực / cơ sở
+
+            return this.createViewTongKet(
+                siso,
+                studentActive,
+                studentTimes,
+                listStudentActiveLink,
+                timeLink,
+                listStudentActiveClass,
+                timeClass,
+                listStudentActiveTuLuyen,
+                timeTuLuyen,
+                listStudentActiveKiemTra,
+                timeKiemTra,
+                pointDataTimeKiemTra,
+                listStudentActiveKhaoThi,
+                timeKhaoThi,
+                pointDataTimeKhaoThi
+            );
+        }
+    }
+
+    createViewTongKet_Student(tghd:number,linkData:typeExam|undefined, luyenTapData:typeExam|undefined, tuLuyenData:typeTuLuyen|undefined, kiemTraData:typeExam|undefined, khaoThiData:typeExam|undefined){
+        if(store.state.View == 3){
             return [
                 // tổng hợp
                 {
@@ -740,84 +827,100 @@ export default class extends Vue {
                 }
             ];
         }
+        if(store.state.View == 2){
+            return [
+                // bai kiểm tra
+                {
+                    text: kiemTraData != null && kiemTraData.studentIDs && kiemTraData.studentIDs.length >0 ? ((kiemTraData.studentIDs.length/kiemTraData.siSo)*100).toFixed(1)+"%" : "---",
+                    style: 'text-align: center'
+                },
+                {
+                    text: '---',
+                    style: 'text-align: center'
+                },
+                {
+                    text:kiemTraData != null && kiemTraData.studentIDs && kiemTraData.studentIDs.length >0 ? (kiemTraData.times/kiemTraData.studentIDs.length).toFixed(1) : '---',
+                    style: 'text-align: center; border-right:1px solid #000'
+                },
+                // bai khao thi
+                {
+                    text: khaoThiData != null && khaoThiData.studentIDs && khaoThiData.studentIDs.length >0 ? ((khaoThiData.studentIDs.length/khaoThiData.siSo)*100).toFixed(1)+"%" : "---",
+                    style: 'text-align: center'
+                },
+                {
+                    text: '---',
+                    style: 'text-align: center'
+                },
+                {
+                    text:khaoThiData != null && khaoThiData.studentIDs && khaoThiData.studentIDs.length >0 ? khaoThiData.times.toFixed(1) : '---',
+                    style: 'text-align: center; border-right:1px solid #000'
+                }
+            ];
+        }
+        if(store.state.View == 1){
+            return [
+                // bai link
+                {
+                    text: linkData != null && linkData.studentIDs && linkData.studentIDs.length >0 ? ((linkData.studentIDs.length/linkData.siSo)*100).toFixed(1)+"%" : "---",
+                    style: 'text-align: center'
+                },
+                {
+                    text:linkData != null && linkData.studentIDs && linkData.studentIDs.length >0 ? (linkData.times/linkData.studentIDs.length).toFixed(1) : '---',
+                    style: 'text-align: center; border-right:1px solid #000'
+                },
+                // luyện tập lớp
+                {
+                    text:luyenTapData != null && luyenTapData.studentIDs && luyenTapData.studentIDs.length >0 ? ((luyenTapData.studentIDs.length/luyenTapData.siSo)*100).toFixed(1)+"%" : "---",
+                    style: 'text-align: center'
+                },
+                {
+                    text:luyenTapData != null && luyenTapData.studentIDs && luyenTapData.studentIDs.length >0 ? (luyenTapData.times/luyenTapData.studentIDs.length).toFixed(1) : '---',
+                    style: 'text-align: center; border-right:1px solid #000'
+                },
+                //tu luyen
+                {
+                    text: tuLuyenData != null && tuLuyenData.ds && tuLuyenData.ds.length >0 ? ((tuLuyenData.ds.length/tuLuyenData.siso)*100).toFixed(1)+"%" : "---",
+                    style: 'text-align: center'
+                },
+                {
+                    text:tuLuyenData != null && tuLuyenData.ds && tuLuyenData.ds.length >0 ? tuLuyenData.tgtl.toFixed(1) : '---',
+                    style: 'text-align: center; border-right:1px solid #000'
+                }
+            ];
+        }
+        if(store.state.View == 0){
+            return [
+                // tổng hợp
+                {
+                    text: tghd > 0 ? tghd.toFixed(1) :"---",
+                    style: 'text-align: center; border-right:1px solid #000'
+                },
+            ];
+        }
+    }
 
-        else{
-            const dataStudentLink = store.state.LuyenTap.Link.map(o=>o.studentIDs);
-        const dataStudentClass = store.state.LuyenTap.Class.map(o=>o.studentIDs);
-        const dataStudentTuLuyen = store.state.LuyenTap.TuLuyen.map(o=>o.hstg);
-        const dataStudentKiemTra = store.state.kiemTra.Class.map(o=>o.studentIDs);
-        const dataStudentKhaoThi = store.state.kiemTra.Exam.map(o=>o.studentIDs);
-
-         
-        const trueDataTimeLink      = store.state.LuyenTap.Link.map(o=>o.times).filter(o=>o > 0)  
-        const trueDataTimeClass     = store.state.LuyenTap.Class.map(o=>o.times).filter(o=>o > 0) 
-        const trueDataTimeTuLuyen   = store.state.LuyenTap.TuLuyen.map(o=>o.tgtl).filter(o=>o > 0)
-        const trueDataTimeKiemTra   = store.state.kiemTra.Class.map(o=>o.times).filter(o=>o > 0)  
-        const trueDataTimeKhaoThi   = store.state.kiemTra.Exam.map(o=>o.times*o.tyleThamGia*o.siSo/100).filter(o=>o > 0)   
-
-        const totalDataTimeLink      = store.state.LuyenTap.Link.map(o=>(o.tyleThamGia*o.siSo/100)).reduce((a,b)=>a+b,0)
-        const totalDataTimeClass     = store.state.LuyenTap.Class.map(o=>(o.tyleThamGia*o.siSo/100)).reduce((a,b)=>a+b,0)
-        const totalDataTimeTuLuyen   = store.state.LuyenTap.TuLuyen.map(o=>(o.tltg)).reduce((a,b)=>a+b,0)
-        const totalDataTimeKiemTra   = store.state.kiemTra.Class.map(o=>(o.tyleThamGia*o.siSo/100)).reduce((a,b)=>a+b,0)
-        const totalDataTimeKhaoThi   = store.state.kiemTra.Exam.map(o=>(o.tyleThamGia*o.siSo/100)).reduce((a,b)=>a+b,0)
-
-        const trueTyLeThamGiaLink      = store.state.LuyenTap.Link.map(o=>o.tyleThamGia).filter(o=>o > 0)  
-        const trueTyLeThamGiaClass     = store.state.LuyenTap.Class.map(o=>o.tyleThamGia).filter(o=>o > 0) 
-        const trueTyLeThamGiaTuLuyen   = store.state.LuyenTap.TuLuyen.map(o=>o.tltg).filter(o=>o > 0)
-        const trueTyLeThamGiaKiemTra   = store.state.kiemTra.Class.map(o=>o.tyleThamGia).filter(o=>o > 0)  
-        const trueTyLeThamGiaKhaoThi   = store.state.kiemTra.Exam.map(o=>o.tyleThamGia).filter(o=>o > 0)   
-
-       
-        
-        console.log(trueTyLeThamGiaLink   ,trueTyLeThamGiaClass  ,trueTyLeThamGiaTuLuyen,trueTyLeThamGiaKiemTra,trueTyLeThamGiaKhaoThi);
-
-
-        const listStudentActiveLink = this.mergeArray(dataStudentLink,0);
-        const listStudentActiveClass = this.mergeArray(dataStudentClass,0);
-        const listStudentActiveKhaoThi = this.mergeArray(dataStudentKhaoThi,0);
-        const listStudentActiveKiemTra = this.mergeArray(dataStudentKiemTra,0);
-        const listStudentActiveTuLuyen = this.mergeArray(dataStudentTuLuyen,0);
-
-
-        const dataTimeLink      = trueDataTimeLink   .reduce((a,b)=>(a+b),0);
-        const dataTimeClass     = trueDataTimeClass  .reduce((a,b)=>(a+b),0);
-        const dataTimeTuLuyen   = trueDataTimeTuLuyen.reduce((a,b)=>(a+b),0);
-        const dataTimeKiemTra   = trueDataTimeKiemTra.reduce((a,b)=>(a+b),0);
-        const dataTimeKhaoThi   = trueDataTimeKhaoThi.reduce((a,b)=>(a+b),0);
-
-        const timeLink      = dataTimeLink > 0 ? (dataTimeLink/       totalDataTimeLink) : 0;
-        const timeClass     = dataTimeClass > 0 ? (dataTimeClass/     totalDataTimeClass) : 0;
-        const timeTuLuyen   = dataTimeTuLuyen > 0 ? (dataTimeTuLuyen/ totalDataTimeTuLuyen) : 0;
-        const timeKiemTra   = dataTimeKiemTra > 0 ? (dataTimeKiemTra/ totalDataTimeKiemTra) : 0;
-        const timeKhaoThi   = dataTimeKhaoThi > 0 ? (dataTimeKhaoThi/ totalDataTimeKhaoThi) : 0;
-        
-        console.log(dataTimeLink    + dataTimeClass   + dataTimeTuLuyen + dataTimeKiemTra + dataTimeKhaoThi);
-        console.log(trueDataTimeLink   ,trueDataTimeClass  ,trueDataTimeTuLuyen,trueDataTimeKiemTra,trueDataTimeKhaoThi);
-
-        const dataTimes = [timeLink,timeClass,timeTuLuyen,timeKiemTra,timeKhaoThi].reduce((a,b)=>a+b,0);
-
-        // console.log(dataTimes);
-        
-
-        const listStudents = dataStudentLink.concat(dataStudentClass,dataStudentTuLuyen,dataStudentKiemTra,dataStudentKhaoThi).filter(o=> o && o.length > 0);
-        const dataActive = this.mergeArray<string[]>(listStudents,0);
-        const siso = store.state.LuyenTap.Link.map(o=>o.siSo).reduce((a,b)=>(a+b),0);
-
-        const students = Array.from(new Set(dataActive)).filter(o => o != null && o.length > 10)
-
-        const studentActive = dataActive && dataActive.length > 0 ? students.length : 0;
-        const studentTimes = dataTimes > 0 ? dataTimes.toFixed(1) : "---";
-
-        ///công thức tính thời gian trung bình bằng :
-        /// a  = tổng số học sinh hoạt động : 
-        /// b  = tổng thời gian * học sinh hoạt động
-        /// c  = b/a =>  thời gian trung bình của khu vực / cơ sở
-
-
-
-        // console.log(data);
-        // console.log(listStudents, students);
-        return [
+    createViewTongKet(
+        siso:number,
+        studentActive:number,
+        studentTimes:string,
+        listStudentActiveLink:string[][],
+        timeLink:number,
+        listStudentActiveClass:string[][],
+        timeClass:number,
+        listStudentActiveTuLuyen:string[][],
+        timeTuLuyen:number,
+        listStudentActiveKiemTra:string[][],
+        timeKiemTra:number,
+        pointDataTimeKiemTra:number[],
+        listStudentActiveKhaoThi:string[][],
+        timeKhaoThi:number,
+        pointDataTimeKhaoThi:number[]
+        ){
+        if(store.state.View == 3){
+            /**
+             * tất cả
+             */
+             return [
                 // tổng hợp
                 {
                     text: siso == 0 ? "---" : siso,
@@ -868,7 +971,7 @@ export default class extends Vue {
                     style: 'text-align: center'
                 },
                 {
-                    text: '---',
+                    text: pointDataTimeKiemTra && pointDataTimeKiemTra.length > 0 ? (pointDataTimeKiemTra.reduce((a,b)=>a+b,0)/pointDataTimeKiemTra.length).toFixed(1) : "---",
                     style: 'text-align: center'
                 },
                 {
@@ -881,7 +984,7 @@ export default class extends Vue {
                     style: 'text-align: center'
                 },
                 {
-                    text: '---',
+                    text: pointDataTimeKhaoThi && pointDataTimeKhaoThi.length > 0 ? (pointDataTimeKhaoThi.reduce((a,b)=>a+b,0)/pointDataTimeKhaoThi.length).toFixed(1) : "---",
                     style: 'text-align: center'
                 },
                 {
@@ -889,9 +992,101 @@ export default class extends Vue {
                     style: 'text-align: center; border-right:1px solid #000'
                 }
             ]
-
+        }
+        if(store.state.View == 1){
+            /**
+             * luyện tập
+             */
+             return [
+                // bai link
+                {
+                    text: listStudentActiveLink != null && listStudentActiveLink.length >0 ? ((listStudentActiveLink.length/siso)*100).toFixed(1)+"%" : "---",
+                    style: 'text-align: center'
+                },
+                {
+                    text:timeLink > 0 ? timeLink.toFixed(1) : '---',
+                    style: 'text-align: center; border-right:1px solid #000'
+                },
+                // luyện tập lớp
+                {
+                    text:listStudentActiveClass != null && listStudentActiveClass.length >0 ? ((listStudentActiveClass.length/siso)*100).toFixed(1)+"%" : "---",
+                    style: 'text-align: center'
+                },
+                {
+                    text:timeClass > 0 ? timeClass.toFixed(1) : '---',
+                    style: 'text-align: center; border-right:1px solid #000'
+                },
+                //tu luyen
+                {
+                    text: listStudentActiveTuLuyen != null && listStudentActiveTuLuyen.length >0 ? ((listStudentActiveTuLuyen.length/siso)*100).toFixed(1)+"%" : "---",
+                    style: 'text-align: center'
+                },
+                {
+                    text:timeTuLuyen > 0 ? timeTuLuyen.toFixed(1) : '---',
+                    style: 'text-align: center; border-right:1px solid #000'
+                }
+                
+            ]
+        }
+        if(store.state.View == 2){
+            /**
+             * kiểm tra
+             */
+             return [
+                // bai kiểm tra
+                {
+                    text: listStudentActiveKiemTra != null && listStudentActiveKiemTra.length >0 ? ((listStudentActiveKiemTra.length/siso)*100).toFixed(1)+"%" : "---",
+                    style: 'text-align: center'
+                },
+                {
+                    text: pointDataTimeKiemTra && pointDataTimeKiemTra.length > 0 ? (pointDataTimeKiemTra.reduce((a,b)=>a+b,0)/pointDataTimeKiemTra.length).toFixed(1) : "---",
+                    style: 'text-align: center'
+                },
+                {
+                    text:timeKiemTra > 0 ? timeKiemTra.toFixed(1) : '---',
+                    style: 'text-align: center; border-right:1px solid #000'
+                },
+                // bai khao thi
+                {
+                    text: listStudentActiveKhaoThi != null && listStudentActiveKhaoThi.length >0 ? ((listStudentActiveKhaoThi.length/siso)*100).toFixed(1)+"%" : "---",
+                    style: 'text-align: center'
+                },
+                {
+                    text: pointDataTimeKhaoThi && pointDataTimeKhaoThi.length > 0 ? (pointDataTimeKhaoThi.reduce((a,b)=>a+b,0)/pointDataTimeKhaoThi.length).toFixed(1) : "---",
+                    style: 'text-align: center'
+                },
+                {
+                    text:timeKhaoThi > 0 ? timeKhaoThi.toFixed(1) : '---',
+                    style: 'text-align: center; border-right:1px solid #000'
+                }
+            ]
+        }
+        if(store.state.View == 0){
+            /**
+             * tổng hợp
+             */
+             return [
+                // tổng hợp
+                {
+                    text: siso == 0 ? "---" : siso,
+                    style: 'text-align: center'
+                },
+                {
+                    text: studentActive == 0 ? "---" : studentActive,
+                    style: 'text-align: center'
+                },
+                {
+                    text: studentActive == 0 ? "---" : ((studentActive/siso)*100).toFixed(1)+"%",
+                    style: 'text-align: center'
+                },
+                {
+                    text:studentTimes,
+                    style: 'text-align: center; border-right:1px solid #000'
+                }
+            ]
         }
     }
+
 
     mergeArray<T>(dataMerge:(T|null)[],isLog:number){
         let data:T[] = [];

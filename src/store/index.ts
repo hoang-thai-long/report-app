@@ -1,36 +1,16 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import Helper from './helper';
+import { ITeacherView, classModel, label, typeExam, typeTuLuyen } from '@/utils/model';
 
 Vue.use(Vuex)
-interface typeExam {
-  siSo: number,
-  totalLesson: number,
-  classID: string,
-  tyleThamGia: number,
-  times: number,
-  points: number,
-  studentIDs: string[] | null,
-  details:{name:string,id:string,tyLeThamGia:number,diem:number,thoiGian:number}[]
-}
-interface typeTuLuyen {
-  id: string,
-  siso: number,
-  hstg: string[]|null,
-  tltg: number,
-  tgtl: number,
-  qtt: number,
-  ds:{name:string,id:string,questionTotal:number,timeTotal:number}[]
-}
-
-interface ITeacherView {id:string,name:string, classIDs:string[]}
 
 const LuyenTap: { Link: typeExam[], Class: typeExam[], TuLuyen: typeTuLuyen[] } = { Link: [], Class: [], TuLuyen: [] };
 const kiemTra: { Class: typeExam[], Exam: typeExam[] } = { Class: [], Exam: [] };
 const TypeDataView: { [key: string]: { id: string, name: string }[] } = {};
-const DataType :{ id: string, name: string, centerID: string, regionID: string, level:string }[] | null = [];
-const levels = [{ id: "1", name: "Khối 1" }, { id: "2", name: "Khối 2" }, { id: "3", name: "Khối 4" }, { id: "5", name: "Khối 5" }, { id: "6", name: "Khối 6" }, { id: "7", name: "Khối 8" }, { id: "9", name: "Khối 9" }, { id: "10", name: "Khối 10" }, { id: "11", name: "Khối 11" }, { id: "12", name: "Khối 12" }, { id: "0", name: "Đại học" }];
-const DataClassModel :{ id: string, name: string, centerID: string, regionID: string, level:string }[] = [];
+const DataType : classModel[] | null = [];
+const levels : label[] = [{ id: "1", name: "Khối 1" }, { id: "2", name: "Khối 2" }, { id: "3", name: "Khối 4" }, { id: "5", name: "Khối 5" }, { id: "6", name: "Khối 6" }, { id: "7", name: "Khối 8" }, { id: "9", name: "Khối 9" }, { id: "10", name: "Khối 10" }, { id: "11", name: "Khối 11" }, { id: "12", name: "Khối 12" }, { id: "0", name: "Đại học" }];
+const DataClassModel : classModel[] = [];
 
 
 

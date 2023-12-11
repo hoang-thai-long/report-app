@@ -1,6 +1,6 @@
 import axios from 'axios';
 const configs = {
-    BASE_URL:"https://localhost:56456/data/",
+    BASE_URL:"https://beta.eduso.vn:8088/data/",
     GET_REGIONS:'GetRegions',
     GET_CENTERS:'GetCenters',
     GET_CLASS :'GetClass',
