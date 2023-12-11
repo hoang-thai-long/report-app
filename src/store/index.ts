@@ -161,7 +161,6 @@ export default new Vuex.Store({
       state.kiemTra.Exam.push(data);
     },
     CLEAR_DATA(state) {
-      console.log(state);
       state.kiemTra = { Class: [], Exam: [] };
       state.LuyenTap = { Link: [], Class: [], TuLuyen: [] };
     },

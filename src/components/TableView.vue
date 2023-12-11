@@ -1,6 +1,7 @@
 
 <template>
     <div class="table-data">
+        {{ $store.state.Type }}
         <div class="table-data-box">
             <table id="report-table" class="table table-striped table-bordered table-report-table">
                 <thead style="position: sticky; top: 0px; background-color: #fff;">
@@ -130,7 +131,7 @@ export default class extends Vue {
 
     public getDataFilter(){
         let data = store.state.FilterTable.concat();
-        if(store.state.View == 1){
+        if(store.state.Type == 1){
             if(store.state.FilterLevel){
                 data = data.filter(o=>o.level == store.state.FilterLevel);
             }
@@ -683,28 +684,62 @@ export default class extends Vue {
         }
 
         else{
-            const dataStudentLink = store.state.LuyenTap.Link.map(o=>o.studentIDs);
-            const dataStudentClass = store.state.LuyenTap.Class.map(o=>o.studentIDs);
-            const dataStudentTuLuyen = store.state.LuyenTap.TuLuyen.map(o=>o.hstg);
-            const dataStudentKiemTra = store.state.kiemTra.Class.map(o=>o.studentIDs);
-            const dataStudentKhaoThi = store.state.kiemTra.Exam.map(o=>o.studentIDs);
+
+            let luyentapLink      = Array.from(store.state.LuyenTap.Link);
+            let luyentapClass     = Array.from(store.state.LuyenTap.Class);
+            let luyentapTuLuyen   = Array.from(store.state.LuyenTap.TuLuyen);
+            let kiemTraClass      = Array.from(store.state.kiemTra.Class);
+            let kiemTraExam       = Array.from(store.state.kiemTra.Exam);
+
+            if(store.state.Type == 1){
+                if(store.state.TeacherView && store.state.TeacherView.id.length > 10){
+                    luyentapLink    = luyentapLink   .filter(o=> store.state.TeacherView.classIDs.includes(o.classID))
+                    luyentapClass   = luyentapClass  .filter(o=> store.state.TeacherView.classIDs.includes(o.classID))
+                    luyentapTuLuyen = luyentapTuLuyen.filter(o=> store.state.TeacherView.classIDs.includes(o.id))
+                    kiemTraClass    = kiemTraClass   .filter(o=> store.state.TeacherView.classIDs.includes(o.classID))
+                    kiemTraExam     = kiemTraExam    .filter(o=> store.state.TeacherView.classIDs.includes(o.classID))
+                }
+                if(store.state.FilterLevel){
+                    const listClass = Array.from(store.state.Class).filter(o=>o.level == store.state.FilterLevel);
+                    if(listClass && listClass.length > 0){
+                        luyentapLink    = luyentapLink   .filter(o=> listClass.map(x=>x.id).includes(o.classID))
+                        luyentapClass   = luyentapClass  .filter(o=> listClass.map(x=>x.id).includes(o.classID))
+                        luyentapTuLuyen = luyentapTuLuyen.filter(o=> listClass.map(x=>x.id).includes(o.id))
+                        kiemTraClass    = kiemTraClass   .filter(o=> listClass.map(x=>x.id).includes(o.classID))
+                        kiemTraExam     = kiemTraExam    .filter(o=> listClass.map(x=>x.id).includes(o.classID))
+                    }
+                    else{
+                        luyentapLink    = [];
+                        luyentapClass   = [];
+                        luyentapTuLuyen = [];
+                        kiemTraClass    = [];
+                        kiemTraExam     = [];
+                    }
+                }
+            }
+
+            const dataStudentLink = luyentapLink.map(o=>o.studentIDs);
+            const dataStudentClass = luyentapClass.map(o=>o.studentIDs);
+            const dataStudentTuLuyen = luyentapTuLuyen.map(o=>o.hstg);
+            const dataStudentKiemTra = kiemTraClass.map(o=>o.studentIDs);
+            const dataStudentKhaoThi = kiemTraExam.map(o=>o.studentIDs);
 
             
-            const pointDataTimeKiemTra   = store.state.kiemTra.Class.map(o=>o.points).filter(o=>o > 0) 
-            const pointDataTimeKhaoThi   = store.state.kiemTra.Exam.map(o=>o.points).filter(o=>o > 0)
+            const pointDataTimeKiemTra   = kiemTraClass.map(o=>o.points).filter(o=>o > 0) 
+            const pointDataTimeKhaoThi   = kiemTraExam.map(o=>o.points).filter(o=>o > 0)
 
             
-            const trueDataTimeLink      = store.state.LuyenTap.Link.map(o=>o.times).filter(o=>o > 0)  
-            const trueDataTimeClass     = store.state.LuyenTap.Class.map(o=>o.times).filter(o=>o > 0) 
-            const trueDataTimeTuLuyen   = store.state.LuyenTap.TuLuyen.map(o=>o.tgtl).filter(o=>o > 0)
-            const trueDataTimeKiemTra   = store.state.kiemTra.Class.map(o=>o.times).filter(o=>o > 0)  
-            const trueDataTimeKhaoThi   = store.state.kiemTra.Exam.map(o=>o.times*o.tyleThamGia*o.siSo/100).filter(o=>o > 0)   
+            const trueDataTimeLink      = luyentapLink.map(o=>o.times).filter(o=>o > 0)  
+            const trueDataTimeClass     = luyentapClass.map(o=>o.times).filter(o=>o > 0) 
+            const trueDataTimeTuLuyen   = luyentapTuLuyen.map(o=>o.tgtl).filter(o=>o > 0)
+            const trueDataTimeKiemTra   = kiemTraClass.map(o=>o.times).filter(o=>o > 0)  
+            const trueDataTimeKhaoThi   = kiemTraExam.map(o=>o.times*o.tyleThamGia*o.siSo/100).filter(o=>o > 0)   
 
-            const totalDataTimeLink      = store.state.LuyenTap.Link.map(o=>(o.tyleThamGia*o.siSo/100)).reduce((a,b)=>a+b,0)
-            const totalDataTimeClass     = store.state.LuyenTap.Class.map(o=>(o.tyleThamGia*o.siSo/100)).reduce((a,b)=>a+b,0)
-            const totalDataTimeTuLuyen   = store.state.LuyenTap.TuLuyen.map(o=>(o.tltg)).reduce((a,b)=>a+b,0)
-            const totalDataTimeKiemTra   = store.state.kiemTra.Class.map(o=>(o.tyleThamGia*o.siSo/100)).reduce((a,b)=>a+b,0)
-            const totalDataTimeKhaoThi   = store.state.kiemTra.Exam.map(o=>(o.tyleThamGia*o.siSo/100)).reduce((a,b)=>a+b,0)
+            const totalDataTimeLink      = luyentapLink.map(o=>(o.tyleThamGia*o.siSo/100)).reduce((a,b)=>a+b,0)
+            const totalDataTimeClass     = luyentapClass.map(o=>(o.tyleThamGia*o.siSo/100)).reduce((a,b)=>a+b,0)
+            const totalDataTimeTuLuyen   = luyentapTuLuyen.map(o=>(o.tltg)).reduce((a,b)=>a+b,0)
+            const totalDataTimeKiemTra   = kiemTraClass.map(o=>(o.tyleThamGia*o.siSo/100)).reduce((a,b)=>a+b,0)
+            const totalDataTimeKhaoThi   = kiemTraExam.map(o=>(o.tyleThamGia*o.siSo/100)).reduce((a,b)=>a+b,0)
 
             const listStudentActiveLink = this.mergeArray(dataStudentLink,0);
             const listStudentActiveClass = this.mergeArray(dataStudentClass,0);
@@ -732,7 +767,7 @@ export default class extends Vue {
 
             const listStudents = dataStudentLink.concat(dataStudentClass,dataStudentTuLuyen,dataStudentKiemTra,dataStudentKhaoThi).filter(o=> o && o.length > 0);
             const dataActive = this.mergeArray<string[]>(listStudents,0);
-            const siso = store.state.LuyenTap.Link.map(o=>o.siSo).reduce((a,b)=>(a+b),0);
+            const siso = luyentapLink.map(o=>o.siSo).reduce((a,b)=>(a+b),0);
 
             const students = Array.from(new Set(dataActive)).filter(o => o != null && o.length > 10)
 

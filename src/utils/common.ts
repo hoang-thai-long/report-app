@@ -109,7 +109,7 @@ const exportExcelFromTable = function(tableid:string,name:string,start:string, e
             tableJson.tbody.push(tr);
         }
     }
-    //const urlTest = 'https://localhost:44381/ConvertTableJson?exportFunction='+name+'&datetime=' + start + '_' + end + '&className=' +"ReportTable";
+    //const url = 'https://localhost:44381/ConvertTableJson?exportFunction='+name+'&datetime=' + start + '_' + end + '&className=' +"ReportTable";
     const url = 'https://excel.eduso.vn/ConvertTableJson?exportFunction='+name+'&datetime=' + start + '_' + end + '&className=' +"ReportTable";
     return {
         data : tableJson,
