@@ -1,28 +1,27 @@
 
 <template>
     <div class="table-data">
-        {{ $store.state.Type }}
         <div class="table-data-box">
             <table id="report-table" class="table table-striped table-bordered table-report-table">
                 <thead style="position: sticky; top: 0px; background-color: #fff;">
                     <tr>
                         <th rowspan="3"
-                            style="border-left: 1px solid #000000;border-right:1px solid #000000; border-top: 1px solid #000000;">
+                            style="border-bottom: 1px solid #000000;border-left: 1px solid #000000;border-right:1px solid #000000; border-top: 1px solid #000000;">
                             STT</th>
-                        <th rowspan="3" style="border-right:1px solid #000000; border-top: 1px solid #000000;">Tên</th>
+                        <th rowspan="3" style="border-bottom: 1px solid #000000;border-right:1px solid #000000; border-top: 1px solid #000000;">Tên</th>
                         <!-- tổng hợp -->
                         <template v-if="$store.state.View == 0 || $store.state.View == 3">
-                            <th style="border-right:1px solid #000000; border-top: 1px solid #000000;"
+                            <th style="border-bottom: 1px solid #000000;border-right:1px solid #000000; border-top: 1px solid #000000;"
                                 :colspan="$store.state.Type == 2 ? '1' : '4'">Tổng hợp</th>
                         </template>
                         <!--  luyện tập -->
                         <template v-if="$store.state.View == 1 || $store.state.View == 3">
-                            <th style="border-right:1px solid #000000; border-top: 1px solid #000000;" colspan="6">Luyện tập
+                            <th style="border-bottom: 1px solid #000000;border-right:1px solid #000000; border-top: 1px solid #000000;" colspan="6">Luyện tập
                             </th>
                         </template>
                         <!-- kiểm tra -->
                         <template v-if="$store.state.View == 2 || $store.state.View == 3">
-                            <th style="border-right:1px solid #000000; border-top: 1px solid #000000;"
+                            <th style="border-bottom: 1px solid #000000;border-right:1px solid #000000; border-top: 1px solid #000000;"
                                 :colspan="$store.state.Type == 2 ? '4' : '6'">Kiểm tra</th>
                         </template>
                     </tr>
@@ -30,13 +29,13 @@
                         <!-- tổng hợp -->
                         <template v-if="$store.state.View == 0 || $store.state.View == 3">
                             <template v-if="$store.state.Type == 2">
-                                <th style="border-right: 1px solid #000000;" rowspan="2"> Tổng thời gian hoạt động </th>
+                                <th style="border-bottom: 1px solid #000000; border-top: 1px solid #000000; border-right: 1px solid #000000;" rowspan="2"> Tổng thời gian hoạt động </th>
                             </template>
                             <template v-else>
-                                <th style="border-left: 1px solid #000000;" rowspan="2">Tổng HS</th>
-                                <th rowspan="2">Số HS hoạt động</th>
-                                <th rowspan="2">Tỷ lệ</th>
-                                <th style="border-right: 1px solid #000000;" rowspan="2">Thời gian hoạt động trung bình</th>
+                                <th style="border-bottom: 1px solid #000000;" rowspan="2">Tổng HS</th>
+                                <th style="border-bottom: 1px solid #000000;" rowspan="2">Số HS hoạt động</th>
+                                <th style="border-bottom: 1px solid #000000;" rowspan="2">Tỷ lệ</th>
+                                <th style="border-bottom: 1px solid #000000; border-right: 1px solid #000000;" rowspan="2">Thời gian hoạt động trung bình</th>
                             </template>
 
                         </template>
@@ -48,33 +47,33 @@
                         </template>
                         <!-- kiểm tra -->
                         <template v-if="$store.state.View == 2 || $store.state.View == 3">
-                            <th style="border-left: 1px solid #000000; border-right: 1px solid #000000;"
+                            <th style="border-right: 1px solid #000000;"
                                 :colspan="$store.state.Type == 2 ? '2' : '3'">Bài kiểm tra trong lớp</th>
-                            <th style="border-left: 1px solid #000000; border-right: 1px solid #000000;"
+                            <th style="border-right: 1px solid #000000;"
                                 :colspan="$store.state.Type == 2 ? '2' : '3'">Bài kiểm tra trên khảo thí</th>
                         </template>
                     </tr>
                     <tr v-if="$store.state.View == 1 || $store.state.View == 3 || $store.state.View == 2">
                         <!--  luyện tập -->
                         <template v-if="$store.state.View == 1 || $store.state.View == 3">
-                            <th>{{ $store.state.Type == 2 ? 'Tỷ lệ hoàn thành' : 'Tỷ lệ làm bài' }}</th>
-                            <th style="border-right: 1px solid #000000;">{{ $store.state.Type == 2 ? 'Tổng thời gian luyện tập' : 'Thời gian LT TB' }}</th>
+                            <th style="border-bottom: 1px solid #000000; border-top: 1px solid #000000;">{{ $store.state.Type == 2 ? 'Tỷ lệ hoàn thành' : 'Tỷ lệ làm bài' }}</th>
+                            <th style="border-bottom: 1px solid #000000; border-right: 1px solid #000000; border-top: 1px solid #000000;">{{ $store.state.Type == 2 ? 'Tổng thời gian luyện tập' : 'Thời gian LT TB' }}</th>
 
-                            <th>{{ $store.state.Type == 2 ? 'Tỷ lệ hoàn thành' : 'Tỷ lệ làm bài' }}</th>
-                            <th style="border-right: 1px solid #000000;">{{ $store.state.Type == 2 ? 'Tổng thời gian luyện tập' : 'Thời gian LT TB' }}</th>
+                            <th style="border-bottom: 1px solid #000000; border-top: 1px solid #000000;">{{ $store.state.Type == 2 ? 'Tỷ lệ hoàn thành' : 'Tỷ lệ làm bài' }}</th>
+                            <th style="border-bottom: 1px solid #000000; border-right: 1px solid #000000; border-top: 1px solid #000000;">{{ $store.state.Type == 2 ? 'Tổng thời gian luyện tập' : 'Thời gian LT TB' }}</th>
 
-                            <th>{{ $store.state.Type == 2 ? 'Tổng số câu tự luyện' : 'Tỷ lệ làm bài' }}</th>
-                            <th style="border-right: 1px solid #000000;">{{ $store.state.Type == 2 ? 'Tổng thời gian luyện tập' : 'Thời gian LT TB' }}</th>
+                            <th style="border-bottom: 1px solid #000000; border-top: 1px solid #000000;">{{ $store.state.Type == 2 ? 'Tổng số câu tự luyện' : 'Tỷ lệ làm bài' }}</th>
+                            <th style="border-bottom: 1px solid #000000; border-right: 1px solid #000000; border-top: 1px solid #000000;">{{ $store.state.Type == 2 ? 'Tổng thời gian luyện tập' : 'Thời gian LT TB' }}</th>
                         </template>
                         <!-- kiểm tra -->
                         <template v-if="$store.state.View == 2 || $store.state.View == 3">
-                            <th v-if="$store.state.Type != 2">Tỷ lệ làm bài</th>
-                            <th>Điểm TB</th>
-                            <th style="border-right: 1px solid #000000;">{{ $store.state.Type == 2 ? 'Thời gian làm bài TB'
+                            <th style="border-top: 1px solid #000000; border-bottom: 1px solid #000000;" v-if="$store.state.Type != 2">Tỷ lệ làm bài</th>
+                            <th style="border-top: 1px solid #000000; border-bottom: 1px solid #000000;">Điểm TB</th>
+                            <th style="border-right: 1px solid #000000; border-top: 1px solid #000000; border-bottom: 1px solid #000000;">{{ $store.state.Type == 2 ? 'Thời gian làm bài TB'
                                 : 'Thời gian LT TB' }}</th>
-                            <th v-if="$store.state.Type != 2">Tỷ lệ làm bài</th>
-                            <th>Điểm TB</th>
-                            <th style="border-right: 1px solid #000000;">{{ $store.state.Type == 2 ? 'Thời gian làm bài TB'
+                            <th style="border-top: 1px solid #000000; border-bottom: 1px solid #000000;" v-if="$store.state.Type != 2">Tỷ lệ làm bài</th>
+                            <th style="border-top: 1px solid #000000; border-bottom: 1px solid #000000;">Điểm TB</th>
+                            <th style="border-right: 1px solid #000000; border-top: 1px solid #000000; border-bottom: 1px solid #000000;">{{ $store.state.Type == 2 ? 'Thời gian làm bài TB'
                                 : 'Thời gian LT TB' }}</th>
                         </template>
                     </tr>
@@ -82,7 +81,7 @@
                 <tbody>
                     <tr v-for="(item, i) in getDataFilter()" :key="i">
                         <td style="border-left: 1px solid #000000; border-right:1px solid #000000;">{{ (i + 1) }}</td>
-                        <td style="border-right: 1px solid #000000; text-align: left;">{{ item.name }}</td>
+                        <td style="border-right: 1px solid #000000; text-align: left; white-space: nowrap;">{{ item.name.replace("lớp","").replace("Lớp","").replace("LỚP","").replace("Lớp ","") }}</td>
                         <!-- tổng hợp -->
                         <template v-if="$store.state.View == 0 || $store.state.View == 3">
                             <td v-for="(td, k) in getTongHop(item.id)" :key="'total' + k" :style="td.style">{{ td.text }}</td>
@@ -110,9 +109,13 @@
                             <td v-for="(td, k) in getKhaoThi(item.id)" :key="'kt' + k" :style="td.style">{{ td.text }}</td>
                         </template>
                     </tr>
-                    <tr>
+                    <tr style="position: sticky;z-index: 10;bottom: 0px;box-shadow: 0px -6px 10px #3f51b54f;font-weight: 700;" v-if="$store.state.loadding === 0">
+                        <td style="border: 1px solid #000000;" colspan="2">Tổng kết</td>
+                        <td v-for="(td,k) in getTongKet()" :key="'tk' + k" :style="td.style" style="border-top: 1px solid #000000; border-bottom: 1px solid #000000;">{{ td.text }}</td>
+                    </tr>
+                    <tr v-else style="color: #ccc;">
                         <td style="border-left: 1px solid #000000; border-right:1px solid #000000;" colspan="2">Tổng kết</td>
-                        <td v-for="(td,k) in getTongKet()" :key="'tk' + k" :style="td.style">{{ td.text }}</td>
+                        <td v-for="(data) in getDataSeke()" :key="'loading'+data" style="border-top: 1px solid #000000; border-bottom: 1px solid #000000;"><span class="loading"></span></td>
                     </tr>
                 </tbody>
             </table>
@@ -128,6 +131,25 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 export default class extends Vue {
     @Prop()
     type !: number;
+
+    getDataSeke(){
+        if(store.state.Type == 2){
+            if(store.state.View == 0) // tỏng hợp
+            return [1];
+            if(store.state.View == 1) // tự luyện
+            return [1,2,3,4,5,6]
+            if(store.state.View == 2) // kiểm tra
+            return [1,2,3,4]
+            if(store.state.View == 3) // tất cả
+            return [1,2,3,4,5,6,7,8,9,10,11];
+        }
+        else{
+            if(store.state.View == 0) return [1,2,3,4]
+            if(store.state.View == 1) return [1,2,3,4,5,6]
+            if(store.state.View == 2) return [1,2,3,4,5,6]
+            if(store.state.View == 3) return [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
+        }
+    }
 
     public getDataFilter(){
         let data = store.state.FilterTable.concat();
@@ -827,20 +849,16 @@ export default class extends Vue {
                 },
                 //tu luyen
                 {
-                    text: tuLuyenData != null && tuLuyenData.ds && tuLuyenData.ds.length >0 ? ((tuLuyenData.ds.length/tuLuyenData.siso)*100).toFixed(1)+"%" : "---",
+                    text: tuLuyenData != null && tuLuyenData.tltg > 0 ? (tuLuyenData.tltg).toFixed(1)+"%" : "---",
                     style: 'text-align: center'
                 },
                 {
-                    text:tuLuyenData != null && tuLuyenData.ds && tuLuyenData.ds.length >0 ? tuLuyenData.tgtl.toFixed(1) : '---',
+                    text:tuLuyenData != null && tuLuyenData.tgtl >0 ? tuLuyenData.tgtl.toFixed(1) : '---',
                     style: 'text-align: center; border-right:1px solid #000'
                 },
                 // bai kiểm tra
                 {
-                    text: kiemTraData != null && kiemTraData.studentIDs && kiemTraData.studentIDs.length >0 ? ((kiemTraData.studentIDs.length/kiemTraData.siSo)*100).toFixed(1)+"%" : "---",
-                    style: 'text-align: center'
-                },
-                {
-                    text: '---',
+                    text: kiemTraData != null && kiemTraData.studentIDs && kiemTraData.studentIDs.length >0 ? kiemTraData.points.toFixed(1) : "---",
                     style: 'text-align: center'
                 },
                 {
@@ -849,11 +867,7 @@ export default class extends Vue {
                 },
                 // bai khao thi
                 {
-                    text: khaoThiData != null && khaoThiData.studentIDs && khaoThiData.studentIDs.length >0 ? ((khaoThiData.studentIDs.length/khaoThiData.siSo)*100).toFixed(1)+"%" : "---",
-                    style: 'text-align: center'
-                },
-                {
-                    text: '---',
+                    text: khaoThiData != null && khaoThiData.studentIDs && khaoThiData.studentIDs.length > 0 ? khaoThiData.points.toFixed(1) : "---",
                     style: 'text-align: center'
                 },
                 {
@@ -866,11 +880,7 @@ export default class extends Vue {
             return [
                 // bai kiểm tra
                 {
-                    text: kiemTraData != null && kiemTraData.studentIDs && kiemTraData.studentIDs.length >0 ? ((kiemTraData.studentIDs.length/kiemTraData.siSo)*100).toFixed(1)+"%" : "---",
-                    style: 'text-align: center'
-                },
-                {
-                    text: '---',
+                    text: kiemTraData != null && kiemTraData.studentIDs && kiemTraData.studentIDs.length >0 ? kiemTraData.points.toFixed(1) : "---",
                     style: 'text-align: center'
                 },
                 {
@@ -879,11 +889,7 @@ export default class extends Vue {
                 },
                 // bai khao thi
                 {
-                    text: khaoThiData != null && khaoThiData.studentIDs && khaoThiData.studentIDs.length >0 ? ((khaoThiData.studentIDs.length/khaoThiData.siSo)*100).toFixed(1)+"%" : "---",
-                    style: 'text-align: center'
-                },
-                {
-                    text: '---',
+                    text: khaoThiData != null && khaoThiData.studentIDs && khaoThiData.studentIDs.length > 0 ? khaoThiData.points.toFixed(1) : "---",
                     style: 'text-align: center'
                 },
                 {
@@ -1151,10 +1157,27 @@ export default class extends Vue {
 
 <style lang="scss">
 .table-report-table {
+    border-collapse: separate;
+    border-spacing: 0;
     th
     {
         text-align: center;
-    vertical-align: middle;
+        vertical-align: middle;
     }
+}
+@keyframes shine {
+  to {
+    background-position-x: -200%;
+  }
+}
+.loading {
+    display: block;
+    background: #eee;
+    background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
+    border-radius: 5px;
+    background-size: 200% 100%;
+    animation: 1.5s shine linear infinite;
+    width: 90%;
+    height: 20px;
 }
 </style>

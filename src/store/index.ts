@@ -38,7 +38,8 @@ export default new Vuex.Store({
     Centers: DataType,
     Class: DataType,
     Students: DataType,
-    Levels: levels
+    Levels: levels,
+    loadding:0,
   },
   getters: {
     getRegions(state) {
@@ -178,6 +179,12 @@ export default new Vuex.Store({
     },
     SET_CLASS_FILTER(state,value){
       state.FilterClass = value;
+    },
+    SET_LOADING(state,value){
+      state.loadding = value;
+    },
+    SUB_LOADING(state){
+      state.loadding--;
     }
   },
   actions: {
