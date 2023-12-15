@@ -34,7 +34,7 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { computed, onMounted, ref, defineProps } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { caculatorDate, exportExcelFromTable } from "../utils/common";
 import FilterItem from './FilterItem.vue';
 import FilterDate from './FilterDate.vue';
@@ -42,9 +42,6 @@ import store from '@/store';
 import FilterTab from './FilterTab.vue';
 import { ExportExcel } from '@/store/request';
 // import Helper from '../store/helper';
-
-
-
 
 const props = defineProps({
     CenterCode: {

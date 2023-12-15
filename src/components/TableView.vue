@@ -675,8 +675,6 @@ export default class extends Vue {
             style: 'border-right: 1px solid #000000; text-align: center'
         }];
     }
-
-
     public getTongKet(){
         if(store.state.Type == 2){
             let tghd = 0;

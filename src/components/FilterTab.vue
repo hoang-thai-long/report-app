@@ -8,7 +8,7 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { defineProps, defineEmits, ref } from 'vue';
+import { ref } from 'vue';
 const value = ref("0");
 const props = defineProps(['data','name','text'])
 const emits = defineEmits(['on-select'])
