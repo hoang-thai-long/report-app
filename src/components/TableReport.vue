@@ -4,7 +4,7 @@
         <hr style="margin: 0 0 8px 0;"/>
         <table-view></table-view>
         <hr style="margin: 0 0 8px 0;">
-        <chart-report></chart-report>
+        <chart-report :labels="['10A10','10A1']" :datasets="[{label:'SS',data:[90,100]},{label:'HSHD',data:[89,10]}]"></chart-report>
     </div>
 </template>
 <script lang="ts">

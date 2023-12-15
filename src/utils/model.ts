@@ -21,8 +21,15 @@ interface typeTuLuyen {
 }
 
 interface ITeacherView { id: string, name: string, classIDs: string[] }
-
+interface stack {
+    [key:string]:any,
+    label:string,
+    data:number[],
+    backgroundColor?:string
+  }
+  
 export {
+    stack,
     typeExam,
     typeTuLuyen,
     ITeacherView,
