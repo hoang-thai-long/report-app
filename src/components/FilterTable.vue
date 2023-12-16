@@ -21,10 +21,10 @@
             </div>
             <filter-tab class="rt-filter-group" :data="DataReportView" @on-select="changeView" :text="'Tùy chọn báo cáo :'"
                 :name="'report-type'"></filter-tab>
-            <button class="btn btn-primary" @click="applyFilter" style="position: absolute; bottom: 10px;right: 10px;">Áp
+            <button class="btn btn-primary" @click="applyFilter" :disabled="$store.state.loadding > 0" style="position: absolute; bottom: 5px;right: 10px;">Áp
                 dụng</button>
-            <button class="btn btn-primary" @click="exportExcel"
-                style="position: absolute; bottom: 10px;right: 100px;">Export</button>
+            <button class="btn btn-primary" @click="exportExcel" :disabled="$store.state.loadding > 0"
+                style="position: absolute; bottom: 5px;right: 100px;">Export</button>
         </div>
         <div class="progress-bar__container" v-if="$store.state.loadding > 0">
             <div class="progress-bar" :style="'left:'+($store.state.loadding*100/max)+'%'">

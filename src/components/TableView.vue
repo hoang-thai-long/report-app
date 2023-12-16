@@ -109,7 +109,7 @@
                             <td v-for="(td, k) in getKhaoThi(item.id)" :key="'kt' + k" :style="td.style">{{ td.text }}</td>
                         </template>
                     </tr>
-                    <tr style="position: sticky;z-index: 10;bottom: 0px;box-shadow: 0px -6px 10px #3f51b54f;font-weight: 700;" v-if="$store.state.loadding === 0">
+                    <tr style="position: sticky;z-index: 10;bottom: 0px;box-shadow: 0px -6px 10px #3f51b54f;font-weight: 700; background-color: #ffffff;" v-if="$store.state.loadding === 0">
                         <td style="border: 1px solid #000000;" colspan="2">Tổng kết</td>
                         <td v-for="(td,k) in getTongKet()" :key="'tk' + k" :style="td.style" style="border-top: 1px solid #000000; border-bottom: 1px solid #000000;">{{ td.text }}</td>
                     </tr>
@@ -125,7 +125,8 @@
 <script lang="ts">
 import store from '@/store';
 import { typeExam, typeTuLuyen } from '@/utils/model';
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+import { computed } from 'vue';
 
 @Component
 export default class extends Vue {
@@ -1149,6 +1150,16 @@ export default class extends Vue {
         // console.log(data);
         return data;
     }
+    loadding = computed(()=>store.state.loadding);
+    zero = computed(()=>0);
+    @Watch("loadding")
+    updateDataTable(){
+        if(this.loadding == this.zero){
+            const table = document.getElementById('report-table');
+            console.log(table);
+        }
+    }
+
 }
 
 </script>
