@@ -8,7 +8,7 @@ interface typeExam {
     times: number,
     points: number,
     studentIDs: string[] | null,
-    details: { name: string, id: string, tyLeThamGia: number, diem: number, thoiGian: number }[]
+    details: { name: string, id: string, tyLeThamGia: number, diem: number, thoiGian: number , points :number[]}[]
 }
 interface typeTuLuyen {
     id: string,

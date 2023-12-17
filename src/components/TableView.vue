@@ -125,8 +125,8 @@
 <script lang="ts">
 import store from '@/store';
 import { typeExam, typeTuLuyen } from '@/utils/model';
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
-import { computed } from 'vue';
+import { Component, Prop, Vue } from 'vue-property-decorator';
+// import { computed } from 'vue';
 
 @Component
 export default class extends Vue {
@@ -820,7 +820,7 @@ export default class extends Vue {
         }
     }
 
-    createViewTongKet_Student(tghd:number,linkData:typeExam|undefined, luyenTapData:typeExam|undefined, tuLuyenData:typeTuLuyen|undefined, kiemTraData:typeExam|undefined, khaoThiData:typeExam|undefined){
+    createViewTongKet_Student(tghd:number,linkData:typeExam|undefined, luyenTapData:typeExam|undefined, tuLuyenData:typeTuLuyen|undefined, kiemTraData:typeExam|undefined, khaoThiData:typeExam|undefined){    
         if(store.state.View == 3){
             return [
                 // tổng hợp
@@ -956,6 +956,37 @@ export default class extends Vue {
         timeKhaoThi:number,
         pointDataTimeKhaoThi:number[]
         ){
+
+            //tong hop
+            const Siso = siso;
+            const StudentActive = studentActive;
+            const StudentActivePercent = Siso > 0 && studentActive > 0 ? (StudentActive/siso)*100 : 0;
+            const StudentTotalTime = studentTimes;
+            // link
+            const studentActiveLink = listStudentActiveLink.length;
+            const studentActiveLinkPercent = studentActiveLink > 0 ? (studentActive/siso)*100 : 0;
+            const studentTimeLink = timeLink;
+            //luyen tap
+            const studentActiveLuyenTap = listStudentActiveClass.length;
+            const studentActiveLuyenTapPercent = studentActiveLuyenTap > 0 ? (studentActiveLuyenTap/siso)*100 :0
+            const studenTimeLuyenTap = timeClass;
+            // tu luyen
+            const studentActiveTuLuyen = listStudentActiveTuLuyen.length;
+            const studentTuLuyenPercent = studentActiveTuLuyen > 0 ? (studentActiveLuyenTap/siso)*100 : 0;
+            const studentTimeTuLuyen = timeTuLuyen;
+            //kiem tra
+            const studentActiveKiemTra = listStudentActiveKiemTra.length;
+            const studentActiveKiemTraPercent = studentActiveKiemTra > 0 ? (studentActiveKiemTra/siso)*100 : 0
+            const studentPointKiemTra = pointDataTimeKiemTra && pointDataTimeKiemTra.length > 0 ? (pointDataTimeKiemTra.reduce((a,b)=>a+b,0)/pointDataTimeKiemTra.length) : 0;
+            const studentTimeKiemTra = timeKiemTra
+            //khao thi
+            const studentActiveKhaoThi = listStudentActiveKhaoThi.length;
+            const studentActiveKhaoThiPercent = studentActiveKhaoThi > 0 ? (studentActiveKhaoThi/siso)*100 : 0
+            const studentPointKhaoThi = pointDataTimeKhaoThi && pointDataTimeKhaoThi.length > 0 ? (pointDataTimeKhaoThi.reduce((a,b)=>a+b,0)/pointDataTimeKhaoThi.length) : 0;
+            const studentTimeKhaoThi = timeKhaoThi
+
+
+
         if(store.state.View == 3){
             /**
              * tất cả
@@ -971,7 +1002,7 @@ export default class extends Vue {
                     style: 'text-align: center'
                 },
                 {
-                    text: studentActive == 0 ? "---" : ((studentActive/siso)*100).toFixed(1)+"%",
+                    text: studentActive == 0 ? "---" : StudentActivePercent.toFixed(1)+"%",
                     style: 'text-align: center'
                 },
                 {
@@ -980,7 +1011,7 @@ export default class extends Vue {
                 },
                 // bai link
                 {
-                    text: listStudentActiveLink != null && listStudentActiveLink.length >0 ? ((listStudentActiveLink.length/siso)*100).toFixed(1)+"%" : "---",
+                    text: listStudentActiveLink != null && listStudentActiveLink.length >0 ? studentActiveLinkPercent.toFixed(1)+"%" : "---",
                     style: 'text-align: center'
                 },
                 {
@@ -1116,7 +1147,7 @@ export default class extends Vue {
                     style: 'text-align: center'
                 },
                 {
-                    text: studentActive == 0 ? "---" : ((studentActive/siso)*100).toFixed(1)+"%",
+                    text: studentActive == 0 ? "---" : StudentActivePercent.toFixed(1)+"%",
                     style: 'text-align: center'
                 },
                 {
@@ -1150,16 +1181,6 @@ export default class extends Vue {
         // console.log(data);
         return data;
     }
-    loadding = computed(()=>store.state.loadding);
-    zero = computed(()=>0);
-    @Watch("loadding")
-    updateDataTable(){
-        if(this.loadding == this.zero){
-            const table = document.getElementById('report-table');
-            console.log(table);
-        }
-    }
-
 }
 
 </script>

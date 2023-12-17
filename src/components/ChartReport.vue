@@ -1,59 +1,35 @@
 <template>
   <div>
     <!-- số lượng học sinh hoạt động -->
-    <Bar id="my-chart-id" :options="chartOptions" :data="data" />
+    <canvas id="tylehocsinhhoatdong"></canvas>
     <!-- kết quả kiểm tra -->
-    <p>{{ datasets }}</p>
+    <canvas id="ketquakiemtra"></canvas>
+    <canvas id="ketquakhaothi"></canvas>
     <!-- kiểm tra trung bình, trung vị -->
-    <p>{{ labels }}</p>
+    <canvas id="trungbinhtrungvi"></canvas>
     <!-- giao bài -->
   </div>
 </template>
 <script lang="ts">
-
 import { Bar } from 'vue-chartjs'
-import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, LineElement } from 'chart.js'
+import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, LineElement, PointElement } from 'chart.js'
 
-ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, LineElement)
+ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, LineElement, PointElement)
 
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue, Watch } from "vue-property-decorator";
 import { stack } from '@/utils/model';
+import { computed } from 'vue';
+import store from '@/store';
 @Component({
-  components: { Bar },
-  props: ['labels', 'datasets']
+  props: ['labels', 'datasets'],
+  components: { Bar }
 })
 
 export default class ChartReport extends Vue {
 
+  listCharts: { [key: string]: ChartJS | null } = {};
   labels !: string[];
   datasets !: stack[];
-
-  data = {
-    labels: ["1", "2", "3", "4", "5", "6", "7"],
-    datasets: [{
-      label: 'My First Dataset',
-      data: [{x: 'Sales', y: 10}, {x: 'Revenue', y: 5},{x: 'Sales', y: 20}, {x: 'Revenue', y: 5}],
-      backgroundColor: [
-        'rgba(255, 99, 132, 0.2)',
-        'rgba(255, 159, 64, 0.2)',
-        'rgba(255, 205, 86, 0.2)',
-        'rgba(75, 192, 192, 0.2)',
-        'rgba(54, 162, 235, 0.2)',
-        'rgba(153, 102, 255, 0.2)',
-        'rgba(201, 203, 207, 0.2)'
-      ],
-      borderColor: [
-        'rgb(255, 99, 132)',
-        'rgb(255, 159, 64)',
-        'rgb(255, 205, 86)',
-        'rgb(75, 192, 192)',
-        'rgb(54, 162, 235)',
-        'rgb(153, 102, 255)',
-        'rgb(201, 203, 207)'
-      ],
-      borderWidth: 1
-    }]
-  }
 
   chartData = {
     labels: this.labels,
@@ -61,14 +37,479 @@ export default class ChartReport extends Vue {
   }
   chartOptions = {
     responsive: true,
-    scales: {
-      x: {
-        stacked: true,
-      },
-      y: {
-        stacked: true
-      }
+    // scales: {
+    //   x: {
+    //     stacked: true,
+    //   },
+    //   y: {
+    //     stacked: true
+    //   }
+    // }
+  }
+
+  loading = computed(() => store.state.loadding)
+
+
+  @Watch("loading")
+  createChart(n: number, o: number) {
+    if (n == 0 && n != o) {
+      const data = this.caculatorDataChart();
+
+      const optionsTyLe = {
+        type: 'line',
+        data: {
+          labels: data.labels,
+          datasets: data.tyleHoatDong
+        },
+        options: {
+          interaction: {
+            intersect: false,
+            mode: 'index',
+          },
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: (context: any) => {
+                  let label = context.dataset.label || '';
+
+                  if (label) {
+                    label += ': ';
+                  }
+                  if (context.parsed.y !== null) {
+                    if (context.parsed.y > 0)
+                      label += context.parsed.y.toFixed(1) + "%";
+                    else
+                      label += "---";
+                  }
+                  return label;
+                }
+              }
+            },
+            title: {
+              display: true,
+              text: 'tỷ lệ hoạt động của học sinh'
+            },
+          },
+          responsive: true,
+        }
+      };
+      const optionsKiemTra = {
+        type: 'bar',
+        data: {
+          labels: data.labels,
+          datasets: data.diemKiemTra
+        },
+        options: {
+          interaction: {
+            intersect: false,
+            mode: 'index',
+          },
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: (context: any) => {
+                  let label = context.dataset.label || '';
+
+                  if (label) {
+                    label += ': ';
+                  }
+                  if (context.parsed.y !== null) {
+                    if (context.parsed.y > 0)
+                      label += context.parsed.y.toFixed(1);
+                    else
+                      label += "---";
+                  }
+                  return label;
+                }
+              }
+            },
+            title: {
+              display: true,
+              text: 'Kết quả kiểm tra'
+            },
+          },
+          responsive: true,
+          scales: {
+            x: {
+              stacked: true,
+            },
+            y: {
+              stacked: true
+            }
+          }
+        }
+      };
+      const optionsKhaothi = {
+        type: 'bar',
+        data: {
+          labels: data.labels,
+          datasets: data.diemKhaoThi
+        },
+        options: {
+          interaction: {
+            intersect: false,
+            mode: 'index',
+          },
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: (context: any) => {
+                  let label = context.dataset.label || '';
+
+                  if (label) {
+                    label += ': ';
+                  }
+                  if (context.parsed.y !== null) {
+                    if (context.parsed.y > 0)
+                      label += context.parsed.y.toFixed(1);
+                    else
+                      label += "---";
+                  }
+                  return label;
+                }
+              }
+            },
+            title: {
+              display: true,
+              text: 'Kết quả khảo thí'
+            },
+          },
+          responsive: true,
+          scales: {
+            x: {
+              stacked: true,
+            },
+            y: {
+              stacked: true
+            }
+          }
+        }
+      };
+      const optionsTBTV = {
+        type: 'bar',
+        data: {
+          labels: data.labelsPoints,
+          datasets: data.diems
+        },
+        options: {
+          interaction: {
+            intersect: false,
+            mode: 'index',
+          },
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: (context: any) => {
+                  let label = context.dataset.label || '';
+
+                  if (label) {
+                    label += ': ';
+                  }
+                  if (context.parsed.y !== null) {
+                    if (context.parsed.y > 0)
+                      label += context.parsed.y.toFixed(1);
+                    else
+                      label += "---";
+                  }
+                  return label;
+                }
+              }
+            },
+            title: {
+              display: true,
+              text: 'Phổ điểm'
+            },
+          },
+          responsive: true,
+        }
+      };
+
+      this.createChartTyle("tylehocsinhhoatdong", optionsTyLe);
+      this.createChartTyle("ketquakiemtra", optionsKiemTra);
+      this.createChartTyle("ketquakhaothi", optionsKhaothi);
+      this.createChartTyle("trungbinhtrungvi", optionsTBTV);
+
     }
+    if (n > 0) {
+      this.listCharts["my-chart-id"]?.destroy();
+    }
+  }
+
+
+  createChartTyle(id: string, opts: any) {
+    if (this.listCharts && this.listCharts[id]) {
+      this.listCharts[id]?.destroy();
+    }
+    this.listCharts[id] = new ChartJS(id, opts)
+  }
+
+  caculatorDataChart() {
+    const arrayLabels = Array.from(store.state.FilterTable);
+    const luyentapLink = Array.from(store.state.LuyenTap.Link);
+    const luyentapClass = Array.from(store.state.LuyenTap.Class);
+    const luyentapTuLuyen = Array.from(store.state.LuyenTap.TuLuyen);
+    const kiemTraClass = Array.from(store.state.kiemTra.Class);
+    const kiemTraExam = Array.from(store.state.kiemTra.Exam);
+
+    const dataChartTotal: number[] = [];
+    const dataChartLink: number[] = [];
+    const dataChartLuyenTap: number[] = [];
+    const dataChartSelf: number[] = [];
+    const dataChartKiemTra: number[] = [];
+    const dataChartKhaoThi: number[] = [];
+
+    const dataPointKetQuaKiemTra: number[] = [];
+    const dataPointKetQuaKhaoThi: number[] = [];
+
+    const listPointKiemTra: number[][] = [];
+    const listPointKhaoThi: number[][] = [];
+
+    const allPoints :number[] = [];
+
+    const count = arrayLabels.length;
+    for (let i = 0; i < count; i++) {
+      const item = arrayLabels[i];
+      const link = luyentapLink.find(o => o.classID == item.id);
+      const luyenTap = luyentapClass.find(o => o.classID == item.id);
+      const self = luyentapTuLuyen.find(o => o.id == item.id);
+      const kiemTra = kiemTraClass.find(o => o.classID == item.id);
+      const khaoThi = kiemTraExam.find(o => o.classID == item.id);
+
+      let studentActives: string[] = [];
+      let siso = 0;
+      if (link) {
+        if (siso == 0) {
+          siso = link.siSo;
+        }
+        if (link.studentIDs && link.studentIDs.length > 0) {
+          studentActives = studentActives.concat(link.studentIDs);
+          dataChartLink.push(link.studentIDs.length * 100 / link.siSo);
+        }
+        else {
+          dataChartLink.push(0)
+        }
+      }
+      if (luyenTap) {
+        if (siso == 0) {
+          siso = luyenTap.siSo;
+        }
+        if (luyenTap.studentIDs && luyenTap.studentIDs.length > 0) {
+          studentActives = studentActives.concat(luyenTap.studentIDs);
+          dataChartLuyenTap.push(luyenTap.studentIDs.length * 100 / luyenTap.siSo);
+        }
+        else {
+          dataChartLuyenTap.push(0)
+        }
+      }
+      if (self) {
+        if (siso == 0) {
+          siso = self.siso;
+        }
+        if (self.hstg && self.hstg.length > 0) {
+          studentActives = studentActives.concat(self.hstg);
+          dataChartSelf.push(self.hstg.length * 100 / self.siso);
+        }
+        else {
+          dataChartSelf.push(0)
+        }
+      }
+      if (kiemTra) {
+        if (siso == 0) {
+          siso = kiemTra.siSo;
+        }
+        if (kiemTra.studentIDs && kiemTra.studentIDs.length > 0) {
+          studentActives = studentActives.concat(kiemTra.studentIDs);
+          dataChartKiemTra.push(kiemTra.studentIDs.length * 100 / kiemTra.siSo);
+
+          dataPointKetQuaKiemTra.push(kiemTra.points)
+          if (kiemTra.details) {
+            const pointKiemTra: number[] = [];
+            kiemTra.details.forEach(o => {
+              if (o.tyLeThamGia > 0) {
+                pointKiemTra.push(...o.points);
+                allPoints.push(...o.points);
+              }
+            })
+            if (pointKiemTra.length > 0) {
+              listPointKiemTra.push(pointKiemTra)
+            }
+          }
+          else {
+            listPointKiemTra.push([]);
+          }
+
+        }
+        else {
+          listPointKiemTra.push([]);
+          dataChartKiemTra.push(0)
+          dataPointKetQuaKiemTra.push(0)
+        }
+
+      }
+      else {
+        dataPointKetQuaKiemTra.push(0);
+      }
+      if (khaoThi) {
+        if (siso == 0) {
+          siso = khaoThi.siSo;
+        }
+        if (khaoThi.studentIDs && khaoThi.studentIDs.length > 0) {
+          studentActives = studentActives.concat(khaoThi.studentIDs);
+          dataChartKhaoThi.push(khaoThi.studentIDs.length * 100 / khaoThi.siSo);
+          dataPointKetQuaKhaoThi.push(khaoThi.points)
+
+          if (khaoThi.details) {
+            const pointKhaoThi: number[] = [];
+            khaoThi.details.forEach(o => {
+              if (o.tyLeThamGia > 0) {
+                pointKhaoThi.push(...o.points);
+                allPoints.push(...o.points);
+              }
+            })
+            if (pointKhaoThi.length > 0) {
+              listPointKhaoThi.push(pointKhaoThi)
+            }
+          }
+          else {
+            listPointKhaoThi.push([]);
+          }
+
+        }
+        else {
+          listPointKhaoThi.push([]);
+          dataChartKhaoThi.push(0)
+          dataPointKetQuaKhaoThi.push(0);
+        }
+      }
+      else {
+        dataPointKetQuaKhaoThi.push(0);
+      }
+      studentActives = Array.from(new Set(studentActives.filter(o => o && o.length > 10)));
+      dataChartTotal.push(studentActives.length * 100 / siso);
+
+    }
+    const numbers :number[] = [];
+    const labelsPoints = Array.from(new Set(allPoints)).sort((a, b)=> a-b);
+    if(labelsPoints.length > 0){
+      labelsPoints.forEach(p=>{
+        numbers.push(allPoints.filter(o=>o==p).length);
+      });
+    }
+
+    console.log(listPointKhaoThi);
+    return {
+      labelsPoints : labelsPoints.map(o=>o.toFixed(2)),
+      labels: arrayLabels.map(o => o.name),
+      diems:[
+        {
+          label:"điểm",
+          data:numbers
+        }
+      ],
+      diemKhaoThi: [
+        {
+          label: "0->3.9",
+          data: listPointKhaoThi.map(o => o.filter(x => x < 4).length),
+          borderColor: "#f3b8b1",
+          backgroundColor: "#f3b8b1"
+        },
+        {
+          label: "4->4.9",
+          data: listPointKhaoThi.map(o => o.filter(x => x >= 4 && x < 5).length),
+          borderColor: "#f3d2ac",
+          backgroundColor: "#f3d2ac"
+        },
+        {
+          label: "5->6.9",
+          data: listPointKhaoThi.map(o => o.filter(x => x >= 5 && x < 7).length),
+          borderColor: "#cae9e0",
+          backgroundColor: "#cae9e0"
+        },
+        {
+          label: "7->7.9",
+          data: listPointKhaoThi.map(o => o.filter(x => x >= 7 && x < 8).length),
+          borderColor: "#90dac5",
+          backgroundColor: "#90dac5"
+        },
+        {
+          label: "8->10",
+          data: listPointKhaoThi.map(o => o.filter(x => x >= 8).length),
+          borderColor: "#7dcbca",
+          backgroundColor: "#7dcbca"
+        }
+      ],
+      diemKiemTra: [
+        {
+          label: "0->3.9",
+          data: listPointKiemTra.map(o => o.filter(x => x < 4).length),
+          borderColor: "#f3b8b1",
+          backgroundColor: "#f3b8b1"
+        },
+        {
+          label: "4->4.9",
+          data: listPointKiemTra.map(o => o.filter(x => x >= 4 && x < 5).length),
+          borderColor: "#f3d2ac",
+          backgroundColor: "#f3d2ac"
+        },
+        {
+          label: "5->6.9",
+          data: listPointKiemTra.map(o => o.filter(x => x >= 5 && x < 7).length),
+          borderColor: "#cae9e0",
+          backgroundColor: "#cae9e0"
+        },
+        {
+          label: "7->7.9",
+          data: listPointKiemTra.map(o => o.filter(x => x >= 7 && x < 8).length),
+          borderColor: "#90dac5",
+          backgroundColor: "#90dac5"
+        },
+        {
+          label: "8->10",
+          data: listPointKiemTra.map(o => o.filter(x => x >= 8).length),
+          borderColor: "#7dcbca",
+          backgroundColor: "#7dcbca"
+        }
+      ],
+      tyleHoatDong: [
+        {
+          label: "tổng hợp",
+          data: dataChartTotal,
+          backgroundColor: "#AEB6BF",
+          borderColor: "#AEB6BF"
+        },
+        {
+          label: "Được giao qua link",
+          data: dataChartLink,
+          backgroundColor: "#EDBB99",
+          borderColor: "#EDBB99"
+        },
+        {
+          label: "Được GV giao trong lớp",
+          data: dataChartLuyenTap,
+          backgroundColor: "#F9E79F",
+          borderColor: "#F9E79F"
+        },
+        {
+          label: "Tự luyện",
+          data: dataChartSelf,
+          backgroundColor: "#ABEBC6",
+          borderColor: "#ABEBC6"
+        },
+        {
+          label: "Bài kiểm tra trong lớp",
+          data: dataChartKiemTra,
+          backgroundColor: "#AED6F1",
+          borderColor: "#AED6F1"
+        },
+        {
+          label: "Bài kiểm tra trên khảo thí",
+          data: dataChartKhaoThi,
+          backgroundColor: "#D7BDE2",
+          borderColor: "#D7BDE2"
+        }
+      ],
+    }
+
   }
 }
 
