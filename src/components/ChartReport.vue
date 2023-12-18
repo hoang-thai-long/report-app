@@ -12,7 +12,7 @@
 </template>
 <script lang="ts">
 import { Bar } from 'vue-chartjs'
-import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, LineElement, PointElement } from 'chart.js'
+import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, LineElement, PointElement, BubbleDataPoint, ChartConfiguration, ChartConfigurationCustomTypesPerDataset, ChartTypeRegistry, Point } from 'chart.js'
 
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, LineElement, PointElement)
 
@@ -51,11 +51,11 @@ export default class ChartReport extends Vue {
 
 
   @Watch("loading")
-  createChart(n: number, o: number) {
-    if (n == 0 && n != o) {
+  createChart(n: number, _o: number) {
+    if (n == 0) {
       const data = this.caculatorDataChart();
 
-      const optionsTyLe = {
+      const optionsTyLe :  ChartConfiguration<keyof ChartTypeRegistry, (number | [number, number] | Point | BubbleDataPoint | null)[], unknown> | ChartConfigurationCustomTypesPerDataset<keyof ChartTypeRegistry, (number | [number, number] | Point | BubbleDataPoint | null)[], unknown> = {
         type: 'line',
         data: {
           labels: data.labels,
@@ -69,7 +69,7 @@ export default class ChartReport extends Vue {
           plugins: {
             tooltip: {
               callbacks: {
-                label: (context: any) => {
+                label: (context) => {
                   let label = context.dataset.label || '';
 
                   if (label) {
@@ -93,7 +93,7 @@ export default class ChartReport extends Vue {
           responsive: true,
         }
       };
-      const optionsKiemTra = {
+      const optionsKiemTra :  ChartConfiguration<keyof ChartTypeRegistry, (number | [number, number] | Point | BubbleDataPoint | null)[], unknown> | ChartConfigurationCustomTypesPerDataset<keyof ChartTypeRegistry, (number | [number, number] | Point | BubbleDataPoint | null)[], unknown> = {
         type: 'bar',
         data: {
           labels: data.labels,
@@ -139,7 +139,7 @@ export default class ChartReport extends Vue {
           }
         }
       };
-      const optionsKhaothi = {
+      const optionsKhaothi :  ChartConfiguration<keyof ChartTypeRegistry, (number | [number, number] | Point | BubbleDataPoint | null)[], unknown> | ChartConfigurationCustomTypesPerDataset<keyof ChartTypeRegistry, (number | [number, number] | Point | BubbleDataPoint | null)[], unknown> = {
         type: 'bar',
         data: {
           labels: data.labels,
@@ -185,7 +185,7 @@ export default class ChartReport extends Vue {
           }
         }
       };
-      const optionsTBTV = {
+      const optionsTBTV : ChartConfiguration<keyof ChartTypeRegistry, (number | [number, number] | Point | BubbleDataPoint | null)[], unknown> | ChartConfigurationCustomTypesPerDataset<keyof ChartTypeRegistry, (number | [number, number] | Point | BubbleDataPoint | null)[], unknown> = {
         type: 'bar',
         data: {
           labels: data.labelsPoints,
@@ -236,7 +236,7 @@ export default class ChartReport extends Vue {
   }
 
 
-  createChartTyle(id: string, opts: any) {
+  createChartTyle(id: string, opts: ChartConfiguration<keyof ChartTypeRegistry, (number | [number, number] | Point | BubbleDataPoint | null)[], unknown> | ChartConfigurationCustomTypesPerDataset<keyof ChartTypeRegistry, (number | [number, number] | Point | BubbleDataPoint | null)[], unknown>) {
     if (this.listCharts && this.listCharts[id]) {
       this.listCharts[id]?.destroy();
     }

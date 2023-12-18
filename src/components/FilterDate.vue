@@ -16,9 +16,6 @@ const emits = defineEmits(['on-update'])
 const type = ref("week");
 
 
-
-
-
 const now = ref(caculatorDate(new Date,type.value));
 watch(type, (n, o) => {
     if(n != o){
