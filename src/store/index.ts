@@ -13,7 +13,6 @@ const levels: label[] = [{ id: "1", name: "Khối 1" }, { id: "2", name: "Khối
 const DataClassModel: classModel[] = [];
 
 const dataForChart : {
-  [key:string]:any,
   labels?: string[];
   xLabels?: string[];
   yLabels?: string[];

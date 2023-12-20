@@ -957,33 +957,33 @@ export default class extends Vue {
         pointDataTimeKhaoThi:number[]
         ){
 
-            //tong hop
-            const Siso = siso;
-            const StudentActive = studentActive;
-            const StudentActivePercent = Siso > 0 && studentActive > 0 ? (StudentActive/siso)*100 : 0;
-            const StudentTotalTime = studentTimes;
-            // link
-            const studentActiveLink = listStudentActiveLink.length;
-            const studentActiveLinkPercent = studentActiveLink > 0 ? (studentActive/siso)*100 : 0;
-            const studentTimeLink = timeLink;
-            //luyen tap
-            const studentActiveLuyenTap = listStudentActiveClass.length;
-            const studentActiveLuyenTapPercent = studentActiveLuyenTap > 0 ? (studentActiveLuyenTap/siso)*100 :0
-            const studenTimeLuyenTap = timeClass;
-            // tu luyen
-            const studentActiveTuLuyen = listStudentActiveTuLuyen.length;
-            const studentTuLuyenPercent = studentActiveTuLuyen > 0 ? (studentActiveLuyenTap/siso)*100 : 0;
-            const studentTimeTuLuyen = timeTuLuyen;
-            //kiem tra
-            const studentActiveKiemTra = listStudentActiveKiemTra.length;
-            const studentActiveKiemTraPercent = studentActiveKiemTra > 0 ? (studentActiveKiemTra/siso)*100 : 0
-            const studentPointKiemTra = pointDataTimeKiemTra && pointDataTimeKiemTra.length > 0 ? (pointDataTimeKiemTra.reduce((a,b)=>a+b,0)/pointDataTimeKiemTra.length) : 0;
-            const studentTimeKiemTra = timeKiemTra
-            //khao thi
-            const studentActiveKhaoThi = listStudentActiveKhaoThi.length;
-            const studentActiveKhaoThiPercent = studentActiveKhaoThi > 0 ? (studentActiveKhaoThi/siso)*100 : 0
-            const studentPointKhaoThi = pointDataTimeKhaoThi && pointDataTimeKhaoThi.length > 0 ? (pointDataTimeKhaoThi.reduce((a,b)=>a+b,0)/pointDataTimeKhaoThi.length) : 0;
-            const studentTimeKhaoThi = timeKhaoThi
+            // //tong hop
+             const Siso = siso;
+             const StudentActive = studentActive;
+             const StudentActivePercent = Siso > 0 && studentActive > 0 ? (StudentActive/siso)*100 : 0;
+            // const StudentTotalTime = studentTimes;
+            // // link
+             const studentActiveLink = listStudentActiveLink.length;
+             const studentActiveLinkPercent = studentActiveLink > 0 ? (studentActive/siso)*100 : 0;
+            // const studentTimeLink = timeLink;
+            // //luyen tap
+            // const studentActiveLuyenTap = listStudentActiveClass.length;
+            // const studentActiveLuyenTapPercent = studentActiveLuyenTap > 0 ? (studentActiveLuyenTap/siso)*100 :0
+            // const studenTimeLuyenTap = timeClass;
+            // // tu luyen
+            // const studentActiveTuLuyen = listStudentActiveTuLuyen.length;
+            // const studentTuLuyenPercent = studentActiveTuLuyen > 0 ? (studentActiveLuyenTap/siso)*100 : 0;
+            // const studentTimeTuLuyen = timeTuLuyen;
+            // //kiem tra
+            // const studentActiveKiemTra = listStudentActiveKiemTra.length;
+            // const studentActiveKiemTraPercent = studentActiveKiemTra > 0 ? (studentActiveKiemTra/siso)*100 : 0
+            // const studentPointKiemTra = pointDataTimeKiemTra && pointDataTimeKiemTra.length > 0 ? (pointDataTimeKiemTra.reduce((a,b)=>a+b,0)/pointDataTimeKiemTra.length) : 0;
+            // const studentTimeKiemTra = timeKiemTra
+            // //khao thi
+            // const studentActiveKhaoThi = listStudentActiveKhaoThi.length;
+            // const studentActiveKhaoThiPercent = studentActiveKhaoThi > 0 ? (studentActiveKhaoThi/siso)*100 : 0
+            // const studentPointKhaoThi = pointDataTimeKhaoThi && pointDataTimeKhaoThi.length > 0 ? (pointDataTimeKhaoThi.reduce((a,b)=>a+b,0)/pointDataTimeKhaoThi.length) : 0;
+            // const studentTimeKhaoThi = timeKhaoThi
 
 
 

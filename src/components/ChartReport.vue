@@ -11,8 +11,8 @@
   </div>
 </template>
 <script lang="ts">
-import { Bar } from 'vue-chartjs'
-import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, LineElement, PointElement, BubbleDataPoint, ChartConfiguration, ChartConfigurationCustomTypesPerDataset, ChartTypeRegistry, Point } from 'chart.js'
+import { Bar , Line} from 'vue-chartjs'
+import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, LineElement, PointElement, BubbleDataPoint, ChartConfiguration, ChartConfigurationCustomTypesPerDataset, ChartTypeRegistry, Point} from 'chart.js'
 
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, LineElement, PointElement)
 
@@ -22,7 +22,7 @@ import { computed } from 'vue';
 import store from '@/store';
 @Component({
   props: ['labels', 'datasets'],
-  components: { Bar }
+  components: { Bar , Line}
 })
 
 export default class ChartReport extends Vue {
@@ -52,11 +52,12 @@ export default class ChartReport extends Vue {
 
   @Watch("loading")
   createChart(n: number, _o: number) {
+    console.log(_o);
     if (n == 0) {
       const data = this.caculatorDataChart();
 
       const optionsTyLe :  ChartConfiguration<keyof ChartTypeRegistry, (number | [number, number] | Point | BubbleDataPoint | null)[], unknown> | ChartConfigurationCustomTypesPerDataset<keyof ChartTypeRegistry, (number | [number, number] | Point | BubbleDataPoint | null)[], unknown> = {
-        type: 'line',
+        type: 'bar',
         data: {
           labels: data.labels,
           datasets: data.tyleHoatDong
@@ -107,7 +108,7 @@ export default class ChartReport extends Vue {
           plugins: {
             tooltip: {
               callbacks: {
-                label: (context: any) => {
+                label: (context) => {
                   let label = context.dataset.label || '';
 
                   if (label) {
@@ -153,7 +154,7 @@ export default class ChartReport extends Vue {
           plugins: {
             tooltip: {
               callbacks: {
-                label: (context: any) => {
+                label: (context) => {
                   let label = context.dataset.label || '';
 
                   if (label) {
@@ -197,9 +198,13 @@ export default class ChartReport extends Vue {
             mode: 'index',
           },
           plugins: {
+            title : {
+                display: true,
+                text: 'Điểm trung bình: ' + data.avg + ", Trung vị: " + data.tv,
+            },
             tooltip: {
               callbacks: {
-                label: (context: any) => {
+                label: (context) => {
                   let label = context.dataset.label || '';
 
                   if (label) {
@@ -214,11 +219,7 @@ export default class ChartReport extends Vue {
                   return label;
                 }
               }
-            },
-            title: {
-              display: true,
-              text: 'Phổ điểm'
-            },
+            }
           },
           responsive: true,
         }
@@ -400,6 +401,8 @@ export default class ChartReport extends Vue {
     return {
       labelsPoints : labelsPoints.map(o=>o.toFixed(2)),
       labels: arrayLabels.map(o => o.name),
+      tv: this.trungVi(allPoints),
+      avg : this.caculatorAvg(allPoints),
       diems:[
         {
           label:"điểm",
@@ -510,6 +513,29 @@ export default class ChartReport extends Vue {
       ],
     }
 
+  }
+  trungVi(data:number[]){
+    if(data && data.length > 0){
+      data = data.sort((a,b)=> a-b);
+      if(data.length%2 == 0){
+        const index = data.length / 2;
+        const nextIndex = index+1;
+        return ((data[index]+data[nextIndex])/2).toFixed(1);
+      }
+      else{
+        const index = (data.length + 1)/2;
+        return data[index];
+      }
+    }
+    return "---";
+  }
+  caculatorAvg(data:number[]){
+    if(data && data.length > 0){
+      const avg = data.reduce((a,b)=> a+b)/data.length;
+      return Math.round(avg*10)/10;
+    }
+
+    return "---";
   }
 }
 
