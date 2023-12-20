@@ -1,12 +1,12 @@
 <template>
-  <div>
+  <div style="text-align: center;">
     <!-- số lượng học sinh hoạt động -->
-    <canvas id="tylehocsinhhoatdong"></canvas>
+    <canvas style="max-height: 400px;" id="tylehocsinhhoatdong"></canvas>
     <!-- kết quả kiểm tra -->
-    <canvas id="ketquakiemtra"></canvas>
-    <canvas id="ketquakhaothi"></canvas>
+    <canvas style="max-height: 400px;" id="ketquakiemtra"></canvas>
+    <canvas style="max-height: 400px;" id="ketquakhaothi"></canvas>
     <!-- kiểm tra trung bình, trung vị -->
-    <canvas id="trungbinhtrungvi"></canvas>
+    <canvas style="max-height: 400px;" id="trungbinhtrungvi"></canvas>
     <!-- giao bài -->
   </div>
 </template>
@@ -241,7 +241,7 @@ export default class ChartReport extends Vue {
     if (this.listCharts && this.listCharts[id]) {
       this.listCharts[id]?.destroy();
     }
-    this.listCharts[id] = new ChartJS(id, opts)
+    this.listCharts[id] = new ChartJS(id, opts);
   }
 
   caculatorDataChart() {
