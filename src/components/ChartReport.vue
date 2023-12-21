@@ -569,7 +569,7 @@ export default class ChartReport extends Vue {
       }
       else {
         const index = (data.length + 1) / 2;
-        return data[index];
+        return data[index].toFixed(1);
       }
     }
     return "---";
