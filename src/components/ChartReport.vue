@@ -1,18 +1,18 @@
 <template>
   <div style="text-align: center;">
     <!-- số lượng học sinh hoạt động -->
-    <canvas style="max-height: 400px;" id="tylehocsinhhoatdong"></canvas>
+    <canvas v-if="$store.state.Type != 2" style="max-height: 400px;" id="tylehocsinhhoatdong"></canvas>
     <!-- kết quả kiểm tra -->
-    <canvas style="max-height: 400px;" id="ketquakiemtra"></canvas>
-    <canvas style="max-height: 400px;" id="ketquakhaothi"></canvas>
+    <canvas v-if="$store.state.Type == 1" style="max-height: 400px;" id="ketquakiemtra"></canvas>
+    <canvas v-if="$store.state.Type == 1" style="max-height: 400px;" id="ketquakhaothi"></canvas>
     <!-- kiểm tra trung bình, trung vị -->
-    <canvas style="max-height: 400px;" id="trungbinhtrungvi"></canvas>
+    <canvas v-if="$store.state.Type == 1" style="max-height: 400px;" id="trungbinhtrungvi"></canvas>
     <!-- giao bài -->
   </div>
 </template>
 <script lang="ts">
-import { Bar , Line} from 'vue-chartjs'
-import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, LineElement, PointElement, BubbleDataPoint, ChartConfiguration, ChartConfigurationCustomTypesPerDataset, ChartTypeRegistry, Point} from 'chart.js'
+import { Bar, Line } from 'vue-chartjs'
+import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, LineElement, PointElement, BubbleDataPoint, ChartConfiguration, ChartConfigurationCustomTypesPerDataset, ChartTypeRegistry, Point } from 'chart.js'
 
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, LineElement, PointElement)
 
@@ -22,7 +22,7 @@ import { computed } from 'vue';
 import store from '@/store';
 @Component({
   props: ['labels', 'datasets'],
-  components: { Bar , Line}
+  components: { Bar, Line }
 })
 
 export default class ChartReport extends Vue {
@@ -52,11 +52,11 @@ export default class ChartReport extends Vue {
 
   @Watch("loading")
   createChart(n: number, _o: number) {
-    console.log(_o);
-    if (n == 0) {
+    // console.log(_o);
+    if (n == 0 && n != _o) {
       const data = this.caculatorDataChart();
 
-      const optionsTyLe :  ChartConfiguration<keyof ChartTypeRegistry, (number | [number, number] | Point | BubbleDataPoint | null)[], unknown> | ChartConfigurationCustomTypesPerDataset<keyof ChartTypeRegistry, (number | [number, number] | Point | BubbleDataPoint | null)[], unknown> = {
+      const optionsTyLe: ChartConfiguration<keyof ChartTypeRegistry, (number | [number, number] | Point | BubbleDataPoint | null)[], unknown> | ChartConfigurationCustomTypesPerDataset<keyof ChartTypeRegistry, (number | [number, number] | Point | BubbleDataPoint | null)[], unknown> = {
         type: 'bar',
         data: {
           labels: data.labels,
@@ -72,7 +72,13 @@ export default class ChartReport extends Vue {
               callbacks: {
                 label: (context) => {
                   let label = context.dataset.label || '';
-
+                  const classInfo = store.state.Class.find(o=>o.name == context.label);
+                  if(classInfo){
+                    const teacher =store.state.ListTeachers.find(o=>o.classIDs.includes(classInfo.id));
+                    if(teacher){
+                      context.label += "("+teacher.name+")" ;
+                    }
+                  }
                   if (label) {
                     label += ': ';
                   }
@@ -88,13 +94,24 @@ export default class ChartReport extends Vue {
             },
             title: {
               display: true,
-              text: 'tỷ lệ hoạt động của học sinh'
+              text: 'TỶ LỆ HOẠT ĐỘNG CỦA HỌC SINH',
+              font: {
+                family:'Be Vietnam', 
+                size:18,
+              }
             },
           },
           responsive: true,
+          scales:{
+            x:{
+              grid:{
+                color:"#000"
+              }
+            }
+          }
         }
       };
-      const optionsKiemTra :  ChartConfiguration<keyof ChartTypeRegistry, (number | [number, number] | Point | BubbleDataPoint | null)[], unknown> | ChartConfigurationCustomTypesPerDataset<keyof ChartTypeRegistry, (number | [number, number] | Point | BubbleDataPoint | null)[], unknown> = {
+      const optionsKiemTra: ChartConfiguration<keyof ChartTypeRegistry, (number | [number, number] | Point | BubbleDataPoint | null)[], unknown> | ChartConfigurationCustomTypesPerDataset<keyof ChartTypeRegistry, (number | [number, number] | Point | BubbleDataPoint | null)[], unknown> = {
         type: 'bar',
         data: {
           labels: data.labels,
@@ -126,7 +143,11 @@ export default class ChartReport extends Vue {
             },
             title: {
               display: true,
-              text: 'Kết quả kiểm tra'
+              text: 'KẾT QUẢ KIỂM TRA',
+              font: {
+                family:'Be Vietnam', 
+                size:18,
+              }
             },
           },
           responsive: true,
@@ -140,7 +161,7 @@ export default class ChartReport extends Vue {
           }
         }
       };
-      const optionsKhaothi :  ChartConfiguration<keyof ChartTypeRegistry, (number | [number, number] | Point | BubbleDataPoint | null)[], unknown> | ChartConfigurationCustomTypesPerDataset<keyof ChartTypeRegistry, (number | [number, number] | Point | BubbleDataPoint | null)[], unknown> = {
+      const optionsKhaothi: ChartConfiguration<keyof ChartTypeRegistry, (number | [number, number] | Point | BubbleDataPoint | null)[], unknown> | ChartConfigurationCustomTypesPerDataset<keyof ChartTypeRegistry, (number | [number, number] | Point | BubbleDataPoint | null)[], unknown> = {
         type: 'bar',
         data: {
           labels: data.labels,
@@ -156,7 +177,6 @@ export default class ChartReport extends Vue {
               callbacks: {
                 label: (context) => {
                   let label = context.dataset.label || '';
-
                   if (label) {
                     label += ': ';
                   }
@@ -172,7 +192,11 @@ export default class ChartReport extends Vue {
             },
             title: {
               display: true,
-              text: 'Kết quả khảo thí'
+              text: 'KẾT QUẢ KHẢO THÍ',
+              font: {
+                family:'Be Vietnam', 
+                size:18,
+              }
             },
           },
           responsive: true,
@@ -181,12 +205,12 @@ export default class ChartReport extends Vue {
               stacked: true,
             },
             y: {
-              stacked: true
+              stacked: true,
             }
           }
         }
       };
-      const optionsTBTV : ChartConfiguration<keyof ChartTypeRegistry, (number | [number, number] | Point | BubbleDataPoint | null)[], unknown> | ChartConfigurationCustomTypesPerDataset<keyof ChartTypeRegistry, (number | [number, number] | Point | BubbleDataPoint | null)[], unknown> = {
+      const optionsTBTV: ChartConfiguration<keyof ChartTypeRegistry, (number | [number, number] | Point | BubbleDataPoint | null)[], unknown> | ChartConfigurationCustomTypesPerDataset<keyof ChartTypeRegistry, (number | [number, number] | Point | BubbleDataPoint | null)[], unknown> = {
         type: 'bar',
         data: {
           labels: data.labelsPoints,
@@ -198,9 +222,13 @@ export default class ChartReport extends Vue {
             mode: 'index',
           },
           plugins: {
-            title : {
-                display: true,
-                text: 'Điểm trung bình: ' + data.avg + ", Trung vị: " + data.tv,
+            title: {
+              display: true,
+              text: 'Điểm trung bình: ' + data.avg + ", Trung vị: " + data.tv,
+              font: {
+                family:'Be Vietnam', 
+                size:18,
+              }
             },
             tooltip: {
               callbacks: {
@@ -265,9 +293,10 @@ export default class ChartReport extends Vue {
     const listPointKiemTra: number[][] = [];
     const listPointKhaoThi: number[][] = [];
 
-    const allPoints :number[] = [];
+    const allPoints: number[] = [];
 
     const count = arrayLabels.length;
+
     for (let i = 0; i < count; i++) {
       const item = arrayLabels[i];
       const link = luyentapLink.find(o => o.classID == item.id);
@@ -389,24 +418,24 @@ export default class ChartReport extends Vue {
       dataChartTotal.push(studentActives.length * 100 / siso);
 
     }
-    const numbers :number[] = [];
-    const labelsPoints = Array.from(new Set(allPoints)).sort((a, b)=> a-b);
-    if(labelsPoints.length > 0){
-      labelsPoints.forEach(p=>{
-        numbers.push(allPoints.filter(o=>o==p).length);
+    const numbers: number[] = [];
+    const labelsPoints = Array.from(new Set(allPoints)).sort((a, b) => a - b);
+    if (labelsPoints.length > 0) {
+      labelsPoints.forEach(p => {
+        numbers.push(allPoints.filter(o => o == p).length);
       });
     }
 
-    console.log(listPointKhaoThi);
+    // console.log(listPointKhaoThi);
     return {
-      labelsPoints : labelsPoints.map(o=>o.toFixed(2)),
+      labelsPoints: labelsPoints.map(o => o.toFixed(2)),
       labels: arrayLabels.map(o => o.name),
       tv: this.trungVi(allPoints),
-      avg : this.caculatorAvg(allPoints),
-      diems:[
+      avg: this.caculatorAvg(allPoints),
+      diems: [
         {
-          label:"điểm",
-          data:numbers
+          label: "điểm",
+          data: numbers
         }
       ],
       diemKhaoThi: [
@@ -414,31 +443,36 @@ export default class ChartReport extends Vue {
           label: "0->3.9",
           data: listPointKhaoThi.map(o => o.filter(x => x < 4).length),
           borderColor: "#f3b8b1",
-          backgroundColor: "#f3b8b1"
+          backgroundColor: "#f3b8b1",
+          maxBarThickness:20
         },
         {
           label: "4->4.9",
           data: listPointKhaoThi.map(o => o.filter(x => x >= 4 && x < 5).length),
           borderColor: "#f3d2ac",
-          backgroundColor: "#f3d2ac"
+          backgroundColor: "#f3d2ac",
+          maxBarThickness:20
         },
         {
           label: "5->6.9",
           data: listPointKhaoThi.map(o => o.filter(x => x >= 5 && x < 7).length),
           borderColor: "#cae9e0",
-          backgroundColor: "#cae9e0"
+          backgroundColor: "#cae9e0",
+          maxBarThickness:20
         },
         {
           label: "7->7.9",
           data: listPointKhaoThi.map(o => o.filter(x => x >= 7 && x < 8).length),
           borderColor: "#90dac5",
-          backgroundColor: "#90dac5"
+          backgroundColor: "#90dac5",
+          maxBarThickness:20
         },
         {
           label: "8->10",
           data: listPointKhaoThi.map(o => o.filter(x => x >= 8).length),
           borderColor: "#7dcbca",
-          backgroundColor: "#7dcbca"
+          backgroundColor: "#7dcbca",
+          maxBarThickness:20
         }
       ],
       diemKiemTra: [
@@ -446,31 +480,36 @@ export default class ChartReport extends Vue {
           label: "0->3.9",
           data: listPointKiemTra.map(o => o.filter(x => x < 4).length),
           borderColor: "#f3b8b1",
-          backgroundColor: "#f3b8b1"
+          backgroundColor: "#f3b8b1",
+          maxBarThickness:20
         },
         {
           label: "4->4.9",
           data: listPointKiemTra.map(o => o.filter(x => x >= 4 && x < 5).length),
           borderColor: "#f3d2ac",
-          backgroundColor: "#f3d2ac"
+          backgroundColor: "#f3d2ac",
+          maxBarThickness:20
         },
         {
           label: "5->6.9",
           data: listPointKiemTra.map(o => o.filter(x => x >= 5 && x < 7).length),
           borderColor: "#cae9e0",
-          backgroundColor: "#cae9e0"
+          backgroundColor: "#cae9e0",
+          maxBarThickness:20
         },
         {
           label: "7->7.9",
           data: listPointKiemTra.map(o => o.filter(x => x >= 7 && x < 8).length),
           borderColor: "#90dac5",
-          backgroundColor: "#90dac5"
+          backgroundColor: "#90dac5",
+          maxBarThickness:20
         },
         {
           label: "8->10",
           data: listPointKiemTra.map(o => o.filter(x => x >= 8).length),
           borderColor: "#7dcbca",
-          backgroundColor: "#7dcbca"
+          backgroundColor: "#7dcbca",
+          maxBarThickness:20
         }
       ],
       tyleHoatDong: [
@@ -478,61 +517,67 @@ export default class ChartReport extends Vue {
           label: "tổng hợp",
           data: dataChartTotal,
           backgroundColor: "#AEB6BF",
-          borderColor: "#AEB6BF"
+          borderColor: "#AEB6BF",
+          maxBarThickness:20
         },
         {
           label: "Được giao qua link",
           data: dataChartLink,
           backgroundColor: "#EDBB99",
-          borderColor: "#EDBB99"
+          borderColor: "#EDBB99",
+          maxBarThickness:20
         },
         {
           label: "Được GV giao trong lớp",
           data: dataChartLuyenTap,
           backgroundColor: "#F9E79F",
-          borderColor: "#F9E79F"
+          borderColor: "#F9E79F",
+          maxBarThickness:20
         },
         {
           label: "Tự luyện",
           data: dataChartSelf,
           backgroundColor: "#ABEBC6",
-          borderColor: "#ABEBC6"
+          borderColor: "#ABEBC6",
+          maxBarThickness:20
         },
         {
           label: "Bài kiểm tra trong lớp",
           data: dataChartKiemTra,
           backgroundColor: "#AED6F1",
-          borderColor: "#AED6F1"
+          borderColor: "#AED6F1",
+          maxBarThickness:20
         },
         {
           label: "Bài kiểm tra trên khảo thí",
           data: dataChartKhaoThi,
           backgroundColor: "#D7BDE2",
-          borderColor: "#D7BDE2"
+          borderColor: "#D7BDE2",
+          maxBarThickness:20
         }
       ],
     }
 
   }
-  trungVi(data:number[]){
-    if(data && data.length > 0){
-      data = data.sort((a,b)=> a-b);
-      if(data.length%2 == 0){
+  trungVi(data: number[]) {
+    if (data && data.length > 0) {
+      data = data.sort((a, b) => a - b);
+      if (data.length % 2 == 0) {
         const index = data.length / 2;
-        const nextIndex = index+1;
-        return ((data[index]+data[nextIndex])/2).toFixed(1);
+        const nextIndex = index + 1;
+        return ((data[index] + data[nextIndex]) / 2).toFixed(1);
       }
-      else{
-        const index = (data.length + 1)/2;
+      else {
+        const index = (data.length + 1) / 2;
         return data[index];
       }
     }
     return "---";
   }
-  caculatorAvg(data:number[]){
-    if(data && data.length > 0){
-      const avg = data.reduce((a,b)=> a+b)/data.length;
-      return Math.round(avg*10)/10;
+  caculatorAvg(data: number[]) {
+    if (data && data.length > 0) {
+      const avg = data.reduce((a, b) => a + b) / data.length;
+      return Math.round(avg * 10) / 10;
     }
 
     return "---";

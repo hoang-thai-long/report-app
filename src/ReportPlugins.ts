@@ -1,23 +1,17 @@
 import TableReport from "./components/TableReport.vue"
 import store from '@/store';
+import Vue from 'vue';
 
 const ReportPlugins =  {
-    install(vue:any,options:any){
-        if(options){
-            console.log(options);
-        }
+    install(vue: typeof Vue){
         vue.prototype.$store = store;
         vue.component('table-report',TableReport)
     }
 }
 
-const useLibrary = function(vue:any){
-    vue.use(ReportPlugins)
-}
-
 if (typeof window !== 'undefined' && window.Vue) {
     window.Vue.config.productionTip = false
-    useLibrary(window.Vue);
+    window.Vue.use(ReportPlugins);
 }
 
 export default ReportPlugins;

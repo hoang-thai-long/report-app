@@ -762,11 +762,11 @@ export default class extends Vue {
             const totalDataTimeKiemTra   = kiemTraClass.map(o=>(o.tyleThamGia*o.siSo/100)).reduce((a,b)=>a+b,0)
             const totalDataTimeKhaoThi   = kiemTraExam.map(o=>(o.tyleThamGia*o.siSo/100)).reduce((a,b)=>a+b,0)
 
-            const listStudentActiveLink = this.mergeArray(dataStudentLink,0);
-            const listStudentActiveClass = this.mergeArray(dataStudentClass,0);
-            const listStudentActiveKhaoThi = this.mergeArray(dataStudentKhaoThi,0);
-            const listStudentActiveKiemTra = this.mergeArray(dataStudentKiemTra,0);
-            const listStudentActiveTuLuyen = this.mergeArray(dataStudentTuLuyen,0);
+            const listStudentActiveLink = this.mergeArray(dataStudentLink);
+            const listStudentActiveClass = this.mergeArray(dataStudentClass);
+            const listStudentActiveKhaoThi = this.mergeArray(dataStudentKhaoThi);
+            const listStudentActiveKiemTra = this.mergeArray(dataStudentKiemTra);
+            const listStudentActiveTuLuyen = this.mergeArray(dataStudentTuLuyen);
 
 
             const dataTimeLink      = trueDataTimeLink   .reduce((a,b)=>(a+b),0);
@@ -787,7 +787,7 @@ export default class extends Vue {
             
 
             const listStudents = dataStudentLink.concat(dataStudentClass,dataStudentTuLuyen,dataStudentKiemTra,dataStudentKhaoThi).filter(o=> o && o.length > 0);
-            const dataActive = this.mergeArray<string[]>(listStudents,0);
+            const dataActive = this.mergeArray<string[]>(listStudents);
             const siso = luyentapLink.map(o=>o.siSo).reduce((a,b)=>(a+b),0);
 
             const students = Array.from(new Set(dataActive)).filter(o => o != null && o.length > 10)
@@ -1159,11 +1159,8 @@ export default class extends Vue {
     }
 
 
-    mergeArray<T>(dataMerge:(T|null)[],isLog:number){
+    mergeArray<T>(dataMerge:(T|null)[]){
         let data:T[] = [];
-        if(isLog){
-            console.log(dataMerge);
-        }
         if(dataMerge && dataMerge.length > 0){
             dataMerge.forEach(o=>{
                 if(o){

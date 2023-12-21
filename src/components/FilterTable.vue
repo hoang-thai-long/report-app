@@ -110,7 +110,7 @@ const changeTeacher = function (value: { id: string, name: string, classIDs: str
     store.commit('SET_TEACHER_VIEW', value)
 }
 const changeView = function (value: { id: string, name: string }) {
-    console.log('changeView', value);
+    // console.log('changeView', value);
     store.dispatch('changeView', value)
 }
 const updateDate = function (range: { startDate: Date, endDate: Date }) {
@@ -281,21 +281,21 @@ const applyFilter = function () {
     let type = -1;
     if (filterClass.value != null) {
         type = 2;
-        console.log("load data theo class")
+        // console.log("load data theo class")
     }
     else {
         if (filterCenter.value != null) {
             type = 1;
-            console.log("load data theo center")
+            // console.log("load data theo center")
         }
         else {
             if (filterRegion.value != null) {
                 type = 0;
-                console.log("load data theo region")
+                // console.log("load data theo region")
             }
             else {
                 type = -1;
-                console.log("load data all region")
+                // console.log("load data all region")
             }
         }
     }
