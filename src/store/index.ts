@@ -9,7 +9,7 @@ const LuyenTap: { Link: typeExam[], Class: typeExam[], TuLuyen: typeTuLuyen[] } 
 const kiemTra: { Class: typeExam[], Exam: typeExam[] } = { Class: [], Exam: [] };
 const TypeDataView: { [key: string]: { id: string, name: string }[] } = {};
 const DataType: classModel[] | null = [];
-const levels: label[] = [{ id: "1", name: "Khối 1" }, { id: "2", name: "Khối 2" }, { id: "3", name: "Khối 4" }, { id: "5", name: "Khối 5" }, { id: "6", name: "Khối 6" }, { id: "7", name: "Khối 8" }, { id: "9", name: "Khối 9" }, { id: "10", name: "Khối 10" }, { id: "11", name: "Khối 11" }, { id: "12", name: "Khối 12" }, { id: "0", name: "Đại học" }];
+const levels: label[] = [{ id: "1", name: "Khối 1" }, { id: "2", name: "Khối 2" }, { id: "3", name: "Khối 4" }, { id: "5", name: "Khối 5" }, { id: "6", name: "Khối 6" }, { id: "7", name: "Khối 7" }, { id: "8", name: "Khối 8" }, { id: "9", name: "Khối 9" }, { id: "10", name: "Khối 10" }, { id: "11", name: "Khối 11" }, { id: "12", name: "Khối 12" }, { id: "0", name: "Đại học" }];
 const DataClassModel: classModel[] = [];
 
 const dataForChart : {
@@ -142,7 +142,8 @@ export default new Vuex.Store({
         state.Class = dataClass.listClass;
         state.ListTeachers = dataClass.listTeacher;
         if (state.Class != null && state.Class.length > 0) {
-          state.Levels = levels.filter(o => state.Class.map(x => x.level).includes(o.id));
+          const listLevels = Array.from(new Set(state.Class.map(x => x.level)));
+          state.Levels = levels.filter(o => listLevels.includes(o.id));
         }
         else {
           state.Levels = levels;
@@ -153,6 +154,7 @@ export default new Vuex.Store({
         state.Class = [];
         state.Levels = levels;
       }
+      console.log(state.Levels);
     },
     SET_DATA_TULUYEN(state, data) {
       state.LuyenTap.TuLuyen.push(data);
