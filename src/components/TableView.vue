@@ -748,7 +748,6 @@ export default class extends Vue {
             
             const pointDataTimeKiemTra   = kiemTraClass.map(o=>o.points).filter(o=>o > 0) 
             const pointDataTimeKhaoThi   = kiemTraExam.map(o=>o.points).filter(o=>o > 0)
-
             
             const trueDataTimeLink      = luyentapLink.map(o=>o.times).filter(o=>o > 0)  
             const trueDataTimeClass     = luyentapClass.map(o=>o.times).filter(o=>o > 0) 
@@ -866,7 +865,7 @@ export default class extends Vue {
                 },
                 // bai khao thi
                 {
-                    text: khaoThiData != null && khaoThiData.studentIDs && khaoThiData.studentIDs.length > 0 ? khaoThiData.points.toFixed(1) : "---",
+                    text: khaoThiData != null && khaoThiData.studentIDs && khaoThiData.studentIDs.length > 0 ? (khaoThiData.details.map(o=>o.diem).reduce((a,b)=>a+b,0)/khaoThiData.studentIDs.length).toFixed(1) : "---",
                     style: 'text-align: center'
                 },
                 {
@@ -888,7 +887,7 @@ export default class extends Vue {
                 },
                 // bai khao thi
                 {
-                    text: khaoThiData != null && khaoThiData.studentIDs && khaoThiData.studentIDs.length > 0 ? khaoThiData.points.toFixed(1) : "---",
+                    text: khaoThiData != null && khaoThiData.studentIDs && khaoThiData.studentIDs.length > 0 ? (khaoThiData.details.map(o=>o.diem).reduce((a,b)=>a+b,0)/khaoThiData.studentIDs.length).toFixed(1) : "---",
                     style: 'text-align: center'
                 },
                 {

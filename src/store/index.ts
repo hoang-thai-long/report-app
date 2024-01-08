@@ -195,7 +195,9 @@ export default new Vuex.Store({
       state.loadding = value;
     },
     SUB_LOADING(state) {
-      state.loadding--;
+      if(state){
+        state.loadding--;
+      }
       if (state.loadding == 0) {
 
         const arrayLabels = Array.from(state.FilterTable);

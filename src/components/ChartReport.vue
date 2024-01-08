@@ -72,11 +72,11 @@ export default class ChartReport extends Vue {
               callbacks: {
                 label: (context) => {
                   let label = context.dataset.label || '';
-                  const classInfo = store.state.Class.find(o=>o.name == context.label);
-                  if(classInfo){
-                    const teacher =store.state.ListTeachers.find(o=>o.classIDs.includes(classInfo.id));
-                    if(teacher){
-                      context.label += "("+teacher.name+")" ;
+                  const classInfo = store.state.Class.find(o => o.name == context.label);
+                  if (classInfo) {
+                    const teacher = store.state.ListTeachers.find(o => o.classIDs.includes(classInfo.id));
+                    if (teacher) {
+                      context.label += "(" + teacher.name + ")";
                     }
                   }
                   if (label) {
@@ -96,16 +96,16 @@ export default class ChartReport extends Vue {
               display: true,
               text: 'TỶ LỆ HOẠT ĐỘNG CỦA HỌC SINH',
               font: {
-                family:'Be Vietnam', 
-                size:18,
+                family: 'Be Vietnam',
+                size: 18,
               }
             },
           },
           responsive: true,
-          scales:{
-            x:{
-              grid:{
-                color:"#000"
+          scales: {
+            x: {
+              grid: {
+                color: "#000"
               }
             }
           }
@@ -145,8 +145,8 @@ export default class ChartReport extends Vue {
               display: true,
               text: 'KẾT QUẢ KIỂM TRA',
               font: {
-                family:'Be Vietnam', 
-                size:18,
+                family: 'Be Vietnam',
+                size: 18,
               }
             },
           },
@@ -194,8 +194,8 @@ export default class ChartReport extends Vue {
               display: true,
               text: 'KẾT QUẢ KHẢO THÍ',
               font: {
-                family:'Be Vietnam', 
-                size:18,
+                family: 'Be Vietnam',
+                size: 18,
               }
             },
           },
@@ -226,8 +226,8 @@ export default class ChartReport extends Vue {
               display: true,
               text: 'Điểm trung bình: ' + data.avg + ", Trung vị: " + data.tv,
               font: {
-                family:'Be Vietnam', 
-                size:18,
+                family: 'Be Vietnam',
+                size: 18,
               }
             },
             tooltip: {
@@ -252,12 +252,14 @@ export default class ChartReport extends Vue {
           responsive: true,
         }
       };
-
-      this.createChartTyle("tylehocsinhhoatdong", optionsTyLe);
-      this.createChartTyle("ketquakiemtra", optionsKiemTra);
-      this.createChartTyle("ketquakhaothi", optionsKhaothi);
-      this.createChartTyle("trungbinhtrungvi", optionsTBTV);
-
+      if (store.state.Type != 2) {
+        this.createChartTyle("tylehocsinhhoatdong", optionsTyLe);
+      }
+      if (store.state.Type == 1) {
+        this.createChartTyle("ketquakiemtra", optionsKiemTra);
+        this.createChartTyle("ketquakhaothi", optionsKhaothi);
+        this.createChartTyle("trungbinhtrungvi", optionsTBTV);
+      }
     }
     if (n > 0) {
       this.listCharts["my-chart-id"]?.destroy();
@@ -266,6 +268,7 @@ export default class ChartReport extends Vue {
 
 
   createChartTyle(id: string, opts: ChartConfiguration<keyof ChartTypeRegistry, (number | [number, number] | Point | BubbleDataPoint | null)[], unknown> | ChartConfigurationCustomTypesPerDataset<keyof ChartTypeRegistry, (number | [number, number] | Point | BubbleDataPoint | null)[], unknown>) {
+    console.log(id);
     if (this.listCharts && this.listCharts[id]) {
       this.listCharts[id]?.destroy();
     }
@@ -444,35 +447,35 @@ export default class ChartReport extends Vue {
           data: listPointKhaoThi.map(o => o.filter(x => x < 4).length),
           borderColor: "#f3b8b1",
           backgroundColor: "#f3b8b1",
-          maxBarThickness:20
+          maxBarThickness: 20
         },
         {
           label: "4->4.9",
           data: listPointKhaoThi.map(o => o.filter(x => x >= 4 && x < 5).length),
           borderColor: "#f3d2ac",
           backgroundColor: "#f3d2ac",
-          maxBarThickness:20
+          maxBarThickness: 20
         },
         {
           label: "5->6.9",
           data: listPointKhaoThi.map(o => o.filter(x => x >= 5 && x < 7).length),
           borderColor: "#cae9e0",
           backgroundColor: "#cae9e0",
-          maxBarThickness:20
+          maxBarThickness: 20
         },
         {
           label: "7->7.9",
           data: listPointKhaoThi.map(o => o.filter(x => x >= 7 && x < 8).length),
           borderColor: "#90dac5",
           backgroundColor: "#90dac5",
-          maxBarThickness:20
+          maxBarThickness: 20
         },
         {
           label: "8->10",
           data: listPointKhaoThi.map(o => o.filter(x => x >= 8).length),
           borderColor: "#7dcbca",
           backgroundColor: "#7dcbca",
-          maxBarThickness:20
+          maxBarThickness: 20
         }
       ],
       diemKiemTra: [
@@ -481,35 +484,35 @@ export default class ChartReport extends Vue {
           data: listPointKiemTra.map(o => o.filter(x => x < 4).length),
           borderColor: "#f3b8b1",
           backgroundColor: "#f3b8b1",
-          maxBarThickness:20
+          maxBarThickness: 20
         },
         {
           label: "4->4.9",
           data: listPointKiemTra.map(o => o.filter(x => x >= 4 && x < 5).length),
           borderColor: "#f3d2ac",
           backgroundColor: "#f3d2ac",
-          maxBarThickness:20
+          maxBarThickness: 20
         },
         {
           label: "5->6.9",
           data: listPointKiemTra.map(o => o.filter(x => x >= 5 && x < 7).length),
           borderColor: "#cae9e0",
           backgroundColor: "#cae9e0",
-          maxBarThickness:20
+          maxBarThickness: 20
         },
         {
           label: "7->7.9",
           data: listPointKiemTra.map(o => o.filter(x => x >= 7 && x < 8).length),
           borderColor: "#90dac5",
           backgroundColor: "#90dac5",
-          maxBarThickness:20
+          maxBarThickness: 20
         },
         {
           label: "8->10",
           data: listPointKiemTra.map(o => o.filter(x => x >= 8).length),
           borderColor: "#7dcbca",
           backgroundColor: "#7dcbca",
-          maxBarThickness:20
+          maxBarThickness: 20
         }
       ],
       tyleHoatDong: [
@@ -518,42 +521,42 @@ export default class ChartReport extends Vue {
           data: dataChartTotal,
           backgroundColor: "#AEB6BF",
           borderColor: "#AEB6BF",
-          maxBarThickness:20
+          maxBarThickness: 20
         },
         {
           label: "Được giao qua link",
           data: dataChartLink,
           backgroundColor: "#EDBB99",
           borderColor: "#EDBB99",
-          maxBarThickness:20
+          maxBarThickness: 20
         },
         {
           label: "Được GV giao trong lớp",
           data: dataChartLuyenTap,
           backgroundColor: "#F9E79F",
           borderColor: "#F9E79F",
-          maxBarThickness:20
+          maxBarThickness: 20
         },
         {
           label: "Tự luyện",
           data: dataChartSelf,
           backgroundColor: "#ABEBC6",
           borderColor: "#ABEBC6",
-          maxBarThickness:20
+          maxBarThickness: 20
         },
         {
           label: "Bài kiểm tra trong lớp",
           data: dataChartKiemTra,
           backgroundColor: "#AED6F1",
           borderColor: "#AED6F1",
-          maxBarThickness:20
+          maxBarThickness: 20
         },
         {
           label: "Bài kiểm tra trên khảo thí",
           data: dataChartKhaoThi,
           backgroundColor: "#D7BDE2",
           borderColor: "#D7BDE2",
-          maxBarThickness:20
+          maxBarThickness: 20
         }
       ],
     }
